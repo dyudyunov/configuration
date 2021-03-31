@@ -56,6 +56,10 @@
     name: edxapp
 
 - import_role:
+    name: enterprise_catalog
+  when: COMMON_ENABLE_ENTERPRISE
+
+- import_role:
     name: ecommerce
   when: COMMON_ENABLE_ECOMMERCE
 

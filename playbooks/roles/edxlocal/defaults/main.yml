@@ -22,7 +22,7 @@ edxlocal_databases:
   - "{{ REGISTRAR_DEFAULT_DB_NAME | default(None) }}"
   - "{{ NOTIFIER_DATABASE_NAME | default(None) }}"
   - "{{ GAMMA_DB_NAME | default(None) }}"
-
+  - "{{ ENTERPRISE_CATALOG_DEFAULT_DB_NAME | default(None)}}"
 edxlocal_extra_databases: []
 
 edxlocal_database_users:
@@ -96,5 +96,11 @@ edxlocal_database_users:
       user: "{{ GAMMA_DB_USER | default(None) }}",
       pass: "{{ GAMMA_DB_PASSWORD | default(None) }}"
     }
+  - {
+      db: "{{ ENTERPRISE_CATALOG_DEFAULT_DB_NAME | default(None) }}",
+      user: "{{ ENTERPRISE_CATALOG_MYSQL_USER | default(None) }}",
+      pass: "{{ ENTERPRISE_CATALOG_MYSQL_PASSWORD | default(None) }}"
+    }
+
 
 edxlocal_extra_database_users: []
