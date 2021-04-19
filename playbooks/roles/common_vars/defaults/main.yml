@@ -315,3 +315,9 @@ COMMON_ENABLE_BACKUPS_AWS_SNAPSHOTS: False
 COMMON_ENABLE_BACKUPS_AZURE_RECOVERY_VAULT: False
 COMMON_ENABLE_FILEBEAT: False
 COMMON_ENABLE_ENTERPRISE: False
+
+
+COMMON_LOGO_URL: "https://edx-cdn.org/v3/default/logo.svg"
+COMMON_LOGO_TRADEMARK_URL: "https://edx-cdn.org/v3/default/logo-trademark.svg"
+COMMON_LOGO_WHITE_URL: "https://edx-cdn.org/v3/default/logo-white.svg"
+COMMON_FAVICON_URL: "https://edx-cdn.org/v3/default/favicon.ico"
