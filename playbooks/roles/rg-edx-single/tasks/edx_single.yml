@@ -59,6 +59,10 @@
     name: mfe_deployer
   when: COMMON_ENABLE_MFE
 
+- import_role: 
+    name: payment
+  when: PAYMENT_MFE_ENABLED
+
 - import_role:
     name: enterprise_catalog
   when: COMMON_ENABLE_ENTERPRISE

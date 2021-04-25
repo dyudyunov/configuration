@@ -10,7 +10,7 @@ server {
   large_client_header_buffers 8 16k;
 
 
-{% if NGINX_ENABLE_SSL %}
+{% if nginx_ssl %}
   {% include "concerns/handle-ip-disclosure.j2" %}
   rewrite ^ https://$host$request_uri? permanent;
 {% else %}
@@ -25,7 +25,7 @@ server {
 
 }
 
-{% if NGINX_ENABLE_SSL %}
+{% if nginx_ssl %}
 server {
   server_name {{ MFE_HOSTNAME }};
   listen {{ MFE_SSL_NGINX_PORT }} ssl;

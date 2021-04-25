@@ -1,0 +1,3 @@
+MFE_NAME: payment
+payment_env_extra:
+    APPLE_PAY_COUNTRY_CODE: "{{ PAYMENT_APPLE_PAY_COUNTRY_CODE }}"

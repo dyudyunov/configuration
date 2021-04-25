@@ -6,7 +6,7 @@ server {
   server_name {{ MFE_DEPLOY_COMMON_HOSTNAME }};
   listen {{ MFE_DEPLOY_NGINX_PORT }};
 
-{% if NGINX_ENABLE_SSL %}
+{% if nginx_ssl %}
   {% include "concerns/handle-ip-disclosure.j2" %}
   rewrite ^ https://$host$request_uri? permanent;
 {% else %}  
@@ -20,7 +20,7 @@ server {
 
 }
 
-{% if NGINX_ENABLE_SSL %}
+{% if nginx_ssl %}
 server {
   server_name {{ MFE_DEPLOY_COMMON_HOSTNAME }};
   listen {{ MFE_DEPLOY_SSL_NGINX_PORT }} ssl;
