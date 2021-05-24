@@ -1,0 +1,117 @@
+---
+#
+# edX Configuration
+#
+# github:     https://github.com/edx/configuration
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+#
+#
+# Tasks for role mockprock
+#
+# Overview:
+#
+#
+# Dependencies:
+#
+#
+# Example play:
+#
+#
+
+#- name: setup the mockprock env file
+#  template:
+#    src: "edx/app/mockprock/mockprock_env.j2"
+#    dest: "{{ mockprock_app_dir }}/mockprock_env"
+#    owner: "{{ mockprock_user }}"
+#    group: "{{ mockprock_user }}"
+#    mode: 0644
+#  tags:
+#    - install
+#    - install:configuration
+
+- name: install application requirements
+  pip:
+    requirements: "{{ mockprock_requirements_base }}/{{ item }}"
+    virtualenv: "{{ mockprock_venv_dir }}"
+    state: present
+    extra_args: "--exists-action w"
+    virtualenv_python: python3.8
+  become_user: "{{ mockprock_user }}"
+  with_items: "{{ mockprock_requirements }}"
+  tags:
+    - install
+    - install:app-requirements
+
+- name: modify permissions and properties of a mockprock code directory
+  file:
+    path: "{{ mockprock_code_dir }}"
+    state: directory
+    owner: "{{ mockprock_user }}"
+    group: "{{ common_web_user }}"
+    mode: 0775
+
+#- name: run collectstatic
+#  shell: "{{ mockprock_venv_dir }}/bin/python {{ mockprock_manage }} {{ item }}"
+#  args:
+#    chdir: "{{ mockprock_code_dir }}"
+#  become_user: "{{ mockprock_user }}"
+#  environment: "{{ mockprock_environment }}"
+#  with_items:
+#    - "collectstatic --noinput"
+#  tags:
+#    - assets
+#    - assets:gather
+
+- name: write out the supervisior wrapper
+  template:
+    src: "edx/app/mockprock/mockprock.sh.j2"
+    dest: "{{ mockprock_app_dir }}/{{ mockprock_service_name }}.sh"
+    mode: 0650
+    owner: "{{ supervisor_user }}"
+    group: "{{ common_web_user }}"
+  tags:
+    - install
+    - install:configuration
+
+- name: write supervisord config
+  template:
+    src: edx/app/supervisor/conf.d.available/mockprock.conf.j2
+    dest: "{{ supervisor_available_dir }}/{{ mockprock_service_name }}.conf"
+    owner: "{{ supervisor_user }}"
+    group: "{{ common_web_user }}"
+    mode: 0644
+  tags:
+    - install
+    - install:configuration
+
+- name: enable supervisor script
+  file:
+    src: "{{ supervisor_available_dir }}/{{ mockprock_service_name }}.conf"
+    dest: "{{ supervisor_cfg_dir }}/{{ mockprock_service_name }}.conf"
+    state: link
+    force: yes
+  when: not disable_edx_services
+  tags:
+    - install
+    - install:configuration
+
+- name: update supervisor configuration
+  shell: "{{ supervisor_ctl }} -c {{ supervisor_cfg }} update"
+  when: not disable_edx_services
+  tags:
+    - manage
+    - manage:start
+
+- name: restart mockprock
+  supervisorctl:
+    state: restarted
+    supervisorctl_path: "{{ supervisor_ctl }}"
+    config: "{{ supervisor_cfg }}"
+    name: "{{ mockprock_service_name }}"
+  when: not disable_edx_services
+  become_user: "{{ supervisor_service_user }}"
+  tags:
+    - manage:start

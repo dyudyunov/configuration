@@ -53,6 +53,10 @@
   tags: [ "nginx" ]
 
 - import_role:
+    name: mockprock
+  when: COMMON_ENABLE_MOCKPROCK
+
+- import_role:
     name: edxapp
 
 - import_role:

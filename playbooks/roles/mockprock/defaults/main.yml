@@ -1,0 +1,249 @@
+---
+#
+# edX Configuration
+#
+# github:     https://github.com/edx/configuration
+# wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
+# code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+#
+# Defaults for role mockprock
+#
+
+MOCKPROCK_LMS_BASE: 'http://127.0.0.1:8000'
+MOCKPROCK_CMS_BASE: 'http://127.0.0.1:8010'
+MOCKPROCK_BASE_URL: 'http://127.0.0.1:8110'
+MOCKPROCK_MEMCACHE: [ '127.0.0.1:11211' ]
+MOCKPROCK_MKTG_BASE: 'http://example.com'
+MOCKPROCK_LOGOUT_URL: '{{ MOCKPROCK_MKTG_BASE }}/accounts/logout/'
+MOCKPROCK_PRIVACY_POLICY_URL: '{{ MOCKPROCK_MKTG_BASE }}/privacy-policy'
+MOCKPROCK_TERMS_OF_SERVICE_URL: '{{ MOCKPROCK_MKTG_BASE }}/terms-service'
+MOCKPROCK_SUPPORT_EMAIL: ''
+MOCKPROCK_CMS_COURSE_SHORTCUT_BASE_URL: '{{ MOCKPROCK_LMS_BASE }}/course'
+MOCKPROCK_OAUTH2_SECRET: 'secret'
+MOCKPROCK_OAUTH2_URL_ROOT: '{{ MOCKPROCK_LMS_BASE }}/oauth2'
+MOCKPROCK_OAUTH2_URL_LOGOUT: '{{ MOCKPROCK_LMS_BASE }}/logout'
+MOCKPROCK_OAUTH2_APP_CLIENT_NAME: mockprock
+MOCKPROCK_OAUTH2_APP_USERNAME: staff
+MOCKPROCK_SOCIAL_AUTH_REDIRECT_IS_HTTPS: false
+MOCKPROCK_SECRET_KEY: 'YOUR_SECRET_KEY_HERE'
+MOCKPROCK_OAUTH2_KEY: 'YOUR_OAUTH2_KEY'
+MOCKPROCK_SOCIAL_AUTH_EDX_OAUTH2_KEY: 'mockprock-sso-key'
+MOCKPROCK_SOCIAL_AUTH_EDX_OAUTH2_SECRET: 'mockprock-sso-secret'
+MOCKPROCK_BACKEND_SERVICE_EDX_OAUTH2_KEY: 'mockprock-backend-service-key'
+MOCKPROCK_BACKEND_SERVICE_EDX_OAUTH2_SECRET: 'mockprock-backend-service-secret'
+# This will not work on single instance sandboxes
+MOCKPROCK_DOC_BASE: 'http://127.0.0.1/en/latest'
+ANALYTICS_API_ENDPOINT: 'http://127.0.0.1:8100/api/v0'
+MOCKPROCK_DATA_API_AUTH_TOKEN: 'changeme'
+MOCKPROCK_PLATFORM_NAME: 'edX'
+MOCKPROCK_APPLICATION_NAME: 'Insights'
+MOCKPROCK_SEGMENT_IO_KEY: 'YOUR_KEY'
+# should match the timezone of your map reduce pipeline
+MOCKPROCK_TIME_ZONE: 'UTC'
+MOCKPROCK_LANGUAGE_CODE: 'en-us'
+# email config
+MOCKPROCK_EMAIL_HOST: 'smtp.example.com'
+MOCKPROCK_EMAIL_HOST_PASSWORD: "mail_password"
+MOCKPROCK_EMAIL_HOST_USER: "mail_user"
+MOCKPROCK_EMAIL_PORT: 587
+MOCKPROCK_ENABLE_AUTO_AUTH: false
+MOCKPROCK_SEGMENT_IGNORE_EMAIL_REGEX: !!null
+MOCKPROCK_THEME_SCSS: 'sass/themes/open-edx.scss'
+MOCKPROCK_RESEARCH_URL: 'https://www.edx.org/research-pedagogy'
+MOCKPROCK_OPEN_SOURCE_URL: 'http://set-me-please'
+
+MOCKPROCK_DOMAIN: 'mockprock'
+
+# Comma-delimited list of field names to include in the Learner List CSV download
+# e.g., "username,segments,cohort,engagements.videos_viewed,last_updated"
+# Default (null) includes all available fields, in alphabetical order
+MOCKPROCK_LEARNER_API_LIST_DOWNLOAD_FIELDS: !!null
+
+MOCKPROCK_DATABASE_NAME: 'dashboard'
+MOCKPROCK_DATABASE_USER: rosencrantz
+MOCKPROCK_DATABASE_PASSWORD: secret
+MOCKPROCK_DATABASE_HOST: 127.0.0.1
+MOCKPROCK_DATABASE_PORT: 3306
+MOCKPROCK_MYSQL_OPTIONS:
+  connect_timeout: 10
+  init_command: "SET sql_mode='STRICT_TRANS_TABLES'"
+
+MOCKPROCK_DATABASES:
+  # rw user
+  default:
+    ENGINE: 'django.db.backends.mysql'
+    NAME: '{{ MOCKPROCK_DATABASE_NAME }}'
+    USER: '{{ MOCKPROCK_DATABASE_USER }}'
+    PASSWORD: '{{ MOCKPROCK_DATABASE_PASSWORD }}'
+    HOST: "{{ MOCKPROCK_DATABASE_HOST }}"
+    PORT: '{{ MOCKPROCK_DATABASE_PORT }}'
+    OPTIONS: "{{ MOCKPROCK_MYSQL_OPTIONS }}"
+
+MOCKPROCK_LMS_COURSE_SHORTCUT_BASE_URL: "URL_FOR_LMS_COURSE_LIST_PAGE"
+
+MOCKPROCK_SESSION_EXPIRE_AT_BROWSER_CLOSE: false
+
+MOCKPROCK_CDN_DOMAIN: !!null
+
+MOCKPROCK_CORS_ORIGIN_WHITELIST_EXTRA: []
+MOCKPROCK_CORS_ORIGIN_WHITELIST_DEFAULT:
+  - "{{ MOCKPROCK_DOMAIN }}"
+MOCKPROCK_CORS_ORIGIN_WHITELIST: "{{ MOCKPROCK_CORS_ORIGIN_WHITELIST_DEFAULT + MOCKPROCK_CORS_ORIGIN_WHITELIST_EXTRA }}"
+
+# Remote config
+MOCKPROCK_HERMES_ENABLED: "{{ COMMON_HERMES_ENABLED }}"
+
+MOCKPROCK_DECRYPT_CONFIG_ENABLED: "{{ COMMON_DECRYPT_CONFIG_ENABLED }}"
+MOCKPROCK_COPY_CONFIG_ENABLED: "{{ COMMON_COPY_CONFIG_ENABLED }}"
+
+#
+# This block of config is dropped into /edx/etc/mockprock.yml
+# and is read in by analytics_dashboard/settings/production.py
+MOCKPROCK_CONFIG:
+  SUPPORT_EMAIL: '{{ MOCKPROCK_SUPPORT_EMAIL }}'
+  DOCUMENTATION_LOAD_ERROR_URL: '{{ MOCKPROCK_DOC_BASE }}/Reference.html#error-conditions'
+  SEGMENT_IO_KEY: '{{ MOCKPROCK_SEGMENT_IO_KEY }}'
+  SEGMENT_IGNORE_EMAIL_REGEX: '{{ MOCKPROCK_SEGMENT_IGNORE_EMAIL_REGEX }}'
+  PRIVACY_POLICY_URL: '{{ MOCKPROCK_PRIVACY_POLICY_URL }}'
+  TERMS_OF_SERVICE_URL: '{{ MOCKPROCK_TERMS_OF_SERVICE_URL }}'
+  HELP_URL: '{{ MOCKPROCK_DOC_BASE }}'
+  SECRET_KEY: '{{ MOCKPROCK_SECRET_KEY }}'
+  DATA_API_URL: '{{ ANALYTICS_API_ENDPOINT }}'
+  DATA_API_AUTH_TOKEN: '{{ MOCKPROCK_DATA_API_AUTH_TOKEN }}'
+  SOCIAL_AUTH_REDIRECT_IS_HTTPS: '{{ MOCKPROCK_SOCIAL_AUTH_REDIRECT_IS_HTTPS }}'
+
+  # Used to automatically configure OAuth2 Client
+  SOCIAL_AUTH_EDX_OAUTH2_KEY: '{{ MOCKPROCK_SOCIAL_AUTH_EDX_OAUTH2_KEY }}'
+  SOCIAL_AUTH_EDX_OAUTH2_SECRET: '{{ MOCKPROCK_SOCIAL_AUTH_EDX_OAUTH2_SECRET }}'
+  SOCIAL_AUTH_EDX_OAUTH2_ISSUER: '{{ MOCKPROCK_LMS_BASE }}'
+  SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT: '{{ MOCKPROCK_LMS_BASE }}'
+  SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL: '{{ MOCKPROCK_OAUTH2_URL_LOGOUT }}'
+  BACKEND_SERVICE_EDX_OAUTH2_KEY: '{{ MOCKPROCK_BACKEND_SERVICE_EDX_OAUTH2_KEY }}'
+  BACKEND_SERVICE_EDX_OAUTH2_SECRET: '{{ MOCKPROCK_BACKEND_SERVICE_EDX_OAUTH2_SECRET }}'
+  BACKEND_SERVICE_EDX_OAUTH2_PROVIDER_URL: '{{ MOCKPROCK_OAUTH2_URL_ROOT }}'
+
+  ENABLE_AUTO_AUTH: '{{ MOCKPROCK_ENABLE_AUTO_AUTH }}'
+  PLATFORM_NAME: '{{ MOCKPROCK_PLATFORM_NAME }}'
+  APPLICATION_NAME: '{{ MOCKPROCK_APPLICATION_NAME }}'
+  CACHES:
+    default: &default_generic_cache
+      BACKEND:  'django.core.cache.backends.memcached.MemcachedCache'
+      KEY_PREFIX: '{{ COMMON_ENVIRONMENT }}-{{ COMMON_DEPLOYMENT }}-mockprock'
+      LOCATION: "{{ MOCKPROCK_MEMCACHE }}"
+  TIME_ZONE: '{{ MOCKPROCK_TIME_ZONE }}'
+  LANGUAGE_CODE: '{{ MOCKPROCK_LANGUAGE_CODE }}'
+  # email config
+  EMAIL_HOST: '{{ MOCKPROCK_EMAIL_HOST }}'
+  EMAIL_HOST_PASSWORD: '{{ MOCKPROCK_EMAIL_HOST_PASSWORD }}'
+  EMAIL_HOST_USER: '{{ MOCKPROCK_EMAIL_HOST_USER }}'
+  EMAIL_PORT: '{{ MOCKPROCK_EMAIL_PORT }}'
+  # static file config
+  STATICFILES_DIRS: ["{{ mockprock_static_path }}"]
+  STATIC_ROOT: "{{ COMMON_DATA_DIR }}/{{ mockprock_service_name }}/staticfiles"
+  RESEARCH_URL: '{{ MOCKPROCK_RESEARCH_URL }}'
+  OPEN_SOURCE_URL: '{{ MOCKPROCK_OPEN_SOURCE_URL }}'
+  # db config
+  DATABASES: "{{ MOCKPROCK_DATABASES }}"
+  LMS_COURSE_SHORTCUT_BASE_URL: "{{ MOCKPROCK_LMS_COURSE_SHORTCUT_BASE_URL }}"
+  COURSE_API_URL: "{{ MOCKPROCK_COURSE_API_URL }}"
+  GRADING_POLICY_API_URL: "{{ MOCKPROCK_GRADING_POLICY_API_URL }}"
+  MODULE_PREVIEW_URL: "{{ MOCKPROCK_MODULE_PREVIEW_URL }}"
+  # When mockprock is co-located with other django services, we need to ensure they don't all
+  # use the same cookie names.
+  SESSION_COOKIE_NAME:  "{{ MOCKPROCK_SESSION_COOKIE_NAME | default('mockprock_sessionid') }}"
+  CSRF_COOKIE_NAME: "{{ MOCKPROCK_CSRF_COOKIE_NAME | default('mockprock_csrftoken') }}"
+  LANGUAGE_COOKIE_NAME: "{{ MOCKPROCK_LANGUAGE_COOKIE_NAME | default('mockprock_language') }}"
+  SESSION_EXPIRE_AT_BROWSER_CLOSE: "{{ MOCKPROCK_SESSION_EXPIRE_AT_BROWSER_CLOSE }}"
+  CMS_COURSE_SHORTCUT_BASE_URL: "{{ MOCKPROCK_CMS_COURSE_SHORTCUT_BASE_URL }}"
+  LEARNER_API_LIST_DOWNLOAD_FIELDS: "{{ MOCKPROCK_LEARNER_API_LIST_DOWNLOAD_FIELDS }}"
+  # CDN url to serve assets from
+  CDN_DOMAIN: "{{ MOCKPROCK_CDN_DOMAIN }}"
+  CSRF_COOKIE_SECURE: "{{ MOCKPROCK_CSRF_COOKIE_SECURE }}"
+
+MOCKPROCK_NEWRELIC_APPNAME: "{{ COMMON_ENVIRONMENT }}-{{ COMMON_DEPLOYMENT }}-analytics-api"
+MOCKPROCK_ENABLE_NEWRELIC_DISTRIBUTED_TRACING: false
+MOCKPROCK_PIP_EXTRA_ARGS: "-i {{ COMMON_PYPI_MIRROR_URL }}"
+MOCKPROCK_NGINX_PORT: "18110"
+MOCKPROCK_NGINX_SSL_PORT: "18113"
+MOCKPROCK_GUNICORN_WORKERS: "2"
+MOCKPROCK_GUNICORN_EXTRA: ""
+MOCKPROCK_COURSE_API_URL: "{{ MOCKPROCK_LMS_BASE }}/api/courses/v1/"
+MOCKPROCK_GRADING_POLICY_API_URL: "{{ MOCKPROCK_LMS_BASE }}/api/grades/v1/"
+MOCKPROCK_MODULE_PREVIEW_URL: "{{ MOCKPROCK_LMS_BASE }}/xblock"
+
+MOCKPROCK_VERSION: "master"
+MOCKPROCK_GIT_IDENTITY: !!null
+
+MOCKPROCK_REPOS:
+  - PROTOCOL: "{{ COMMON_GIT_PROTOCOL }}"
+    DOMAIN: "{{ COMMON_GIT_MIRROR }}"
+    PATH: "{{ COMMON_GIT_PATH }}"
+    REPO: mockprock.git
+    VERSION: "{{ MOCKPROCK_VERSION }}"
+    DESTINATION: "{{ mockprock_code_dir }}"
+    SSH_KEY: "{{ MOCKPROCK_GIT_IDENTITY }}"
+
+MOCKPROCK_CSRF_COOKIE_SECURE: false
+#
+# vars are namespace with the module name.
+#
+mockprock_environment:
+  DJANGO_SETTINGS_MODULE: "analytics_dashboard.settings.production"
+  ANALYTICS_DASHBOARD_CFG: "{{ COMMON_CFG_DIR  }}/{{ mockprock_service_name }}.yml"
+  PATH: "{{ mockprock_nodeenv_bin }}:{{ mockprock_venv_dir }}/bin:{{ ansible_env.PATH }}"
+  THEME_SCSS: '{{ MOCKPROCK_THEME_SCSS }}'
+  SETUPTOOLS_USE_DISTUTILS: "stdlib" # https://setuptools.readthedocs.io/en/latest/history.html#v50-0-0
+
+
+mockprock_service_name: mockprock
+mockprock_venv_dir: "{{ mockprock_home }}/venvs/{{ mockprock_service_name }}"
+mockprock_user: "{{ mockprock_service_name }}"
+mockprock_app_dir: "{{ COMMON_APP_DIR }}/{{ mockprock_service_name }}"
+mockprock_home: "{{ COMMON_APP_DIR }}/{{ mockprock_service_name }}"
+mockprock_code_dir: "{{ mockprock_app_dir }}/mockprock"
+mockprock_python_path: "{{ mockprock_code_dir }}/mockprock"
+mockprock_static_path: "{{ mockprock_code_dir }}/mockprock/static"
+mockprock_conf_dir: "{{ mockprock_home }}"
+mockprock_log_dir: "{{ COMMON_LOG_DIR }}/{{ mockprock_service_name }}"
+
+mockprock_nodeenv_dir: "{{ mockprock_home }}/nodeenvs/{{ mockprock_service_name }}"
+mockprock_nodeenv_bin: "{{ mockprock_nodeenv_dir }}/bin"
+mockprock_node_modules_dir: "{{ mockprock_code_dir }}/node_modules"
+mockprock_node_bin: "{{ mockprock_node_modules_dir }}/.bin"
+MOCKPROCK_NODE_VERSION: "12.11.1"
+
+mockprock_gunicorn_host: "127.0.0.1"
+mockprock_gunicorn_port: "8110"
+mockprock_gunicorn_timeout: "300"
+mockprock_wsgi: "analytics_dashboard.wsgi:application"
+
+mockprock_django_settings: "analytics_dashboard.settings.production"
+mockprock_manage: "{{ mockprock_code_dir }}/manage.py"
+
+mockprock_requirements_base: "{{ mockprock_code_dir }}/requirements"
+mockprock_requirements:
+  - server.txt
+
+# flag to run Insights on Python 3.8
+MOCKPROCK_USE_PYTHON38: true
+
+#
+# OS packages
+#
+mockprock_debian_pkgs:
+  - libmysqlclient-dev
+  - libssl-dev # needed for mysqlclient python library
+  - build-essential
+  - gettext
+  - python3-pip
+  - python3-dev
+
+mockprock_release_specific_debian_pkgs:
+  xenial:
+    - openjdk-8-jdk
+  bionic:
+    - openjdk-8-jdk
+  focal:
+    - openjdk-8-jdk
