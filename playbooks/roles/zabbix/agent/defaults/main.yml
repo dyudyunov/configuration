@@ -1,7 +1,10 @@
 ---
-zabbix_version_latest: "4.4"
+zabbix_version_latest: "4.5"
 zabbix_version:
   Ubuntu:
+    focal:
+      version: "{{ zabbix_version_latest }}"
+      repo_key: "DF517F33E709712C"
     bionic:
       version: "{{ zabbix_version_latest }}"
       repo_key: "DF517F33E709712C"
