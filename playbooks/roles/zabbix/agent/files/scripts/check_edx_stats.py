@@ -3,7 +3,7 @@
 
 import MySQLdb
 from sys import argv
-import ConfigParser
+import configparser
 import os
 import time
 
@@ -13,7 +13,7 @@ database = 'edxapp'
 host = 'localhost'
 port = 3306
 
-config = ConfigParser.SafeConfigParser( { 'host': host, 'port': str(port), 'user': user, 'password': password, 'database': database } )
+config = configparser.ConfigParser( { 'host': host, 'port': str(port), 'user': user, 'password': password, 'database': database } )
 if config.read(os.path.dirname(os.path.realpath(__file__)) + '/scripts.cfg'):
 
     user = config.get('client', 'user')
@@ -47,17 +47,17 @@ try:
     client = MySQLdb.connect(host=host, port=port, user=user, passwd=password, connect_timeout=3)
     cursor = client.cursor()
 
-    for metric, query in queries.items():
+    for metric, query in list(queries.items()):
         cursor.execute(query, None)
         row = cursor.fetchone()
         if row and len(row):
-            print "{}: {}".format(metric,row[len(row)-1])
+            print("{}: {}".format(metric,row[len(row)-1]))
         else:
-            print "Failed: No such item ({})".format(metric)
+            print("Failed: No such item ({})".format(metric))
 
     cursor.close()
     client.close()
 
-except MySQLdb.Error, e:
-    print "Failed: MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+except MySQLdb.Error as e:
+    print("Failed: MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
     exit(255)

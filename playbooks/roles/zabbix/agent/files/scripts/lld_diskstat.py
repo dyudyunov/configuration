@@ -10,4 +10,4 @@ if __name__ == "__main__":
                if not any(ignore in device for ignore in skippable))
     devices = (dev for dev in devices if dev[len(dev)-1] in '0123456789')
     data = [{"{#DEVICENAME}": device} for device in devices]
-    print(json.dumps({"data": data}, indent=4))
+    print((json.dumps({"data": data}, indent=4)))
