@@ -52,7 +52,7 @@ def responder(item):
     return ret
 
 if len(argv) == 2:
-    print((responder(str(argv[1]))))
+    print(responder(str(argv[1])))
 else:
-    print(("Usage: "+str(argv[0])+" [metric]"))
+    print("Usage: "+str(argv[0])+" [metric]")
     exit(1)

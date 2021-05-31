@@ -47,7 +47,7 @@ def responder(array,item):
         exit(255)
 
 if len(argv) == 3:
-    print((responder(str(argv[1]),str(argv[2]))))
+    print(responder(str(argv[1]),str(argv[2])))
 else:
-    print(("Two arguments required. Usage: "+str(argv[0])+" [metric group] [metric]"))
+    print("Two arguments required. Usage: "+str(argv[0])+" [metric group] [metric]")
     exit(1)
