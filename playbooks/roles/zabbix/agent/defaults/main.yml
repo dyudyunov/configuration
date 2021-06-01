@@ -76,3 +76,7 @@ zabbix_agent_memcached_port: 11211
 zabbix_agent_rabbitmq_host: "localhost"
 zabbix_agent_rabbitmq_user: "guest"
 zabbix_agent_rabbitmq_password: "guest"
+
+zabbix_agent_redis_host: "localhost"
+zabbix_agent_redis_port: 6379
+zabbix_agent_redis_password: ""

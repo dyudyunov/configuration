@@ -22,6 +22,8 @@
     zabbix_agent_rabbitmq_password: "{{ RABBIT_ADMIN_PASSWORD | default('admin') }}"
     zabbix_server_host_dns: "{{ EDXAPP_LMS_BASE | default(inventory_hostname) }}"
     zabbix_server_host_visible_name: "{{ EDXAPP_PLATFORM_NAME | default(EDXAPP_LMS_BASE) | default(inventory_hostname) }}"
+    zabbix_agent_redis_host: "{{ REDIS_BIND_IP | default('localhost') }}"
+    zabbix_agent_redis_password: "{{ REDIS_PASSWORD | default('') }}"
 
 - name: updating zabbix_server_host_visible_name for non prod instances to avoid duplicates of HostName
   set_fact:

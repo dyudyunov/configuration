@@ -40,7 +40,7 @@ zabbix_support_conf:
       - "Active Template App Memcached"
       - "Active Template App MongoDB"
       - "Active Template App MySQL"
-      - "Active Template App RabbitMQ"
+      - "Active Template App Redis"
       - "Nginx connections"
   VIP:
     groups:
@@ -53,5 +53,5 @@ zabbix_support_conf:
       - "Active Template App Memcached"
       - "Active Template App MongoDB"
       - "Active Template App MySQL"
-      - "Active Template App RabbitMQ"
+      - "Active Template App Redis"
       - "Nginx connections"

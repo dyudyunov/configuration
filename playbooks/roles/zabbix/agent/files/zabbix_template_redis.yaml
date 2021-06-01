@@ -1,0 +1,300 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-06-01T13:50:09Z'
+  groups:
+    -
+      name: Templates
+  templates:
+    -
+      template: 'Active Template App Redis'
+      name: 'Active Template App Redis'
+      groups:
+        -
+          name: Templates
+      applications:
+        -
+          name: Redis
+      items:
+        -
+          name: 'Redis port state'
+          type: ZABBIX_ACTIVE
+          key: 'net.tcp.service[tcp,,6379]'
+          delay: 5m
+          history: 1w
+          trends: 60d
+          applications:
+            -
+              name: Redis
+          valuemap:
+            name: 'Service state'
+          request_method: POST
+          triggers:
+            -
+              expression: '{max(#5)}<>1'
+              name: 'Redis port is not present on {HOST.NAME}'
+              priority: HIGH
+        -
+          name: 'Redis CPU utilization'
+          type: ZABBIX_ACTIVE
+          key: 'proc.cpu.util[,,,"/usr/bin/redis-server 127.0.0.1:6379",]'
+          delay: 5m
+          history: 30d
+          trends: 180d
+          value_type: FLOAT
+          units: '%'
+          applications:
+            -
+              name: Redis
+        -
+          name: 'Rediis messages queue length'
+          type: ZABBIX_ACTIVE
+          key: 'redis.queues.maxlength[messages]'
+          delay: 5m
+          units: messages
+          applications:
+            -
+              name: Redis
+          request_method: POST
+          triggers:
+            -
+              expression: '{min(40m)}>500'
+              name: 'Redis too many messages in queue ({ITEM.LASTVALUE1}) on {HOST.NAME}'
+              priority: WARNING
+              description: 'For last 2 hours Redis message queue has too many messages'
+              dependencies:
+                -
+                  name: 'Redis too many messages in queue ({ITEM.LASTVALUE1}) on {HOST.NAME}'
+                  expression: '{Active Template App Redis:redis.queues.maxlength[messages].min(60m)}>1000'
+            -
+              expression: '{min(60m)}>1000'
+              name: 'Redis too many messages in queue ({ITEM.LASTVALUE1}) on {HOST.NAME}'
+              priority: HIGH
+              description: 'For last 2 hours Redis message queue has too many messages'
+        -
+          name: 'Redis current messages'
+          type: ZABBIX_ACTIVE
+          key: redis.queues.messages_total
+          delay: 5m
+          trends: 180d
+          units: msgs
+          applications:
+            -
+              name: Redis
+          request_method: POST
+        -
+          name: 'Redis queues metrics collector'
+          type: ZABBIX_ACTIVE
+          key: redis.queues.stat
+          delay: 10m
+          history: 3h
+          trends: '0'
+          value_type: TEXT
+          description: |
+            Returns metrics for all queues.
+            name messages
+            For example:
+
+            edx.cms.core.low 0
+            edx.cms.core 0
+            edx.lms.core.low 0
+          applications:
+            -
+              name: Redis
+        -
+          name: 'Redis blocked clients'
+          type: ZABBIX_ACTIVE
+          key: 'redis.server.metrics[clients,blocked_clients]'
+          delay: 5m
+          history: 30d
+          trends: 180d
+          applications:
+            -
+              name: Redis
+        -
+          name: 'Redis connected clients'
+          type: ZABBIX_ACTIVE
+          key: 'redis.server.metrics[clients,connected_clients]'
+          delay: 5m
+          history: 30d
+          trends: 180d
+          applications:
+            -
+              name: Redis
+        -
+          name: 'Redis maxmemory'
+          type: ZABBIX_ACTIVE
+          key: 'redis.server.metrics[memory, maxmemory]'
+          delay: 15m
+          history: 1w
+          trends: 90d
+          units: B
+          applications:
+            -
+              name: Redis
+        -
+          name: 'Redis used memory'
+          type: ZABBIX_ACTIVE
+          key: 'redis.server.metrics[memory,used_memory]'
+          delay: 5m
+          trends: 180d
+          units: B
+          applications:
+            -
+              name: Redis
+        -
+          name: 'Redis version'
+          type: ZABBIX_ACTIVE
+          key: 'redis.server.metrics[server,redis_version]'
+          delay: 1h
+          history: 30d
+          trends: '0'
+          value_type: CHAR
+          applications:
+            -
+              name: Redis
+        -
+          name: 'Redis server uptime'
+          type: ZABBIX_ACTIVE
+          key: 'redis.server.metrics[server,uptime_in_seconds]'
+          delay: 5m
+          history: 30d
+          trends: 180d
+          units: s
+          applications:
+            -
+              name: Redis
+        -
+          name: 'Redis connections/sec'
+          type: ZABBIX_ACTIVE
+          key: 'redis.server.metrics[stats,total_connections_received]'
+          delay: 5m
+          trends: 180d
+          applications:
+            -
+              name: Redis
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+        -
+          name: 'Redis status'
+          type: ZABBIX_ACTIVE
+          key: redis.status.ping
+          delay: 5m
+          trends: '0'
+          value_type: TEXT
+          description: 'Result of execution of redis-cli ping'
+          applications:
+            -
+              name: Redis
+          request_method: POST
+          triggers:
+            -
+              expression: '{str(PONG)}<>1'
+              name: 'Redis is down on {HOST.NAME}'
+              priority: HIGH
+              description: 'Redis server liveness probe'
+      discovery_rules:
+        -
+          name: 'Redis queue discovery'
+          type: ZABBIX_ACTIVE
+          key: redis.queues.lld
+          delay: 20m
+          filter:
+            evaltype: AND
+            conditions:
+              -
+                macro: '{#QUEUE_NAME}'
+                value: ^celery@
+                operator: NOT_MATCHES_REGEX
+                formulaid: A
+              -
+                macro: '{#QUEUE_NAME}'
+                value: ^celeryev
+                operator: NOT_MATCHES_REGEX
+                formulaid: B
+          lifetime: 3h
+          description: 'LLD for Redis queues'
+          item_prototypes:
+            -
+              name: 'Redis queue messages {#QUEUE_NAME}'
+              type: DEPENDENT
+              key: 'redis.queue[{#QUEUE_NAME},messages]'
+              delay: '0'
+              description: 'Redis queue messages counter'
+              applications:
+                -
+                  name: Redis
+              preprocessing:
+                -
+                  type: REGEX
+                  parameters:
+                    - '{#QUEUE_NAME}\ (\d+)'
+                    - \1
+              master_item:
+                key: redis.queues.stat
+              trigger_prototypes:
+                -
+                  expression: '{delta(30m)}=0 and {last()}>0'
+                  name: 'Redis queue size does not decrease for {#QUEUE_NAME} on {HOST.NAME}'
+                  priority: WARNING
+                  description: 'Redis queue messages count has not decreased in the last 30 minutes'
+                  manual_close: 'YES'
+  graphs:
+    -
+      name: 'Redis connections'
+      graph_items:
+        -
+          sortorder: '1'
+          color: F44336
+          item:
+            host: 'Active Template App Redis'
+            key: 'redis.server.metrics[clients,blocked_clients]'
+        -
+          sortorder: '2'
+          color: 66BB6A
+          item:
+            host: 'Active Template App Redis'
+            key: 'redis.server.metrics[clients,connected_clients]'
+        -
+          sortorder: '3'
+          color: 2774A4
+          yaxisside: RIGHT
+          item:
+            host: 'Active Template App Redis'
+            key: 'redis.server.metrics[stats,total_connections_received]'
+    -
+      name: 'Redis memory'
+      graph_items:
+        -
+          sortorder: '1'
+          color: F44336
+          item:
+            host: 'Active Template App Redis'
+            key: 'redis.server.metrics[memory, maxmemory]'
+        -
+          sortorder: '2'
+          color: 42A5F5
+          item:
+            host: 'Active Template App Redis'
+            key: 'redis.server.metrics[memory,used_memory]'
+    -
+      name: 'Redis queues'
+      graph_items:
+        -
+          sortorder: '1'
+          color: FF3333
+          item:
+            host: 'Active Template App Redis'
+            key: 'redis.queues.maxlength[messages]'
+  value_maps:
+    -
+      name: 'Service state'
+      mappings:
+        -
+          value: '0'
+          newvalue: Down
+        -
+          value: '1'
+          newvalue: Up
