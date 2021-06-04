@@ -1,0 +1,49 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-06-03T13:31:24Z'
+  groups:
+    -
+      name: Templates
+  templates:
+    -
+      template: 'Active Template App APT Updates'
+      name: 'Active Template App APT Updates'
+      groups:
+        -
+          name: Templates
+      applications:
+        -
+          name: APT
+      items:
+        -
+          name: 'Security Updates'
+          type: ZABBIX_ACTIVE
+          key: apt.security
+          delay: 5m
+          applications:
+            -
+              name: APT
+        -
+          name: 'Non-Critical Updates'
+          type: ZABBIX_ACTIVE
+          key: apt.updates
+          delay: 5m
+          applications:
+            -
+              name: APT
+  triggers:
+    -
+      expression: '{Active Template App APT Updates:apt.security.last()}>0 and {Active Template App APT Updates:apt.updates.last()}>0'
+      name: '{ITEM.LASTVALUE1} security and {ITEM.LASTVALUE2} regular updates on {HOST.NAME}'
+      priority: WARNING
+      manual_close: 'YES'
+    -
+      expression: '{Active Template App APT Updates:apt.updates.last()}>0 and {Active Template App APT Updates:apt.security.last()}=0'
+      name: '{ITEM.LASTVALUE} regular updates on {HOST.NAME}'
+      priority: INFO
+      manual_close: 'YES'
+    -
+      expression: '{Active Template App APT Updates:apt.security.last()}>0 and {Active Template App APT Updates:apt.updates.last()}=0'
+      name: '{ITEM.LASTVALUE} security updates on {HOST.NAME}'
+      priority: WARNING
+      manual_close: 'YES'

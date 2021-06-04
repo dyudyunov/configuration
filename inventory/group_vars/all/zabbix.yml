@@ -19,6 +19,7 @@ zabbix_support_conf:
       - "Client Prod"
     templates:
       - "Active Template OS Linux"
+      - "Active Template App APT Updates"
       - "Template App HTTPS Service"
       - "Nginx connections"
   OnSupport:
@@ -28,6 +29,7 @@ zabbix_support_conf:
       - "Active Template OS Linux"
       - "Template App HTTPS Service"
       - "Active Template App EDX AD"
+      - "Active Template App APT Updates"
       - "Nginx connections"
   Strong:
     groups:
@@ -41,6 +43,7 @@ zabbix_support_conf:
       - "Active Template App MongoDB"
       - "Active Template App MySQL"
       - "Active Template App Redis"
+      - "Active Template App APT Updates"
       - "Nginx connections"
   VIP:
     groups:
@@ -54,4 +57,5 @@ zabbix_support_conf:
       - "Active Template App MongoDB"
       - "Active Template App MySQL"
       - "Active Template App Redis"
+      - "Active Template App APT Updates"
       - "Nginx connections"
