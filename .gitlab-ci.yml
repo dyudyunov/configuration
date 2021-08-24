@@ -16,7 +16,7 @@ build-base-image:
         - docker push $BASE_IMAGE
         - echo image built - $BASE_IMAGE
     only:
-        - lilac-mockprock
+        - lilac-rg
 
 # version tag template: release-rg-v.X.Y.Z
 #
