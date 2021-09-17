@@ -3,7 +3,7 @@
 
 - name: Add zabbix-agent apt_key
   apt_key:
-    keyserver: keys.gnupg.net
+    keyserver: keyserver.ubuntu.com
     id: "{{ zabbix_version[ansible_distribution][ansible_distribution_release].repo_key }}"
 
 - name: Add zabbix main repository into sources list
