@@ -75,9 +75,9 @@
     name: ecomworker
   when: COMMON_ENABLE_ECOMMERCE
 
-- import_role:
-    name: rg_instructor_analytics_log_collector
-  when: COMMON_RG_INSTRUCTOR_ANALYTICS_ENABLE
+#- import_role:
+#    name: rg_instructor_analytics_log_collector
+#  when: COMMON_RG_INSTRUCTOR_ANALYTICS_ENABLE
 
 - import_role:
     name: celerybeat
