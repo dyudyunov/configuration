@@ -4,8 +4,6 @@
 #EDXAPP_LMS_BASE: ${deploy_host}
 #EDXAPP_CMS_BASE: studio-${deploy_host}
 #EDXAPP_SITE_NAME: ${deploy_host}
-#CERTS_DOWNLOAD_URL: "http://${deploy_host}:18090"
-#CERTS_VERIFY_URL: "http://${deploy_host}:18090"
 #edx_internal: True
 #COMMON_USER_INFO:
 #  - name: ${github_username}
@@ -68,9 +66,6 @@
 #EDXAPP_WORKERS:
 #  lms: 2
 #  cms: 2
-#XSERVER_GRADER_DIR: "/edx/var/xserver/data/content-mit-600x~2012_Fall"
-#XSERVER_GRADER_SOURCE: "git@github.com:/MITx/6.00x.git"
-#CERTS_BUCKET: "verify-test.example.org"
 #migrate_db: "yes"
 #rabbitmq_ip: "127.0.0.1"
 #rabbitmq_refresh: True
@@ -93,7 +88,6 @@
 #EDXAPP_FEATURES:
 #  ENABLE_DISCUSSION_SERVICE: true
 #  ENABLE_DISCUSSION_HOME_PANEL: true
-#  ENABLE_INSTRUCTOR_ANALYTICS: false
 #  SUBDOMAIN_BRANDING: false
 #  SUBDOMAIN_COURSE_LISTINGS: false
 #  PREVIEW_LMS_BASE: "{{ EDXAPP_PREVIEW_LMS_BASE }}"
@@ -137,25 +131,17 @@
 #    custom_domain: yourcloudfrontdomain.cloudfront.net
 #    headers:
 #      Cache-Control: max-age-{{ EDXAPP_PROFILE_IMAGE_MAX_AGE }}
-#EDXAPP_PROFILE_IMAGE_SECRET_KEY: "SECRET KEY HERE"
+#EDXAPP_PROFILE_IMAGE_HASH_SEED: "SECRET KEY HERE"
 #
 ##TODO: remove once ansible_provision.sh stops sucking or is burned to the ground
 #EDXAPP_PROFILE_IMAGE_MAX_AGE: 31536000
 #
 ## send logs to s3
 #AWS_S3_LOGS: true
-#AWS_S3_LOGS_NOTIFY_EMAIL: devops+logs@example.com
-#AWS_S3_LOGS_FROM_EMAIL: devops@example.com
+#AWS_S3_LOGS_NOTIFY_EMAIL: SRE+logs@example.com
+#AWS_S3_LOGS_FROM_EMAIL: sre@example.com
 #EDX_ANSIBLE_DUMP_VARS: true
 #CONFIGURATION_VERSION: release
-#CERTS_AWS_KEY: 'AWS SECRET KEY HERE'
-#CERTS_AWS_ID: 'AWS KEY ID HERE'
-#CERTS_REPO: "git@github.com:/edx/certificates"
-#XSERVER_GIT_IDENTITY: |
-#  -----BEGIN RSA PRIVATE KEY-----
-#    ssh private key here
-#  -----END RSA PRIVATE KEY-----
-#CERTS_GIT_IDENTITY: "{{ XSERVER_GIT_IDENTITY }}"
 #EDXAPP_INSTALL_PRIVATE_REQUIREMENTS: true
 #EDXAPP_USE_GIT_IDENTITY: true
 #_local_git_identity: |

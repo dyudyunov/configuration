@@ -27,6 +27,7 @@ dependencies:
     edx_django_service_home: '{{ COMMON_APP_DIR }}/{{ discovery_service_name }}'
     edx_django_service_config_overrides: '{{ discovery_service_config_overrides }}'
     edx_django_service_debian_pkgs_extra: '{{ discovery_debian_pkgs }}'
+    edx_django_service_extra_requirements: '{{ DISCOVERY_EXTRA_REQUIREMENTS }}'
     edx_django_service_gunicorn_port: '{{ discovery_gunicorn_port }}'
     edx_django_service_django_settings_module: '{{ DISCOVERY_DJANGO_SETTINGS_MODULE }}'
     edx_django_service_environment_extra: '{{ discovery_environment }}'
@@ -48,12 +49,19 @@ dependencies:
     edx_django_service_session_expire_at_browser_close: '{{ DISCOVERY_SESSION_EXPIRE_AT_BROWSER_CLOSE }}'
     edx_django_service_node_version: '{{ DISCOVERY_NODE_VERSION }}'
     edx_django_service_automated_users: '{{ DISCOVERY_AUTOMATED_USERS }}'
+    edx_django_service_post_migrate_commands: '{{ DISCOVERY_POST_MIGRATE_COMMANDS }}'
     edx_django_service_enable_newrelic_distributed_tracing: '{{ DISCOVERY_ENABLE_NEWRELIC_DISTRIBUTED_TRACING }}'
     edx_django_service_decrypt_config_enabled: '{{ DISCOVERY_DECRYPT_CONFIG_ENABLED }}'
     edx_django_service_copy_config_enabled: '{{ DISCOVERY_COPY_CONFIG_ENABLED }}'
     edx_django_service_max_webserver_upload: 10
     edx_django_service_post_migrate_commands: '{{ discovery_post_migrate_commands }}'
     edx_django_service_cronjob_auto: '{{ discovery_cronjob_auto }}'
+    edx_django_service_migration_check_services: '{{ discovery_service_name }},{{ discovery_service_name }}-workers'
+    edx_django_service_enable_celery_workers: true
+    edx_django_service_workers: '{{ DISCOVERY_WORKERS }}'
+    EDX_DJANGO_SERVICE_ENABLE_ADMIN_URLS_RESTRICTION: '{{ DISCOVERY_ENABLE_ADMIN_URLS_RESTRICTION }}'
+    EDX_DJANGO_SERVICE_ADMIN_URLS: '{{ DISCOVERY_ADMIN_URLS }}'
+
     edx_django_service_databases:
       default:
         ENGINE: 'django.db.backends.mysql'

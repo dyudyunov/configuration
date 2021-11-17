@@ -29,9 +29,9 @@ ENV BOTO_CONFIG=/dev/null \
     ANALYTICS_PIPELINE_VENV=/edx/app/analytics_pipeline/venvs \
     BOOTSTRAP=/etc/bootstrap.sh \
     COMMON_BASE_DIR=/edx \
-    COMMON_PIP_PACKAGES_PIP='pip==20.0.2' \
+    COMMON_PIP_PACKAGES_PIP='pip==20.3.4' \
     COMMON_PIP_PACKAGES_SETUPTOOLS='setuptools==44.1.0' \
-    COMMON_PIP_PACKAGES_VIRTUALENV='virtualenv==16.7.10' \
+    COMMON_PIP_PACKAGES_VIRTUALENV='virtualenv==20.1.0' \
     COMMON_MYSQL_READ_ONLY_USER='read_only' \
     COMMON_MYSQL_READ_ONLY_PASS='password' \
     ANALYTICS_PIPELINE_OUTPUT_DATABASE_USER='pipeline001' \

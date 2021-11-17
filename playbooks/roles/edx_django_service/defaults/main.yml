@@ -40,7 +40,6 @@ edx_django_service_npm_version: '6.12.1'
 edx_django_service_environment_default:
   DJANGO_SETTINGS_MODULE: '{{ edx_django_service_django_settings_module }}'
   PATH: '{{ edx_django_service_nodeenv_bin }}:{{ edx_django_service_venv_dir }}/bin:{{ ansible_env.PATH }}'
-  SETUPTOOLS_USE_DISTUTILS: "stdlib" # https://setuptools.readthedocs.io/en/latest/history.html#v50-0-0
 edx_django_service_environment_extra: {}
 edx_django_service_environment: '{{ edx_django_service_environment_default | combine(edx_django_service_environment_extra) }}'
 
@@ -58,6 +57,17 @@ edx_django_service_debian_pkgs_default:
 edx_django_service_debian_pkgs_extra: []
 edx_django_service_debian_pkgs: '{{ edx_django_service_debian_pkgs_default + edx_django_service_debian_pkgs_extra }}'
 
+# List of additional python packages that should be installed into the
+# service virtual environment.
+# `name` (required), `version` (optional), and `extra_args` (optional)
+# are supported and correspond to the options of ansible's pip module.
+# Example:
+# edx_django_service_extra_requirements:
+#   - name: mypackage
+#     version: 1.0.1
+#   - name: git+https://git.myproject.org/MyProject#egg=MyProject
+edx_django_service_extra_requirements: []
+
 edx_django_service_gunicorn_extra: ''
 edx_django_service_gunicorn_extra_conf: ''
 edx_django_service_gunicorn_host: '127.0.0.1'
@@ -66,6 +76,7 @@ edx_django_service_gunicorn_timeout: 300
 edx_django_service_gunicorn_workers: 2
 edx_django_service_gunicorn_worker_class: 'gevent'
 edx_django_service_gunicorn_max_requests: null
+edx_django_service_gunicorn_limit_request_field_size: 16384
 
 edx_django_service_cors_whitelist: []
 edx_django_service_allow_cors_headers: false

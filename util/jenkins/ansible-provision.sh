@@ -128,15 +128,13 @@ fi
 
 if [[ -z $ami ]]; then
   if [[ $server_type == "full_edx_installation" ]]; then
-    ami="ami-0c9c19b09d5dbaf26"
+    ami="ami-0644020c3c81d30ba"
   elif [[ $server_type == "ubuntu_18.04" ]]; then
     ami="ami-07ebfd5b3428b6f4d"
-  elif [[ $server_type == "ubuntu_20.04" ]]; then
-    ami="ami-05cf2c352da0bfb2e"
+  elif [[ $server_type == "ubuntu_20.04" || $server_type == "full_edx_installation_from_scratch" ]]; then
+    ami="ami-089b5711e63812c2a"
     # Ansible will always use Python3 interpreter on Ubuntu 20.04 hosts to execute modules
     extra_var_arg+=' -e ansible_python_interpreter=auto'
-  elif [[ $server_type == "ubuntu_16.04" || $server_type == "full_edx_installation_from_scratch" ]]; then
-    ami="ami-092546daafcc8bc0d"
   fi
 fi
 
@@ -184,6 +182,18 @@ if [[ -z $registrar_version ]]; then
   REGISTRAR_VERSION="master"
 fi
 
+if [[ -z $license_manager ]]; then
+  license_manager="false"
+fi
+
+if [[ -z $license_manager_version ]]; then
+  LICENSE_MANAGER_VERSION="master"
+fi
+
+if [[ -z $enterprise_catalog_version ]]; then
+  ENTERPRISE_CATALOG_VERSION="master"
+fi
+
 if [[ -z $learner_portal ]]; then
   learner_portal="false"
 fi
@@ -204,6 +214,30 @@ if [[ $registrar == 'true' ]]; then
   program_console="true"
 fi
 
+if [[ -z authn ]]; then
+  authn="false"
+fi
+
+if [[ -z $authn_version ]]; then
+  AUTHN_MFE_VERSION="master"
+fi
+
+if [[ -z $payment ]]; then
+  payment="false"
+fi
+
+if [[ -z $payment_version ]]; then
+  PAYMENT_MFE_VERSION="master"
+fi
+
+if [[ -z $learning ]]; then
+  learning="false"
+fi
+
+if [[ -z $learning_version ]]; then
+  LEARNING_MFE_VERSION="master"
+fi
+
 # Lowercase the dns name to deal with an ansible bug
 dns_name="${dns_name,,}"
 
@@ -216,7 +250,6 @@ cat << EOF > $extra_vars_file
 EDX_PLATFORM_VERSION: $edxapp_version
 FORUM_VERSION: $forum_version
 XQUEUE_VERSION: $xqueue_version
-CERTS_VERSION: $certs_version
 CONFIGURATION_VERSION: $configuration_version
 DEMO_VERSION: $demo_version
 THEMES_VERSION: $themes_version
@@ -271,8 +304,34 @@ PROSPECTUS_VERSION: $prospectus_version
 PROSPECTUS_ENABLED: $prospectus
 PROSPECTUS_SANDBOX_BUILD: True
 
+AUTHN_NGINX_PORT: 80
+AUTHN_SSL_NGINX_PORT: 443
+AUTHN_MFE_VERSION: $authn_version
+AUTHN_ENABLED: $authn
+AUTHN_SANDBOX_BUILD: True
+
+PAYMENT_NGINX_PORT: 80
+PAYMENT_SSL_NGINX_PORT: 443
+PAYMENT_MFE_VERSION: $payment_version
+PAYMENT_MFE_ENABLED: $payment
+PAYMENT_SANDBOX_BUILD: True
+
 VIDEO_PIPELINE_BASE_NGINX_PORT: 80
 VIDEO_PIPELINE_BASE_SSL_NGINX_PORT: 443
+
+LICENSE_MANAGER_NGINX_PORT: 80
+LICENSE_MANAGER_SSL_NGINX_PORT: 443
+LICENSE_MANAGER_VERSION: $license_manager_version
+LICENSE_MANAGER_ENABLED: $license_manager
+LICENSE_MANAGER_DECRYPT_CONFIG_ENABLED: true
+LICENSE_MANAGER_COPY_CONFIG_ENABLED: true
+
+ENTERPRISE_CATALOG_NGINX_PORT: 80
+ENTERPRISE_CATALOG_SSL_NGINX_PORT: 443
+ENTERPRISE_CATALOG_VERSION: $enterprise_catalog_version
+ENTERPRISE_CATALOG_ENABLED: $enterprise_catalog
+ENTERPRISE_CATALOG_DECRYPT_CONFIG_ENABLED: true
+ENTERPRISE_CATALOG_COPY_CONFIG_ENABLED: true
 
 DISCOVERY_NGINX_PORT: 80
 DISCOVERY_SSL_NGINX_PORT: 443
@@ -287,9 +346,15 @@ COMMON_DEPLOY_HOSTNAME: ${deploy_host}
 COMMON_DEPLOYMENT: edx
 COMMON_ENVIRONMENT: sandbox
 COMMON_LMS_BASE_URL: https://${deploy_host}
-
+COMMON_ECOMMERCE_BASE_URL: https://ecommerce-${deploy_host}
 nginx_default_sites:
   - lms
+
+LEARNING_NGINX_PORT: 80
+LEARNING_SSL_NGINX_PORT: 443
+LEARNING_MFE_VERSION: $learning_version
+LEARNING_MFE_ENABLED: $learning
+LEARNING_SANDBOX_BUILD: True
 
 mysql_server_version_5_7: True
 
@@ -331,9 +396,8 @@ if [[ $edx_internal == "true" ]]; then
 EDXAPP_PREVIEW_LMS_BASE: preview-${deploy_host}
 EDXAPP_LMS_BASE: ${deploy_host}
 EDXAPP_CMS_BASE: studio-${deploy_host}
+EDXAPP_CMS_URL_ROOT: "https://{{ EDXAPP_CMS_BASE }}"
 EDXAPP_SITE_NAME: ${deploy_host}
-CERTS_DOWNLOAD_URL: "http://${deploy_host}:18090"
-CERTS_VERIFY_URL: "http://${deploy_host}:18090"
 edx_internal: True
 COMMON_USER_INFO:
   - name: ${github_username}
@@ -391,6 +455,11 @@ PROSPECTUS_URL_ROOT: "https://prospectus-${deploy_host}"
 OAUTH_ID: "{{ PROSPECTUS_OAUTH_ID }}"
 OAUTH_SECRET: "{{ PROSPECTUS_OAUTH_SECRET }}"
 
+AUTHN_URL_ROOT: "https://authn-${deploy_host}"
+PAYMENT_URL_ROOT: "https://payment-${deploy_host}"
+PAYMENT_ECOMMERCE_BASE_URL: "https://ecommerce-${deploy_host}"
+PAYMENT_LMS_BASE_URL: "https://${deploy_host}"
+
 credentials_create_demo_data: true
 CREDENTIALS_LMS_URL_ROOT: "https://${deploy_host}"
 CREDENTIALS_DOMAIN: "credentials-${deploy_host}"
@@ -406,10 +475,14 @@ VEDA_WEB_FRONTEND_VERSION: ${video_pipeline_version:-master}
 VEDA_PIPELINE_WORKER_VERSION: ${video_pipeline_version:-master}
 VEDA_ENCODE_WORKER_VERSION: ${video_encode_worker_version:-master}
 
+LICENSE_MANAGER_URL_ROOT: "https://license-manager-${deploy_host}"
+
+ENTERPRISE_CATALOG_URL_ROOT: "https://enterprise-catalog-${deploy_host}"
+
 EOF
 fi
 
-encrypted_config_apps=(edxapp ecommerce ecommerce_worker analytics_api insights discovery credentials registrar edx_notes_api)
+encrypted_config_apps=(edxapp ecommerce ecommerce_worker analytics_api insights discovery credentials registrar edx_notes_api license_manager)
 
 for app in ${encrypted_config_apps[@]}; do
      eval app_decrypt_and_copy_config_enabled=\${${app}_decrypt_and_copy_config_enabled}
@@ -470,13 +543,29 @@ video_pipeline_integration=${video_pipeline:-false}
 # ansible overrides for master's integration environment setup
 if [[ $registrar == "true" ]]; then
     cat << EOF >> $extra_vars_file
-COMMON_ENABLE_SPLUNKFORWARDER: true,
-EDXAPP_ENABLE_ENROLLMENT_RESET: true,
+COMMON_ENABLE_SPLUNKFORWARDER: true
+EDXAPP_ENABLE_ENROLLMENT_RESET: true
+DISCOVERY_POST_MIGRATE_COMMANDS:
+  - command: "./manage.py remove_program_types_from_migrations"
+    when: true
+  - command: >
+      ./manage.py createsuperuser
+      --username="admin"
+      --email="admin@example.com"
+      --no-input
+    when: true
+registrar_post_migrate_commands:
+  - command: >
+      ./manage.py createsuperuser
+      --username="admin"
+      --email="admin@example.com"
+      --no-input
+    when: true
 EOF
 fi
 
 declare -A deploy
-plays="prospectus edxapp forum ecommerce credentials discovery analyticsapi veda_web_frontend veda_pipeline_worker veda_encode_worker video_pipeline_integration xqueue certs demo testcourses registrar program_console learner_portal"
+plays="prospectus edxapp forum ecommerce credentials discovery enterprise_catalog analyticsapi veda_web_frontend veda_pipeline_worker veda_encode_worker video_pipeline_integration xqueue certs demo testcourses registrar program_console learner_portal"
 
 for play in $plays; do
     deploy[$play]=${!play}

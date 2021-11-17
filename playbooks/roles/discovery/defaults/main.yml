@@ -128,6 +128,8 @@ DISCOVERY_EXTRA_APPS: []
 
 DISCOVERY_USERNAME_REPLACEMENT_WORKER: "OVERRIDE THIS WITH A VALID USERNAME"
 
+DISCOVERY_CELERY_BROKER_URL: "redis://:@127.0.0.1:6379/"
+
 DISCOVERY_REPOS:
   - PROTOCOL: "{{ COMMON_GIT_PROTOCOL }}"
     DOMAIN: "{{ COMMON_GIT_MIRROR }}"
@@ -136,6 +138,17 @@ DISCOVERY_REPOS:
     VERSION: "{{ DISCOVERY_VERSION }}"
     DESTINATION: "{{ discovery_code_dir }}"
     SSH_KEY: "{{ DISCOVERY_GIT_IDENTITY }}"
+
+# List of additional python packages that should be installed into the
+# discovery virtual environment.
+# `name` (required), `version` (optional), and `extra_args` (optional)
+# are supported and correspond to the options of ansible's pip module.
+# Example:
+# DISCOVERY_EXTRA_REQUIREMENTS:
+#   - name: mypackage
+#     version: 1.0.1
+#   - name: git+https://git.myproject.org/MyProject#egg=MyProject
+DISCOVERY_EXTRA_REQUIREMENTS: []
 
 discovery_service_config_overrides:
   ELASTICSEARCH_URL: '{{ DISCOVERY_ELASTICSEARCH_URL }}'
@@ -171,8 +184,12 @@ discovery_service_config_overrides:
 
   USERNAME_REPLACEMENT_WORKER: "{{ DISCOVERY_USERNAME_REPLACEMENT_WORKER }}"
 
+  CELERY_BROKER_URL: "{{ DISCOVERY_CELERY_BROKER_URL }}"
+
 # See edx_django_service_automated_users for an example of what this should be
 DISCOVERY_AUTOMATED_USERS: {}
+
+DISCOVERY_POST_MIGRATE_COMMANDS: []
 
 DISCOVERY_CSRF_COOKIE_SECURE: false
 DISCOVERY_CORS_ORIGIN_WHITELIST: []
@@ -223,3 +240,18 @@ discovery_cronjob_auto:
     name: "discovery first_job_update"
     filename: "update_discovery.sh"
     minute: "*/10"
+
+DISCOVERY_ENABLE_ADMIN_URLS_RESTRICTION: false
+
+DISCOVERY_ADMIN_URLS:
+  - admin
+
+DISCOVERY_CELERY_DEFAULT_QUEUE: 'discovery.default'
+
+# Worker settings
+worker_django_settings_module: "{{ DISCOVERY_DJANGO_SETTINGS_MODULE }}"
+DISCOVERY_CELERY_WORKERS:
+  - queue: '{{ DISCOVERY_CELERY_DEFAULT_QUEUE }}'
+    concurrency: 1
+    monitor: True
+DISCOVERY_WORKERS: "{{ DISCOVERY_CELERY_WORKERS }}"

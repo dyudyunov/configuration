@@ -51,6 +51,13 @@
     - install
     - install:system-requirements
 
+- name: Add Chrome Public keys for focal
+  shell: wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+  when: ansible_distribution_release == 'focal'
+  tags:
+    - install
+    - install:system-requirements
+
 - name: download xenial/bionic/focal browser packages from S3
   get_url:
     dest: /tmp/{{ item.name }}
@@ -254,7 +261,7 @@
     dest: /etc/systemd/system/xvfb.service
     owner: root
     group: root
-  when: ansible_distribution_release == 'xenial'
+  when: ansible_distribution_release == 'xenial' or ansible_distribution_release == 'bionic' or ansible_distribution_release == 'focal'
   tags:
     - install
     - install:configuration
@@ -264,7 +271,7 @@
     name: xvfb
     enabled: yes
     state: started
-  when: ansible_distribution_release == 'xenial'
+  when: ansible_distribution_release == 'xenial' or ansible_distribution_release == 'bionic' or ansible_distribution_release == 'focal'
   tags:
     - manage
     - manage:start

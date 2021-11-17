@@ -20,7 +20,7 @@ http {
         types_hash_max_size 2048;
         # increase header buffer for for https://edx-wiki.atlassian.net/browse/LMS-467&gt
         # see http://orensol.com/2009/01/18/nginx-and-weird-400-bad-request-responses/
-        large_client_header_buffers 4 16k;
+        large_client_header_buffers 8 16k;
         server_tokens off;
 
         # increase bucket size for sites with long DNS names
@@ -76,4 +76,3 @@ http {
         include {{ nginx_conf_dir }}/*.conf;
         include {{ nginx_sites_enabled_dir }}/*;
 }
-

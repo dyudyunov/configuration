@@ -23,6 +23,9 @@ COMMON_OBJECT_STORE_LOG_SYNC_PREFIX: "logs/tracking/"
 COMMON_OBJECT_STORE_LOG_SYNC_SCRIPT: "{{ COMMON_BIN_DIR }}/send-logs-to-object-store"
 COMMON_OBJECT_STORE_LOG_SYNC_ON_EXIT: "{{ COMMON_BIN_DIR }}/sync-logs-on-exit"
 
+COMMON_OBJECT_STORE_EDX_LOG_SYNC_PREFIX : "logs/edx/"
+COMMON_OBJECT_STORE_EDX_LOG_SYNC : false
+
 COMMON_BASE_DIR: /edx
 COMMON_DATA_DIR: "{{ COMMON_BASE_DIR}}/var"
 COMMON_APP_DIR: "{{ COMMON_BASE_DIR}}/app"
@@ -150,13 +153,16 @@ old_python_debian_pkgs:
   - "python2.7=2.7.10-0+{{ ansible_distribution_release }}1"
 
 
-COMMON_PIP_VERSION: '20.0.2'
+COMMON_PIP_VERSION: '20.3.4'
 
 common_pip_pkgs:
   - pip=={{ COMMON_PIP_VERSION }}
+  - configparser==4.0.2
   - setuptools==44.1.0
-  - virtualenv==16.7.10
+  - virtualenv==20.2.0
+  - zipp==1.2.0
   - boto3
+  - importlib-resources==3.2.1
 
 common_web_user: www-data
 common_web_group: www-data
@@ -247,6 +253,11 @@ COMMON_OAUTH_BASE_URL: '{{ COMMON_LMS_BASE_URL }}'
 COMMON_OAUTH_PUBLIC_URL_ROOT: '{{ COMMON_OAUTH_BASE_URL }}/oauth2'
 COMMON_OAUTH_URL_ROOT: '{{ COMMON_OAUTH_PUBLIC_URL_ROOT }}'
 COMMON_OAUTH_LOGOUT_URL: '{{ COMMON_OAUTH_BASE_URL }}/logout'
+
+COMMON_LOGO_URL: "https://edx-cdn.org/v3/default/logo.svg"
+COMMON_LOGO_TRADEMARK_URL: "https://edx-cdn.org/v3/default/logo-trademark.svg"
+COMMON_LOGO_WHITE_URL: "https://edx-cdn.org/v3/default/logo-white.svg"
+COMMON_FAVICON_URL: "https://edx-cdn.org/v3/default/favicon.ico"
 
 ############
 # Settings related to JSON Web Tokens (JWTs).

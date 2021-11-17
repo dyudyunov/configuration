@@ -1,6 +1,157 @@
+
 # Changelog
+
 All notable changes to this project will be documented in this file.
-Add any new changes to the top(right below this line).
+Add any new changes to the top (right below this line).
+
+ - 2021-09-28
+    - Role nginx
+      - Add `NGINX_ENABLE_IPV6` configuration variable to make nginx
+        services listen on the IPv6 wildcard address (in addition to
+        the IPv4 one, where services always listen). Defaults to true.
+
+ - 2021-09-19
+    - Remove configuration for edx-certificates, as that repo and service are no longer used.
+
+ - 2021-07-29
+    - Role edxapp
+       - Add `EDXAPP_ENABLE_MONGODB_INDEXES` configuration variable to optionally set up indexes on edxapp mongodb.
+    - Role forum
+       - Add `FORUM_ENABLE_MONGODB_INDEXES` configuration variable to optionally set up indexes on forum mongodb.
+
+ - 2021-07-19
+     - Role: edx_django_service
+        - Allows writing extra requirements to an 'extra.txt' requirements file in the service's requirements directory.
+     - Role: ecommerce
+        - Adds an optional flag to write the extra requirements to an 'extra.txt' file since many of the app's setup commands
+          use tox and that creates its own environments separate from the default ecommerce virtualenv environment where the
+          `ECOMMERCE_EXTRA_REQUIREMENTS` requirements are installed.
+
+ - 2021-06-17
+    - Role credentials
+       - Installs extra python packages specified in `CREDENTIALS_EXTRA_REQUIREMENTS` (defaults to `[]`).
+
+ - 2021-06-07
+    - In `openedx_native.yml`
+       - Added configuration variable ECOMMERCE_CSRF_TRUSTED_ORIGINS to allow payment mfe to interact with ecommerce service
+       - Added configuration variable ECOMMERCE_CORS_ORIGIN_WHITELIST to allow cross domain interation between mfes and ecommerce service
+       - Added new conditional variable MFE_DEPLOY_ECOMMERCE_MFES to not build ecommerce related MFEs w/o ecommerce service
+       - Created SiteConfiguration for default Site to enable ecommerce MFE
+       - Added configuration variable EDXAPP_ORDER_HISTORY_MICROFRONTEND_URL
+       - Set ECOMMERCE_CORS_ALLOW_CREDENTIALS to true
+       - Added new configuration variable ECOMMERCE_ENABLE_PAYMENT_MFE
+    - Role ecommerce
+       - Added new configuration variable ECOMMERCE_ENABLE_PAYMENT_MFE with default value to false
+       - Updated `create_or_update_site` management command to set `enable-microfrontend-for-basket-page` and `payment-microfrontend-url` flags
+    - Role mfe_deployer
+      - Added MFES_ECOMMERCE list for ecommerce related MFEs
+      - Added new configuration variable MFE_DEPLOY_ECOMMERCE_MFES
+      - Added new deploy_mfes variable to collect list of all MFEs to deploy
+      - Changed looping from `MFES` to `deploy_mfes` list internally
+    - Role mfe_flags_setup
+       - Added new flag `order_history.redirect_to_microfrontend`
+
+ - 2021-06-05
+    - Remove ENABLE_INSTRUCTOR_ANALYTICS setting, which was removed from edx-platform in 2015
+
+ - 2021-05-24
+    - In ``manage_edxapp_users_and_groups.yml`` playbook, allow LMS and CMS
+      groups to be managed separately via ``manage-groups-lms`` and
+      ``manage-groups-cms`` tags. These replace the ``manage-groups`` tag,
+      which will be interepreted as ``manage-groups-lms`` until it is removed.
+
+ - 2021-05-18
+    - The version of tubular is controlled by RETIREMENT_SERVICE_VERSION.
+      Previously it was always "master", which broke older Open edX re-installations.
+
+ - 2021-05-13
+     - Role: edx_django_service
+        - Added task that installs extra python packages specified in `edx_django_service_extra_requirements`.
+     - Role: discovery
+        - Installs extra python packages specified in `DISCOVERY_EXTRA_REQUIREMENTS`.
+     - Role: ecommerce
+        - Installs extra python packages specified in `ECOMMERCE_EXTRA_REQUIREMENTS`.
+
+ - 2021-03-08
+    - Remove instruction from ansile-bootstrap.sh that instructed people to activate
+      the virtualenv.  This was incorrect for community installations.
+
+ - 2021-03-07
+    - Role: ecommerce
+      - Added new configuration variable ECOMMERCE_EXTRA_CONFIG_OVERRIDES, which will allow override any ecommerce settings.
+
+ - 2021-01-20
+    - Remove xserver role and all its references.
+    - This service has been removed per DEPR-95
+
+ - 2021-01-19
+     - Role: edxapp, edx_notes_api, gitreload, xqueue, xserver
+        - Increase gunicorn limit_request_field_size to 16384 in order to accomodate large cookies.
+
+ - 2021-01-15
+     - Role: nginx
+        - Increase large_client_header_buffers from 4->8 buffers to handle browsers with too much cookie data
+
+ - 2021-01-12
+     - Playbook: go-server
+        - Removed
+     - Playbook: go-agent
+        - Removed
+     - Role: go-server
+        - Removed
+     - Role: go-agent
+        - Removed
+
+ - 2021-01-12
+     - Role: nginx
+        - Increase large_client_header_buffers to 16K to handle browsers with too much cookie data
+
+ - 2021-01-08
+     - Role: tinymce_plugins
+        - Installs `tinymce_plugins` specified in `TINYMCE_ADDITIONAL_PLUGINS_LIST` configuration variable
+        - Rebuilds TinyMCE files with the newly installed plugins and the previous ones
+
+     - Role: edxapp
+        - Includes `tinymce_plugins` role in order to install custom TinyMCE plugins, if there are any.
+
+ - 2021-01-05
+     - Role: edxapp
+        - setting `proxy_buffer_size` behind the EDXAPP_SET_PROXY_BUFFER_SIZE flag.
+
+ - 2020-12-11
+    - Role: jenkins_master
+       - Adding variable/tasks to create directories for job virtual
+         enviroments to be created, as part of removing shiningpanda
+         as a dependency.
+
+ - 2020-12-09
+     - Role: edxapp
+        - Updated renderer options to reference `common.djangoapps.edxmako`
+          instead of `edxmako`. The latter import path is deprecated.
+          Other than removing warnings, there should be no functional
+          change.
+
+ - 2020-12-02
+    - Role: mfe
+        - Added logo-related configuration settings, with defaults.
+
+ - 2020-12-01
+    - Role: edxapp
+        - Default the CodeJail Python version to the same as the rest of edxapp.
+
+     - Role: edxapp
+        - Added `EDXAPP_ORGANIZATIONS_AUTOCREATE` variable with default of
+          `true`. See `ORGANIZATIONS_AUTOCREATE` toggle documentation in
+          edx-platform/cms/envs/common.py for details.
+
+ - 2020-11-20
+    - Role: edxapp
+        - Updated the worker newrelic config to have the service variant in the app name.  This will seperate the names
+          of the newrelic apps to be `...-lms` and `...-cms` to make it easier to monitor them separately.  This will
+          impact any newrelic monitoring and alerting you have that is linked to the old app name, which should be
+          updated to use both of the new application names.
+ - 2020-11-17
+    - Removed mentions of ANSIBLE_REPO and ANSIBLE_VERSION since we no longer use our own fork of Ansible.
 
  - 2020-12-01
     - Role: edxapp
@@ -30,7 +181,7 @@ Add any new changes to the top(right below this line).
 
  - 2020-09-18
      - Role: nginx
-       - Add location to support accessing files from ```EDXAPP_MEDIA_URL``` under the cms site.
+       - Add location to support accessing files from `EDXAPP_MEDIA_URL` under the cms site.
 
  - 2020-09-14
      - Playbook: program_manager

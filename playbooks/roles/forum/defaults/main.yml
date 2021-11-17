@@ -54,6 +54,8 @@ FORUM_RESTART_DELAY: 60
 # Set to rebuild the forum ElasticSearch index from the database.
 FORUM_REBUILD_INDEX: false
 
+FORUM_ENABLE_MONGODB_INDEXES: false
+
 forum_base_env: &forum_base_env
   RBENV_ROOT: "{{ forum_rbenv_root }}"
   GEM_HOME: "{{ forum_gem_root }}"
@@ -83,7 +85,7 @@ forum_env:
 devstack_forum_env:
   <<: *forum_base_env
   SEARCH_SERVER: "http://edx.devstack.elasticsearch:9200/"
-  SEARCH_SERVER_ES7: "http://edx.devstack.elasticsearch7:9200/"
+  SEARCH_SERVER_ES7: "http://edx.devstack.elasticsearch710:9200/"
   MONGOHQ_URL: "mongodb://cs_comments_service:password@edx.devstack.mongo:27017/cs_comments_service"
   MONGOID_AUTH_MECH: "{{ FORUM_MONGO_AUTH_MECH }}"
 

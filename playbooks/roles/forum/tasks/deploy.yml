@@ -72,8 +72,8 @@
     - migrate
     - migrate:db
 
-- name: rebuild elasticsearch indexes
-  command: "{{ forum_code_dir }}/bin/rake search:rebuild_index"
+- name: rebuild elasticsearch indices
+  command: "{{ forum_code_dir }}/bin/rake search:rebuild_indices"
   args:
     chdir: "{{ forum_code_dir }}"
   become_user: "{{ forum_user }}"
@@ -107,6 +107,18 @@
   when: not disable_edx_services
   tags:
     - manage
+
+- name: ensure indexes on forum mongo db
+  command: "{{ forum_code_dir }}/bin/rake db:init"
+  args:
+    chdir: "{{ forum_code_dir }}"
+  become_user: "{{ forum_user }}"
+  environment: "{{ forum_base_env }}"
+  when: FORUM_ENABLE_MONGODB_INDEXES
+  run_once: yes
+  tags:
+    - manage
+    - manage:db
 
 - include: test.yml
   tags:

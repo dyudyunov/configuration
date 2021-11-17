@@ -107,7 +107,7 @@
     - install:app-requirements
 
 - name: Create the virtualenv to install the Python requirements
-  command: "virtualenv {{ edxapp_venv_dir }} -p {{ EDXAPP_PYTHON_VERSION }}"
+  command: "virtualenv {{ edxapp_venv_dir }} -p {{ EDXAPP_PYTHON_VERSION }} --always-copy"
   args:
     chdir: "{{ edxapp_code_dir }}"
     creates: "{{ edxapp_venv_dir }}/bin/pip"
@@ -261,7 +261,7 @@
     - install:app-requirements
 
 - name: Create the virtualenv to install the Python sandbox requirements
-  command: "virtualenv {{ edxapp_sandbox_venv_dir }} -p {{ edxapp_sandbox_python_version }}"
+  command: "virtualenv {{ edxapp_sandbox_venv_dir }} -p {{ edxapp_sandbox_python_version }} --always-copy"
   args:
     chdir: "{{ edxapp_code_dir }}"
     creates: "{{ edxapp_sandbox_venv_dir }}/bin/pip"
@@ -275,7 +275,7 @@
 
 - name: Pin pip to a specific version.
   # Not pinning to the same version as everything else because sandboxes are still python 2.7
-  command: "{{ edxapp_sandbox_venv_dir }}/bin/pip install pip==20.0.2"
+  command: "{{ edxapp_sandbox_venv_dir }}/bin/pip install pip==20.3.4"
   args:
     chdir: "{{ edxapp_code_dir }}"
   become_user: "{{ edxapp_sandbox_user }}"
@@ -357,12 +357,31 @@
   with_items:
     - "lms.sh"
     - "cms.sh"
+    - "beat_scheduler.sh"
     - "worker.sh"
     - "reload_lms_config.sh"
     - "reload_cms_config.sh"
   tags:
     - install
     - install:configuration
+
+- name: install single-beat to run only one celerybeat scheduler
+  pip:
+    name: single-beat
+    version: "{{ EDXAPP_SINGLE_BEAT_VERSION|default(omit) }}"
+    virtualenv: "{{ edxapp_venv_dir }}"
+    state: present
+  become_user: "{{ edxapp_user }}"
+  when: EDXAPP_ENABLE_CELERY_BEAT
+  tags:
+    - install
+    - install:app-requirements
+
+- name: import custom tinymce plugins
+  include_role:
+    name: "tinymce_plugins"
+  when:
+    - celery_worker is not defined
 
 # creates the supervisor jobs for the
 # service variants configured, runs
@@ -615,6 +634,14 @@
     chdir: "{{ edxapp_code_dir }}"
   become_user: "{{ common_web_user }}"
   when: COMMON_ENABLE_DISCOVERY | default(false)
+
+- name: ensure indexes on contentstore and modulestore dbs
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} ensure_indexes"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: EDXAPP_ENABLE_MONGODB_INDEXES
+  run_once: yes
   tags:
     - manage
     - manage:db

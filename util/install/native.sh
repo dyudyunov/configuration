@@ -101,10 +101,9 @@ sudo apt-get upgrade -y
 sudo apt-get install -y build-essential software-properties-common curl git-core libxml2-dev libxslt1-dev python3-pip libmysqlclient-dev python3-apt python3-dev libxmlsec1-dev libfreetype6-dev swig gcc g++
 # ansible-bootstrap installs yaml that pip 19 can't uninstall.
 sudo apt-get remove -y python-yaml
-
-sudo pip install --upgrade pip==20.0.2
-sudo pip install --upgrade setuptools==44.1.0
-sudo -H pip install --upgrade virtualenv==16.7.10
+sudo pip3 install --upgrade pip==20.3.4
+sudo pip3 install --upgrade setuptools==44.1.0
+sudo -H pip3 install --upgrade virtualenv==20.2.0
 
 ##
 ## Overridable version variables in the playbooks. Each can be overridden
@@ -112,7 +111,6 @@ sudo -H pip install --upgrade virtualenv==16.7.10
 ##
 VERSION_VARS=(
     EDX_PLATFORM_VERSION
-    CERTS_VERSION
     FORUM_VERSION
     XQUEUE_VERSION
     CONFIGURATION_VERSION
@@ -123,9 +121,8 @@ VERSION_VARS=(
     ECOMMERCE_WORKER_VERSION
     DISCOVERY_VERSION
     THEMES_VERSION
-    ACCOUNT_MFE_VERSION
-    GRADEBOOK_MFE_VERSION
-    PROFILE_MFE_VERSION
+    MFE_DEPLOY_VERSION
+    RETIREMENT_SERVICE_VERSION
 )
 
 for var in ${VERSION_VARS[@]}; do
@@ -175,10 +172,8 @@ if [[ $ansible_status -ne 0 ]]; then
     echo "------------------------------------------------------------"
     echo " "
     echo "Decoded error:"
-    # Find the FAILED line before the "NO MORE HOSTS" line, and decode it.
-    # The plusses in the regex are because if I run this with -x, the awk line
-    # will be added to the log, and the regex would find itself if it didn't have plusses.
-    awk '/NO +MORE +HOSTS/{if (bad) print bad} /FAILED/{bad=$0}' $log_file | python3 /var/tmp/configuration/util/ansible_msg.py
+    # Find the last "failed" or "fatal" line and decode it.
+    awk '/^(failed|fatal):/{bad=$0} END {if (bad) print bad}' $log_file | python3 /var/tmp/configuration/util/ansible_msg.py
     echo " "
     echo "============================================================"
     echo "Installation failed!"
@@ -190,4 +185,5 @@ if [[ $ansible_status -ne 0 ]]; then
     echo "    Your environment:"
     env | egrep -i 'version|release' | sed -e 's/^/        /'
     echo "============================================================"
+    exit ${ansible_status}
 fi

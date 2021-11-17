@@ -115,7 +115,14 @@ EDXAPP_MYSQL_USER_ADMIN: 'root'
 EDXAPP_MYSQL_PASSWORD: 'password'
 EDXAPP_MYSQL_PASSWORD_READ_ONLY: 'password'
 EDXAPP_MYSQL_PASSWORD_ADMIN: 'password'
-EDXAPP_MYSQL_OPTIONS: {}
+# From Django 2.0 the default isolation level used for the MySQL database backend is 'read commited'
+# (refer to https://github.com/django/django/pull/7978). However, this isolation level is enforced
+# from the Django database configuration options to prevent possible inconsistencies or malfunctions.
+# Changing the isolation level can lead to unexpected behaviors, so please proceed only if you
+# what you're doing. Refer to https://docs.djangoproject.com/en/2.2/ref/databases/#mysql-isolation-level
+# to get further information.
+EDXAPP_MYSQL_OPTIONS:
+  isolation_level: "read committed"
 EDXAPP_MYSQL_ATOMIC_REQUESTS: True
 EDXAPP_MYSQL_REPLICA_DB_NAME: "{{ EDXAPP_MYSQL_DB_NAME }}"
 EDXAPP_MYSQL_REPLICA_USER: "{{ EDXAPP_MYSQL_USER }}"
@@ -197,6 +204,12 @@ EDXAPP_CELERY_BROKER_VHOST: ""
 EDXAPP_CELERY_BROKER_USE_SSL: false
 EDXAPP_CELERY_EVENT_QUEUE_TTL: !!null
 EDXAPP_CELERY_TIMEZONE: "UTC"
+EDXAPP_CELERYBEAT_SCHEDULER: "celery.beat:PersistentScheduler"
+EDXAPP_ENABLE_CELERY_BEAT: false
+EDXAPP_SINGLE_BEAT_LOCK_TIME: 60
+# EDXAPP_SINGLE_BEAT_HEARTBEAT_INTERVAL must be smaller than EDXAPP_SINGLE_BEAT_LOCK_TIME / 2
+EDXAPP_SINGLE_BEAT_HEARTBEAT_INTERVAL: 29
+EDXAPP_SINGLE_BEAT_VERSION: "0.4.2"
 EDXAPP_BRANCH_IO_KEY: ""
 
 EDXAPP_AUTH_USE_OPENID_PROVIDER: true
@@ -207,7 +220,6 @@ EDXAPP_ENABLE_CROSS_DOMAIN_CSRF_COOKIE: false
 EDXAPP_ENABLE_DISCUSSION_HOME_PANEL: true
 EDXAPP_ENABLE_DISCUSSION_SERVICE: true
 EDXAPP_ENABLE_GRADE_DOWNLOADS: true
-EDXAPP_ENABLE_INSTRUCTOR_ANALYTICS: false
 EDXAPP_ENABLE_SPECIAL_EXAMS: false
 EDXAPP_ENABLE_VIDEO_UPLOAD_PIPELINE: false
 
@@ -217,9 +229,6 @@ EDXAPP_VIDEO_CDN_URLS:
 EDXAPP_CREDIT_HELP_LINK_URL: ""
 
 EDXAPP_PARTNER_SUPPORT_EMAIL: ''
-
-# ISO-8601 formatted date string, or null
-EDXAPP_AUDIT_CERT_CUTOFF_DATE: null
 
 EDXAPP_PLATFORM_NAME: 'Your Platform Name Here'
 EDXAPP_PLATFORM_DESCRIPTION: 'Your Platform Description Here'
@@ -249,6 +258,13 @@ EDXAPP_THIRD_PARTY_AUTH_BACKENDS:
   - common.djangoapps.third_party_auth.identityserver3.IdentityServer3
   - common.djangoapps.third_party_auth.saml.SAMLAuthBackend
   - common.djangoapps.third_party_auth.lti.LTIAuthBackend
+
+EDXAPP_CMS_SERVICE_NAME: 'edxapp-cms'
+EDXAPP_CMS_SOCIAL_AUTH_EDX_OAUTH2_KEY: 'edxapp-cms-sso-key'
+EDXAPP_CMS_SOCIAL_AUTH_EDX_OAUTH2_SECRET: 'edxapp-cms-sso-secret'
+EDXAPP_CMS_BACKEND_SERVICE_EDX_OAUTH2_KEY: 'edxapp-cms-backend-service-key'
+EDXAPP_CMS_BACKEND_SERVICE_EDX_OAUTH2_SECRET: 'edxapp-cms-backend-service-secret'
+
 EDXAPP_ENABLE_MOBILE_REST_API: false
 
 EDXAPP_ENABLE_BULK_ENROLLMENT_VIEW: false
@@ -319,6 +335,8 @@ EDXAPP_ACE_ROUTING_KEY: 'edx.lms.core.default'
 EDXAPP_ACE_CHANNEL_DEFAULT_EMAIL: 'django_email'
 EDXAPP_ACE_CHANNEL_TRANSACTIONAL_EMAIL: 'django_email'
 
+EDXAPP_ORGANIZATIONS_AUTOCREATE: true
+
 # Display a language selector in the LMS/CMS header.
 EDXAPP_SHOW_HEADER_LANGUAGE_SELECTOR: false
 
@@ -334,7 +352,6 @@ EDXAPP_ENABLE_ENROLLMENT_RESET: false
 EDXAPP_FEATURES_DEFAULT:
   AUTH_USE_OPENID_PROVIDER: "{{ EDXAPP_AUTH_USE_OPENID_PROVIDER }}"
   ENABLE_DISCUSSION_SERVICE: "{{ EDXAPP_ENABLE_DISCUSSION_SERVICE }}"
-  ENABLE_INSTRUCTOR_ANALYTICS: "{{ EDXAPP_ENABLE_INSTRUCTOR_ANALYTICS }}"
   PREVIEW_LMS_BASE: "{{ EDXAPP_PREVIEW_LMS_BASE }}"
   ENABLE_GRADE_DOWNLOADS: "{{ EDXAPP_ENABLE_GRADE_DOWNLOADS }}"
   ENABLE_MKTG_SITE: "{{ EDXAPP_ENABLE_MKTG_SITE }}"
@@ -423,7 +440,7 @@ EDXAPP_CONTACT_EMAIL: 'info@example.com'
 EDXAPP_BUGS_EMAIL: 'bugs@example.com'
 EDXAPP_DEFAULT_FROM_EMAIL: 'registration@example.com'
 EDXAPP_DEFAULT_FEEDBACK_EMAIL: 'feedback@example.com'
-EDXAPP_DEFAULT_SERVER_EMAIL: 'devops@example.com'
+EDXAPP_DEFAULT_SERVER_EMAIL: 'sre@example.com'
 EDXAPP_BULK_EMAIL_DEFAULT_FROM_EMAIL: 'no-reply@example.com'
 EDXAPP_BULK_EMAIL_LOG_SENT_EMAILS: false
 EDXAPP_UNIVERSITY_EMAIL: 'university@example.com'
@@ -546,21 +563,21 @@ EDXAPP_EXTRA_REQUIREMENTS: []
 #   - name: git+https://git.myproject.org/MyProject#egg=MyProject
 EDXAPP_PRIVATE_REQUIREMENTS:
     # For Harvard courses:
-    - name: xblock-problem-builder==4.0.0
+    - name: xblock-problem-builder==5.0.0
     # Oppia XBlock
-    - name: git+https://github.com/oppia/xblock.git@3b5c17c5832b4f8ef132c6bbf48da8a86df43b3d#egg=oppia-xblock
+    - name: git+https://github.com/oppia/xblock.git@1030adb3590ad2d32c93443cc8690db0985d76b6#egg=oppia-xblock
       extra_args: -e
     # This repository contains schoolyourself-xblock, which is used in
     # edX's "AlgebraX" and "GeometryX" courses.
-    - name: git+https://github.com/edx/schoolyourself-xblock.git@c3f7fecefa8e164a0f02ef6264d00e65e9c5a6de#egg=schoolyourself-xblock
+    - name: git+https://github.com/edx/schoolyourself-xblock.git@2093048720cfb36cc05b3143cd6f2585c7c64d85#egg=schoolyourself-xblock
       extra_args: -e
     # Prototype XBlocks from edX learning sciences limited roll-outs and user testing.
     # Concept XBlock, in particular, is nowhere near finished and an early prototype.
     # Profile XBlock is there so we can play with XBlock arguments in the platform, but isn't ready for use outside of
     # edX.
-    - name: git+https://github.com/edx/ConceptXBlock.git@a8e3cff03c3b46dad093db069b12c6fba1aed327#egg=concept-xblock
+    - name: git+https://github.com/edx/ConceptXBlock.git@a45a6560c92b6d8b62be1f939ff1d00dfff84e70#egg=concept-xblock
       extra_args: -e
-    - name: git+https://github.com/edx/AudioXBlock.git@f668a4e231c5cdc338eef6bd148e57a02b48200b#egg=audio-xblock
+    - name: git+https://github.com/edx/AudioXBlock.git@20538c6e9bb704801a71ecbb6981f794556dfc45#egg=audio-xblock
       extra_args: -e
     - name: git+https://github.com/edx/AnimationXBlock.git@c950ffdda2f69effda93bf03df8646f61d3ffada#egg=animation-xblock
       extra_args: -e
@@ -568,30 +585,32 @@ EDXAPP_PRIVATE_REQUIREMENTS:
     - name: git+https://github.com/ubc/ubcpi.git@1.0.0#egg=ubcpi-xblock
       extra_args: -e
     # Vector Drawing and ActiveTable XBlocks (Davidson)
-    - name: git+https://github.com/open-craft/xblock-vectordraw.git@76976425356dfc7f13570f354c0c438db84c2840#egg=xblock-vectordraw==0.3.0
+    - name: git+https://github.com/open-craft/xblock-vectordraw.git@0b931ae5d6314dbda5b58ab6c865aea1bc121267#egg=vectordraw-xblock==0.3.0
       extra_args: -e
-    - name: git+https://github.com/open-craft/xblock-activetable.git@013003aa3ce28f0ae03b8227dc3a6daa4e19997d#egg=xblock-activetable
+    - name: git+https://github.com/open-craft/xblock-activetable.git@d3fb772435c382b59293e4e688a6a3096c4f6fd7#egg=activetable-xblock
       extra_args: -e
-    - name: edx-zoom==1.8
+    - name: edx-zoom==2.0.1
     # Stanford-developed XBlocks (technically unsupported, but here to ease migration of courses from Lagunita)
-    - name: git+https://github.com/edx/xblock-qualtrics-survey.git@d3d2773bcf453d14a0626f813911dc308ddce572#egg=xblock_qualtrics_survey
+    - name: git+https://github.com/edx/xblock-qualtrics-survey.git@02d87f567ec2af4579642cf795bb851507d6edf9#egg=xblock_qualtrics_survey
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-in-video-quiz.git@c1cc11f87285cd885d76604145433dae87434a6d#egg=invideoquiz-xblock
+    - name: git+https://github.com/edx/xblock-in-video-quiz.git@a703acd9ef82434fc7ca2bc230496f45a584bb9a#egg=invideoquiz-xblock
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-submit-and-compare@28751ed01c4d4ae5f10f9ddee710e76f8b8ae640#egg=xblock-submit-and-compare
+    - name: git+https://github.com/edx/xblock-submit-and-compare@8f0b3279f36e25aff8cce3f0b1793b9f19dc8729#egg=xblock-submit-and-compare
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-free-text-response@19ed5bb4b9aece19e9b1c62995a09f73f893f536#egg=xblock-free-text-response
+    - name: git+https://github.com/edx/xblock-free-text-response@83a389e0a4b0a464e5d1e4a4a201678aed5eee9a#egg=xblock-free-text-response
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-sql-grader@56b13ea9719d5c6e910ec2edf98b35dda0ba9c57#egg=xblock-sql-grader
+    - name: git+https://github.com/edx/xblock-sql-grader@5257b4a1aa07aa572fd3865647d91d0628f0cbd3#egg=xblock-sql-grader
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-image-modal@20262ae713bf307f7b13afe73c8a32c5c56b4fd6#egg=xblock-image-modal
+    - name: git+https://github.com/edx/xblock-image-modal@bef91413447e15570863ab08316a04c0b546b268#egg=xblock-image-modal
       extra_args: -e
     # XBlocks associated with the LabXchange project
-    - name: git+https://github.com/open-craft/labxchange-xblocks.git@5352e93cb26c789aecbf92fabf210179483616a2#egg=labxchange-xblocks
+    - name: git+https://github.com/open-craft/labxchange-xblocks.git@a0a8a8dad13199014d4bb29cee416289880bde0b#egg=labxchange-xblocks
       extra_args: -e
     # "Pathways" learning context plugin for the LabXchange project
-    - name: git+https://github.com/open-craft/lx-pathway-plugin.git@337abf249b7c5ecc1e78a44d2e639e1ab65f2085#egg=lx-pathway-plugin
+    - name: git+https://github.com/open-craft/lx-pathway-plugin.git@ba1d470217cd5908cbd8b56075628bd4eacf7b39#egg=lx-pathway-plugin
       extra_args: -e
+    # Caliper and xAPI event routing plugin
+    - name: edx-event-routing-backends==4.1.1
 
 # List of custom middlewares that should be used in edxapp to process
 # incoming HTTP resquests. Should be a list of plain strings that fully
@@ -712,8 +731,8 @@ EDXAPP_RECALCULATE_GRADES_ROUTING_KEY: 'edx.lms.core.default'
 EDXAPP_POLICY_CHANGE_GRADES_ROUTING_KEY: 'edx.lms.core.default'
 EDXAPP_BULK_EMAIL_ROUTING_KEY_SMALL_JOBS: 'edx.lms.core.default'
 EDXAPP_PROGRAM_CERTIFICATES_ROUTING_KEY: 'edx.lms.core.default'
-EDXAPP_LMS_CELERY_QUEUES: "{{ edxapp_workers|selectattr('service_variant', 'equalto', 'lms')|map(attribute='queue')|map('regex_replace', '(.*)', 'edx.lms.core.\\1')|list }}"
-EDXAPP_CMS_CELERY_QUEUES: "{{ edxapp_workers|selectattr('service_variant', 'equalto', 'cms')|map(attribute='queue')|map('regex_replace', '(.*)', 'edx.cms.core.\\1')|list }}"
+EDXAPP_LMS_CELERY_QUEUES: "{{ edxapp_workers|selectattr('service_variant', 'equalto', 'lms')|map(attribute='queue')|map('regex_replace', '^(.*)$', 'edx.lms.core.\\1')|list }}"
+EDXAPP_CMS_CELERY_QUEUES: "{{ edxapp_workers|selectattr('service_variant', 'equalto', 'cms')|map(attribute='queue')|map('regex_replace', '^(.*)$', 'edx.cms.core.\\1')|list }}"
 
 EDXAPP_DEFAULT_CACHE_VERSION: "1"
 EDXAPP_OAUTH_ENFORCE_SECURE: True
@@ -811,7 +830,7 @@ EDXAPP_PROFILE_IMAGE_BACKEND:
 EDXAPP_PROFILE_IMAGE_MAX_AGE: 31536000
 
 # used to salt hashed usernames for profile image filenames
-EDXAPP_PROFILE_IMAGE_SECRET_KEY: placeholder_secret_key
+EDXAPP_PROFILE_IMAGE_HASH_SEED: placeholder_secret_key
 
 # In bytes
 EDXAPP_PROFILE_IMAGE_MAX_BYTES: 1048576
@@ -962,6 +981,11 @@ DISCOVERY_SERVICE_USER_NAME: "discovery_worker"
 ECOMMERCE_SERVICE_USER_EMAIL: "ecommerce_worker@example.com"
 ECOMMERCE_SERVICE_USER_NAME: "ecommerce_worker"
 
+# Configuration needed for LMS to communicate with the Studio service
+EDXAPP_CMS_SERVICE_USER_EMAIL: "edxapp_cms_worker@example.com"
+EDXAPP_CMS_SERVICE_USER_NAME: "edxapp_cms_worker"
+
+
 # Configuration needed for LMS to communicate with the Credentials service
 CREDENTIALS_SERVICE_USER_EMAIL: "credentials_worker@example.com"
 CREDENTIALS_SERVICE_USER_NAME: "credentials_worker"
@@ -978,6 +1002,12 @@ REGISTRAR_SERVICE_USER_NAME: "registrar_worker"
 DESIGNER_SERVICE_USER_EMAIL: "designer_worker@example.com"
 DESIGNER_SERVICE_USER_NAME: "designer_worker"
 
+# Configuration needed for LMS to communicate with the License Manager service
+LICENSE_MANAGER_SERVICE_USER_EMAIL: "license_manager_worker@example.com"
+LICENSE_MANAGER_SERVICE_USER_NAME: "license_manager_worker"
+
+ENTERPRISE_CATALOG_SERVICE_USER_EMAIL: "enterprise_catalog_worker@example.com"
+ENTERPRISE_CATALOG_SERVICE_USER_NAME: "enterprise_catalog_worker"
 
 # Configuration settings needed for the LMS to communicate with the Enterprise service.
 EDXAPP_ENTERPRISE_API_URL: "{{ EDXAPP_LMS_INTERNAL_ROOT_URL }}/enterprise/api/v1"
@@ -1147,7 +1177,6 @@ edxapp_environment_default:
   STUDIO_CFG: "{{ edxapp_studio_cfg }}"
   BOTO_CONFIG: "{{ edxapp_app_dir }}/.boto"
   REVISION_CFG: "{{ edxapp_revision_cfg }}"
-  SETUPTOOLS_USE_DISTUTILS: "stdlib" # https://setuptools.readthedocs.io/en/latest/history.html#v50-0-0
 
 edxapp_environment_extra: {}
 
@@ -1439,6 +1468,7 @@ generic_env_config:  &edxapp_generic_env
       LOCATION: "{{ EDXAPP_CACHE_COURSE_STRUCTURE_MEMCACHE }}"
       # Default to two hours
       TIMEOUT: "7200"
+  CELERYBEAT_SCHEDULER: "{{ EDXAPP_CELERYBEAT_SCHEDULER }}"
   CELERY_BROKER_TRANSPORT: "{{ EDXAPP_CELERY_BROKER_TRANSPORT }}"
   CELERY_BROKER_HOSTNAME: "{{ EDXAPP_CELERY_BROKER_HOSTNAME }}"
   COMMENTS_SERVICE_URL: "{{ EDXAPP_COMMENTS_SERVICE_URL }}"
@@ -1534,7 +1564,7 @@ lms_auth_config:
   GOOGLE_ANALYTICS_LINKEDIN: "{{ EDXAPP_GOOGLE_ANALYTICS_LINKEDIN }}"
   GOOGLE_ANALYTICS_TRACKING_ID: "{{ EDXAPP_GOOGLE_ANALYTICS_TRACKING_ID }}"
   TRACKING_SEGMENTIO_WEBHOOK_SECRET: "{{ EDXAPP_TRACKING_SEGMENTIO_WEBHOOK_SECRET }}"
-  PROFILE_IMAGE_SECRET_KEY: "{{ EDXAPP_PROFILE_IMAGE_SECRET_KEY }}"
+  PROFILE_IMAGE_HASH_SEED: "{{ EDXAPP_PROFILE_IMAGE_HASH_SEED }}"
   MODULESTORE:
     default:
         ENGINE: 'xmodule.modulestore.mixed.MixedModuleStore'
@@ -1594,7 +1624,6 @@ lms_env_config:
   CREDIT_HELP_LINK_URL: "{{ EDXAPP_CREDIT_HELP_LINK_URL }}"
   MAILCHIMP_NEW_USER_LIST_ID: "{{ EDXAPP_MAILCHIMP_NEW_USER_LIST_ID }}"
   CONTACT_MAILING_ADDRESS: "{{ EDXAPP_CONTACT_MAILING_ADDRESS }}"
-  AUDIT_CERT_CUTOFF_DATE: "{{ EDXAPP_AUDIT_CERT_CUTOFF_DATE }}"
   API_ACCESS_MANAGER_EMAIL: "{{ EDXAPP_API_ACCESS_MANAGER_EMAIL }}"
   API_ACCESS_FROM_EMAIL: "{{ EDXAPP_API_ACCESS_FROM_EMAIL }}"
   API_DOCUMENTATION_URL: "{{ EDXAPP_API_DOCUMENTATION_URL }}"
@@ -1616,6 +1645,7 @@ lms_env_config:
   ACE_ROUTING_KEY: "{{ EDXAPP_ACE_ROUTING_KEY }}"
   ACE_CHANNEL_DEFAULT_EMAIL: "{{ EDXAPP_ACE_CHANNEL_DEFAULT_EMAIL }}"
   ACE_CHANNEL_TRANSACTIONAL_EMAIL: "{{ EDXAPP_ACE_CHANNEL_TRANSACTIONAL_EMAIL }}"
+  ORGANIZATIONS_AUTOCREATE: "{{ EDXAPP_ORGANIZATIONS_AUTOCREATE }}"
   ENTERPRISE_TAGLINE: "{{ EDXAPP_ENTERPRISE_TAGLINE }}"
   ANALYTICS_API_URL: "{{ EDXAPP_LMS_ANALYTICS_API_URL }}"
   GOOGLE_SITE_VERIFICATION_ID: "{{ EDXAPP_GOOGLE_SITE_VERIFICATION_ID }}"
@@ -1725,13 +1755,14 @@ base_requirements_file:   "{{ edxapp_code_dir }}/requirements/edx/base.txt"
 django_requirements_file:   "{{ edxapp_code_dir }}/requirements/edx/django.txt"
 openstack_requirements_file: "{{ edxapp_code_dir }}/requirements/edx/openstack.txt"
 
-sandbox_base_requirements:  "{{ edxapp_code_dir }}/requirements/edx-sandbox/{% if edxapp_sandbox_python_version == 'python2.7' %}base.txt{% else %}py35.txt{% endif %}"
+sandbox_base_requirements:  "{{ edxapp_code_dir }}/requirements/edx-sandbox/{% if edxapp_sandbox_python_version == 'python3.5' %}py35.txt{% else %}py38.txt{% endif %}"
 
 # The Python requirements files in the order they should be installed.  This order should
 # match the order of PYTHON_REQ_FILES in edx-platform/pavelib/prereqs.py.
 edxapp_requirements_files:
   - "{{ custom_requirements_file }}"
   - "{{ base_requirements_file }}"
+  - "{{ django_requirements_file }}"
 
 # All edxapp requirements files potentially containing Github URLs.  When using a custom
 # Github mirror, occurrences of "github.com" are replaced by the custom mirror in these
@@ -1818,6 +1849,18 @@ SERVICE_WORKER_USERS:
     username: "{{ REGISTRAR_SERVICE_USER_NAME }}"
     is_staff: true
     is_superuser: false
+  - email: "{{ EDXAPP_CMS_SERVICE_USER_EMAIL }}"
+    username: "{{ EDXAPP_CMS_SERVICE_USER_NAME }}"
+    is_staff: true
+    is_superuser: false
+  - email: "{{ LICENSE_MANAGER_SERVICE_USER_EMAIL }}"
+    username: "{{ LICENSE_MANAGER_SERVICE_USER_NAME }}"
+    is_staff: true
+    is_superuser: false
+  - email: "{{ ENTERPRISE_CATALOG_SERVICE_USER_EMAIL }}"
+    username: "{{ ENTERPRISE_CATALOG_SERVICE_USER_NAME }}"
+    is_staff: true
+    is_superuser: false
   - email: "{{ EDXAPP_RETIREMENT_SERVICE_USER_EMAIL }}"
     username: "{{ EDXAPP_RETIREMENT_SERVICE_USER_NAME }}"
     is_staff: true
@@ -1850,3 +1893,5 @@ edxapp_staticfiles_storage_overrides: !!null
 # SiteConfiguration instance.
 
 EDXAPP_SITE_CONFIGURATION: {}
+
+EDXAPP_ENABLE_MONGODB_INDEXES: false

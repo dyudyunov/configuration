@@ -68,7 +68,8 @@ server {
   # Do not include a 502 error in NGINX_ERROR_PAGES when 
   # NGINX_EDXAPP_ENABLE_S3_MAINTENANCE is enabled.
 
-  error_page 502 @maintenance;
+  # Return a 503 instead so that it passes through Cloudflare
+  error_page 502 =503 @maintenance;
 
     {% include "s3_maintenance.j2" %}
   
@@ -86,9 +87,15 @@ error_page {{ k }} {{ v }};
 {% include "empty_json.j2" %}
 
   listen {{ EDXAPP_LMS_NGINX_PORT }} {{ default_site }};
+  {% if NGINX_ENABLE_IPV6 %}
+  listen [::]:{{ EDXAPP_LMS_NGINX_PORT }} {{ default_site }};
+  {% endif %}
 
   {% if NGINX_ENABLE_SSL %}
   listen {{ EDXAPP_LMS_SSL_NGINX_PORT }} {{ default_site }} ssl;
+  {% if NGINX_ENABLE_IPV6 %}
+  listen [::]:{{ EDXAPP_LMS_SSL_NGINX_PORT }} {{ default_site }} ssl;
+  {% endif %}
 
   ssl_certificate /etc/ssl/certs/{{ NGINX_SSL_CERTIFICATE|basename }};
   ssl_certificate_key /etc/ssl/private/{{ NGINX_SSL_KEY|basename }};
@@ -280,6 +287,11 @@ error_page {{ k }} {{ v }};
     {% if EDXAPP_LMS_ENABLE_BASIC_AUTH|bool %}
       {%- include "basic-auth.j2" %}
     {% endif %}
+    try_files $uri @proxy_to_lms_app;
+  }
+
+  # No basic auth, uses oauth2 for authentication
+  location /v1/accounts/gdpr_retire_users {
     try_files $uri @proxy_to_lms_app;
   }
 

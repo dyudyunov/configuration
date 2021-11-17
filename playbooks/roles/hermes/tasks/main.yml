@@ -20,29 +20,25 @@
 #
 #
 
-# The deadsnakes PPA is required to install python3.6 on Xenial.
-# Bionic comes with python3.6 installed.
-- name: add deadsnakes repository
-  apt_repository:
-    repo: "ppa:fkrull/deadsnakes"
-  when: ansible_distribution_release == 'xenial'
-  tags:
-    - install
-    - install:system-requirements
-
-- name: install python3.6
+# Install python3.8 on Bionic.Focal comes with python3.8 installed.
+- name: install python3.8
   apt:
     name: "{{ item }}"
+    update_cache: yes
+  register: install_pkgs
+  until: install_pkgs|success
+  retries: 10
+  delay: 5
   with_items:
-    - python3.6
+    - python3.8
     - python3-pip
-  when: ansible_distribution_release == 'xenial' or ansible_distribution_release == 'focal'
+  when: ansible_distribution_release == 'bionic'
   tags:
     - install
     - install:system-requirements
 
 - name: build virtualenv with python3
-  command: "virtualenv --python=/usr/bin/python3.6 {{ hermes_venv_dir }}"
+  command: "virtualenv --python=/usr/bin/python3.8 {{ hermes_venv_dir }}"
   args:
     creates: "{{ hermes_venv_dir }}/bin/pip"
   become_user: "{{ hermes_user }}"
@@ -66,7 +62,7 @@
   file:
     path: "{{ hermes_app_dir }}"
     state: directory
-    recurse: yes
+    recurse: no
     owner: "{{ hermes_user }}"
     group: "{{ common_web_group }}"
     mode: "0750"

@@ -6,6 +6,9 @@ nginx_skip_enable_sites: False
 nginx_redirects: {}
 nginx_extra_sites: []
 nginx_extra_configs: []
+NGINX_CMS_CLIENT_MAX_BODY_SIZE: 100M
+NGINX_LMS_CLIENT_MAX_BODY_SIZE: 20M
+NGINX_FORUM_CLIENT_MAX_BODY_SIZE: 1M
 NGINX_EDXAPP_EXTRA_SITES: []
 NGINX_EDXAPP_EXTRA_CONFIGS: []
 
@@ -14,6 +17,17 @@ NGINX_USERS:
   - name: "{{ COMMON_HTPASSWD_USER }}"
     password: "{{ COMMON_HTPASSWD_PASS }}"
     state: present
+
+# Override these vars for adding user to nginx.htpasswd
+# for prospectus preview basic auth
+PROSPECTUS_PREVIEW_HTPASSWD_USER: "{{ COMMON_HTPASSWD_USER }}"
+PROSPECTUS_PREVIEW_HTPASSWD_PASS: "{{ COMMON_HTPASSWD_PASS }}"
+PROSPECTUS_PREVIEW_NGINX_USERS:
+  - name: "{{ PROSPECTUS_PREVIEW_HTPASSWD_USER }}"
+    password: "{{ PROSPECTUS_PREVIEW_HTPASSWD_PASS }}"
+    state: present
+
+NGINX_ENABLE_IPV6: True
 
 NGINX_ENABLE_SSL: False
 NGINX_REDIRECT_TO_HTTPS: False
@@ -76,6 +90,7 @@ nginx_default_sites: []
 nginx_release_specific_debian_pkgs:
   xenial:
     - python-passlib
+    - python3-passlib
   bionic:
     - python-passlib
   focal:
@@ -96,8 +111,6 @@ CMS_HOSTNAME: '~^((stage|prod)-)?studio.*'
 
 nginx_template_dir: "edx/app/nginx/sites-available"
 
-nginx_xserver_gunicorn_hosts:
-  - 127.0.0.1
 nginx_xqueue_gunicorn_hosts:
   - 127.0.0.1
 nginx_lms_gunicorn_hosts:
@@ -127,25 +140,21 @@ COMMON_ENABLE_BASIC_AUTH: False
 REDIRECT_NGINX_PORT: "{{ EDXAPP_LMS_NGINX_PORT }}"
 REDIRECT_SSL_NGINX_PORT: "{{ EDXAPP_LMS_SSL_NGINX_PORT }}"
 
-CERTS_ENABLE_BASIC_AUTH: "{{ COMMON_ENABLE_BASIC_AUTH }}"
 ECOMMERCE_ENABLE_BASIC_AUTH: "{{ COMMON_ENABLE_BASIC_AUTH }}"
 EDXAPP_CMS_ENABLE_BASIC_AUTH: "{{ COMMON_ENABLE_BASIC_AUTH }}"
 EDXAPP_LMS_ENABLE_BASIC_AUTH: "{{ COMMON_ENABLE_BASIC_AUTH }}"
 EDXAPP_LMS_PREVIEW_ENABLE_BASIC_AUTH: "{{ COMMON_ENABLE_BASIC_AUTH }}"
 KIBANA_ENABLE_BASIC_AUTH: "{{ COMMON_ENABLE_BASIC_AUTH }}"
 XQUEUE_ENABLE_BASIC_AUTH: "{{ COMMON_ENABLE_BASIC_AUTH }}"
-XSERVER_ENABLE_BASIC_AUTH: "{{ COMMON_ENABLE_BASIC_AUTH }}"
 
 NGINX_CREATE_HTPASSWD_FILE: >
   {{
-    CERTS_ENABLE_BASIC_AUTH|bool or
     ECOMMERCE_ENABLE_BASIC_AUTH|bool or
     EDXAPP_CMS_ENABLE_BASIC_AUTH|bool or
     EDXAPP_LMS_ENABLE_BASIC_AUTH|bool or
     EDXAPP_LMS_PREVIEW_ENABLE_BASIC_AUTH|bool or
     KIBANA_ENABLE_BASIC_AUTH|bool or
-    XQUEUE_ENABLE_BASIC_AUTH|bool or
-    XSERVER_ENABLE_BASIC_AUTH|bool
+    XQUEUE_ENABLE_BASIC_AUTH|bool
   }}
 
 # Extra settings to add to site configuration for Studio
@@ -220,3 +229,8 @@ nginx_default_conf_path: /etc/nginx/conf.d/default.conf
 nginx_default_conf_delete: yes
 
 ssl_trusted_certificate_path: /etc/ssl/certs/ca-certificates.crt
+EDXAPP_SET_PROXY_BUFFER_SIZE: False
+EDXAPP_PROXY_BUFFER_SIZE: 128k
+EDXAPP_PROXY_BUFFERS_SIZE: 256k
+EDXAPP_PROXY_BUFFERS_NUMBER: 4
+EDXAPP_PROXY_BUSY_BUFFERS_SIZE: 256k
