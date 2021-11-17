@@ -109,8 +109,12 @@
     dest: "{{ elasticsearch_cfg_dir }}/logging.yml"
     mode: 0744
   register: elasticsearch_logging
+  tags:
+    - install
+    - install:configuration
 
 - name: drop the elasticsearch jvm config
+  template:
     src: edx/etc/elasticsearch/jvm.options.j2 
     dest: "{{ elasticsearch_cfg_dir }}/jvm.options"
     mode: 0644
