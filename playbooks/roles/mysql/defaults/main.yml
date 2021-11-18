@@ -1,6 +1,6 @@
 ---
 
-mysql_debian_pkgs:
+mysql_debian_pkgs_default:
   - python3-mysqldb
 mysql_release_specific_debian_pkgs:
   xenial:
