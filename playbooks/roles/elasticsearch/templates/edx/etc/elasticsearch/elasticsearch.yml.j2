@@ -68,11 +68,11 @@ network:
   host:  127.0.0.1
 {% endif %}
 
-{% if ELASTICSEARCH_CLUSTERED is defined and not ELASTICSEARCH_CLUSTERED | bool %}
+#{% if ELASTICSEARCH_CLUSTERED is defined and not ELASTICSEARCH_CLUSTERED | bool %}
 # RG fix:
-discovery.zen.ping.multicast.enabled: false
-node.local: true
-{% endif %}
+#discovery.zen.ping.multicast.enabled: false
+#node.local: true
+#{% endif %}
 # For more information, consult the network module documentation.
 #
 # --------------------------------- Discovery ----------------------------------
@@ -81,9 +81,9 @@ node.local: true
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
 #discovery.seed_hosts: ["host1", "host2"]
-{% if ELASTICSEARCH_CLUSTER_MEMBERS|length > 1 -%}
-discovery.seed_hosts: ['{{ELASTICSEARCH_CLUSTER_MEMBERS|join("\',\'") }}']
-{% endif -%}
+#{% if ELASTICSEARCH_CLUSTER_MEMBERS|length > 1 -%}
+#discovery.seed_hosts: ['{{ELASTICSEARCH_CLUSTER_MEMBERS|join("\',\'") }}']
+#{% endif -%}
 #
 # Bootstrap the cluster using an initial set of master-eligible nodes:
 #

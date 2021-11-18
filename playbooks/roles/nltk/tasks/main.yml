@@ -3,7 +3,7 @@
 - name: Install unzip
   apt: pkg=unzip state=present update_cache=yes
   register: install_pkgs
-  until: install_pkgs|success
+  until: install_pkgs is success
   retries: 10
   delay: 5
 
@@ -24,7 +24,7 @@
     - deploy
 
 - name: unarchive nltk data
-  shell: "unzip {{ NLTK_DATA_DIR }}/{{ item.url|basename }}"
+  shell: "unzip -o {{ NLTK_DATA_DIR }}/{{ item.url|basename }}"
   args:
     chdir: "{{ NLTK_DATA_DIR }}/{{ item.path|dirname }}"
   with_items: "{{ NLTK_DATA }}"
