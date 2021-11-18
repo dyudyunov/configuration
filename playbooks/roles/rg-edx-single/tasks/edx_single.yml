@@ -44,7 +44,6 @@
     nginx_sites:
       - "lms"
       - "cms"
-      - "{{ 'certs' if COMMON_ENABLE_CERTS else '' }}"
       - "{{ 'forum' if COMMON_ENABLE_FORUM else '' }}"
       - "{{ 'xqueue' if COMMON_ENABLE_XQUEUE else '' }}"
       - "{{ 'insights' if COMMON_ENABLE_INSIGHTS else '' }}"
@@ -120,10 +119,6 @@
   vars:
     update_users: True
   when: COMMON_ENABLE_XQUEUE
-
-- import_role:
-    name: certs
-  when: COMMON_ENABLE_CERTS
 
 - import_role:
     name: demo
