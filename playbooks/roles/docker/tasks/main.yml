@@ -13,7 +13,8 @@
     - install
     - docker
 
-- include: install.deb.yml
+
+- include_tasks: install.deb.yml
   when: ansible_os_family == "Debian"
   tags:
     - install
@@ -25,7 +26,8 @@
     - install
     - docker
 
-- include: docker-compose.yml
+
+- include_tasks: docker-compose.yml
   when: docker_install_docker_compose
   tags:
     - install
