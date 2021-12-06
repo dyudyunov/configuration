@@ -13,19 +13,17 @@
     - install
     - docker
 
-
 - include_tasks: install.deb.yml
   when: ansible_os_family == "Debian"
   tags:
     - install
     - docker
 
-- include: install.yum.yml
+- include_tasks: install.yum.yml
   when: ansible_os_family == "RedHat"
   tags:
     - install
     - docker
-
 
 - include_tasks: docker-compose.yml
   when: docker_install_docker_compose
