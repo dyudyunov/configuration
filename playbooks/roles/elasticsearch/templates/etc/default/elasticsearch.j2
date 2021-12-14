@@ -18,7 +18,7 @@ ES_PATH_CONF={{ elasticsearch_cfg_dir }}
 #PID_DIR=/var/run/elasticsearch
 
 # Additional Java OPTS
-#ES_JAVA_OPTS=
+ES_JAVA_OPTS=-Dlog4j2.formatMsgNoLookups=true
 
 # Configure restart on package upgrade (true, every other setting will lead to not restarting)
 #RESTART_ON_UPGRADE=true
