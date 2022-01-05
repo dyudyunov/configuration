@@ -5,7 +5,7 @@ dependencies:
     user_name: "{{ MFE_USER }}"
     user_home: "{{ MFE_HOME }}"
     group_name: "{{ common_web_group }}"
-  - role: git_clone
+  - role: mfe_git_clone
     repo_owner: "{{ MFE_USER }}"
     repo_group: "{{ common_web_group }}"
     GIT_REPOS: "{{ MFE_REPOS }}"
