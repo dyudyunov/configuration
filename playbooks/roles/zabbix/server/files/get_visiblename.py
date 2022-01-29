@@ -5,6 +5,8 @@ import requests
 import json
 import sys
 import os
+import warnings
+warnings.filterwarnings("ignore")
 
 user = os.getenv("ZABBIX_USER")
 password = os.getenv("ZABBIX_PASS")
@@ -33,8 +35,8 @@ def get_token(api_url):
 
 def get_host_visual_names(api_url, host_pattern):
     data = {"jsonrpc": "2.0", "method": "host.get", "params":
-            {"output": "extend", "search": {"host": [host_pattern]}},
-            "startSearch": 1, "auth": token, "id": 0}
+            {"output": "extend", "search": {"host": [host_pattern]}, "startSearch": 1},
+            "auth": token, "id": 0}
     data_json = json.dumps(data).encode()
     try:
         response = requests.post(api_url, headers={'content-type': 'application/json-rpc; charset=utf8'}, data=data_json)
