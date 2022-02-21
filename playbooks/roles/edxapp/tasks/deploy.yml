@@ -578,6 +578,16 @@
   cron: "{{ item }}"
   with_items: "{{ EDXAPP_ADDITIONAL_CRON_JOBS }}"
 
+- name: add certificates.auto_certificate_generation wallfe switch
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_switch --settings={{ edxapp_settings }} --create certificates.auto_certificate_generation on"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: True
+  tags:
+    - manage
+    - manage:db
+
 - name: add mfe account waffle flag
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone account.redirect_to_microfrontend"
   args:
