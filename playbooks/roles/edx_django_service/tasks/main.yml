@@ -506,10 +506,11 @@
 
 - name: Creating superuser
   command: >
-    {{ COMMON_BIN_DIR }}/python.{{ edx_django_service_name }} -W ignore {{ COMMON_BIN_DIR }}/manage.{{ edx_django_service_name }}
+    bash -c ". {{ edx_django_service_home }}/{{ edx_django_service_name }}_env ;
+    {{ edx_django_service_venv_dir }}/bin/python -W ignore {{ edx_django_service_code_dir }}/manage.py
     createsuperuser --email {{ edx_django_service_superuser_email }}
     --username {{ edx_django_service_superuser_username }}
-    --noinput
+    --noinput"
   environment: "{{ edx_django_service_environment }}"
   become_user: "{{ edx_django_service_user }}"
   when: edx_django_service_superuser_username != ''
@@ -533,8 +534,9 @@
 - name: Setting superuser password
   expect:
     command: >
-      {{ COMMON_BIN_DIR }}/python.{{ edx_django_service_name }} {{ COMMON_BIN_DIR }}/manage.{{ edx_django_service_name }}
-      changepassword {{ edx_django_service_superuser_username }}
+      bash -c ". {{ edx_django_service_home }}/{{ edx_django_service_name }}_env ;
+      {{ edx_django_service_venv_dir }}/bin/python -W ignore {{ edx_django_service_code_dir }}/manage.py
+      changepassword {{ edx_django_service_superuser_username }}"
     responses:
       "Password": "{{ edx_django_service_superuser_password }}"
     timeout: 30
