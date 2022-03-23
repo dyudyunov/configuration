@@ -20,7 +20,7 @@
 
 - name: add deadsnakes repo
   apt_repository:
-      repo: ppa:deadsnakes/ppa
+      repo: "{{ common_deadsnakes_ppa }}"
 #- name: Update apt-get
 #  command: apt-get update -qq
 #  register: python_update_result

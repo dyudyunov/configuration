@@ -3,7 +3,7 @@
 # Xenial comes with python3.5 installed.
 - name: add deadsnakes repository
   apt_repository:
-    repo: "ppa:deadsnakes/ppa"
+    repo: "{{ common_deadsnakes_ppa }}"
   when: ansible_distribution_release == 'bionic'
   tags:
     - install

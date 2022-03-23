@@ -2,7 +2,7 @@
 ######## BEGIN PYTHON3 ########
 - name: add deadsnakes repo
   apt_repository:
-      repo: ppa:deadsnakes/ppa
+      repo: "{{ common_deadsnakes_ppa }}"
       update_cache: yes
   when: xqueue_use_python38
 

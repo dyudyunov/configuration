@@ -26,21 +26,6 @@
   delegate_to: localhost
   become: False
 
-- name: Check for expired apt keys
-  shell: "apt-key list | grep expired: | cat"
-  register: ppa_key_status
-
-#- name: Update known expired repo keys
-#  shell: "{{ item }}"
-#  args:
-#    warn: False
-#  with_items:
-#    - "apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 69464050"
-#    - "curl -L https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey | apt-key add -"
-#    - 'curl -L https://www.mongodb.org/static/pgp/server-3.4.asc | apt-key add -'
-#  become: True
-#  when: "'expired' in ppa_key_status.stdout"
-
 - name: Sending slack notification
   slack:
     token: "{{ slack_notification_token }}"
@@ -51,3 +36,11 @@
   with_items: "{{ slack_notification_channels[project_environment] }}"
   when: slack_notification_channels is defined and slack_notification_channels[project_environment] is defined and slack_notification_channels[project_environment] != ''
   delegate_to: localhost
+
+- name: Add Launchpad apt keys to allow using ppa.raccoongang.com
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "{{ item }}"
+  with_items:
+    - BA6932366A755776
+    - A1715D88E1DF1F24

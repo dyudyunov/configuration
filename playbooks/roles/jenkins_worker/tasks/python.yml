@@ -4,7 +4,7 @@
 # newer
 - name: add deadsnakes PPA for newer Python versions
   apt_repository:
-    repo: "ppa:deadsnakes/ppa"
+    repo: "{{ common_deadsnakes_ppa }}"
     update_cache: yes
   when: ansible_distribution_release == 'xenial'
 

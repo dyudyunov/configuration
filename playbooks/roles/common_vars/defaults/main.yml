@@ -169,6 +169,7 @@ common_web_group: www-data
 common_log_user: syslog
 
 common_git_ppa: "ppa:git-core/ppa"
+common_deadsnakes_ppa: "ppa:deadsnakes/ppa"
 
 # Skip supervisor tasks
 # When set to true this flag will allow you to install everything but keep
