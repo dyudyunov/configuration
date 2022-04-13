@@ -628,6 +628,26 @@
     - manage
     - manage:db
 
+- name: add use legacy frontend waffle flag if mfe is not enabled
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone courseware.use_legacy_frontend"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: not COMMON_ENABLE_MFE | default(false)
+  tags:
+    - manage
+    - manage:db
+
+- name: add use legacy home frontend waffle flag if mfe is not enabled
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone course_home.course_home_use_legacy_frontend"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: not COMMON_ENABLE_MFE | default(false)
+  tags:
+    - manage
+    - manage:db
+
 - name: populate retirement states
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} populate_retirement_states"
   args:
