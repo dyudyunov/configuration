@@ -125,9 +125,10 @@
 
 - name: Run git clean after checking out code
   shell: cd {{ item.DESTINATION }} && git clean -xdf
-  become: true
+  become_user: "{{ repo_owner }}"
   with_items: "{{ GIT_REPOS }}"
   no_log: "{{ GIT_CLONE_NO_LOGGING }}"
   tags:
     - install
     - install:code
+
