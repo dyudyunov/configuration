@@ -67,6 +67,7 @@
 
 - name: Check that working tree is clean
   shell: test ! -e "{{ item }}/.git" || git -C "{{ item }}" status --porcelain --untracked-files=no
+  become_user: "{{ repo_owner }}"
   register: dirty_files
   # Using the map here means that the items will only be the DESTINATION strings,
   # rather than the full GIT_REPOS structures, which have data we don't want to log,
