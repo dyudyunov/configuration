@@ -24,4 +24,10 @@ echo "$ANSIBLE_VAULT_KEY" > ~/vault_password
 chmod 600 ~/vault_password
 echo "Loaded Ansible Vault key from environment"
 
+echo "=== Environment"
+env | grep -e ^CI -e ^ANSIBLE | sed 's/ANSIBLE_VAULT_KEY=.*/ANSIBLE_VAULT_KEY=***/' | sed 's/ANSIBLE_SSH_KEY=.*/ANSIBLE_SSH_KEY=***/' | sort
+
+echo "=== Ansible"
+ansible --version
+
 exec "$@"
