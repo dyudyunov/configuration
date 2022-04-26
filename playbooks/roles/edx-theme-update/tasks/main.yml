@@ -3,6 +3,8 @@
     name: git_clone
   vars:
     deploy_user: '{{ themes_deploy_user | default("edxapp", true) }}'
+    repo_owner: '{{ themes_deploy_user | default("edxapp", true) }}'
+    repo_group: '{{ themes_deploy_user | default("edxapp", true) }}'
     COMMON_GIT_PROTOCOL: '{{ THEMES_COMMON_GIT_PROTOCOL | default("https", true) }}'
     COMMON_GIT_MIRROR: '{{ THEMES_COMMON_GIT_MIRROR | default("github.com", true) }}'
     COMMON_GIT_PATH: '{{ THEMES_COMMON_GIT_PATH | default("raccoongang", true) }}'
@@ -14,12 +16,23 @@
 # this role is copy-paste of tasks from edx-configuration
 # to run just theme update
 #
+
+- name: install read-only ssh key
+  copy:
+    content: "{{ EDXAPP_GIT_IDENTITY }}"
+    dest: "{{ edxapp_git_identity }}"
+    force: yes
+    owner: "{{ edxapp_user }}"
+    mode: "0600"
+  when: EDXAPP_USE_GIT_IDENTITY
+
 - name: checkout edx-platform repo into {{ edxapp_code_dir }}
   git:
     dest: "{{ edxapp_code_dir }}"
     repo: "{{ edx_platform_repo }}"
-    version: "{{ edx_platform_version }}"
+    version: "{{ EDX_PLATFORM_VERSION }}"
     accept_hostkey: yes
+    key_file: "{% if EDXAPP_USE_GIT_IDENTITY %}{{ edxapp_git_identity }}{% endif %}"
   become_user: "{{ edxapp_user }}"
   register: git_res
 
@@ -27,10 +40,17 @@
   git:
     dest: "{{ edxapp_app_dir }}/themes/{{ edxapp_theme_name }}"
     repo: "{{ edxapp_theme_source_repo }}"
-    version: "{{ edxapp_theme_version }}"
+    version: "{{ EDXAPP_THEME_VERSION }}"
     accept_hostkey: yes
+    key_file: "{% if EDXAPP_USE_GIT_IDENTITY %}{{ edxapp_git_identity }}{% endif %}"
   when: edxapp_theme_name != ''
   become_user: "{{ edxapp_user }}"
+
+- name: remove read-only ssh key
+  file:
+    path: "{{ edxapp_git_identity }}"
+    state: absent
+  when: EDXAPP_USE_GIT_IDENTITY
 
 - name: removing all pyc files in the edx-platform repo
   shell: "find {{ edxapp_code_dir }}/ -name '*.pyc' -exec rm -f {} \\;"
@@ -38,7 +58,7 @@
   become_user: "{{ edxapp_user }}"
 
 - name: compiling all py files in the edx-platform repo
-  shell: "{{ edxapp_venv_bin }}/python -m compileall -q -x .git/.* {{ edxapp_code_dir }}"
+  shell: "{{ edxapp_venv_bin }}/python -m compileall -q -x '.git/.*|node_modules/.*' {{ edxapp_code_dir }}"
   when: git_res.changed
   become_user: "{{ edxapp_user }}"
 
