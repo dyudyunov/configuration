@@ -127,6 +127,7 @@
     src: lib/systemd/system/elasticsearch.service.j2 
     dest: "/lib/systemd/system/elasticsearch.service"
     mode: 0644
+  register: elasticsearch_systemd
   tags:
     - install
     - install:configuration
@@ -145,7 +146,8 @@
     name: elasticsearch
     state: restarted
     enabled: yes
-  when: elasticsearch_reinstall.changed or elasticsearch_default.changed or elasticsearch_config.changed or elasticsearch_logging.changed
+    daemon_reload: yes
+  when: elasticsearch_reinstall.changed or elasticsearch_default.changed or elasticsearch_config.changed or elasticsearch_logging.changed or elasticsearch_systemd.changed
   tags:
     - manage
     - manage:restart

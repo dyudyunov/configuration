@@ -104,3 +104,6 @@ network:
 # Require explicit names when deleting indices:
 #
 #action.destructive_requires_name: true
+
+discovery.type: {{ ELASTICSEARCH_DISCOVERY_TYPE }}
+network.bind_host: {{ ELASTICSEARCH_BIND_IP }}
