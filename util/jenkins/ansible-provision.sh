@@ -158,10 +158,6 @@ if [[ -z $performance_course ]]; then
   performance_course="false"
 fi
 
-if [[ -z $demo_test_course ]]; then
-  demo_test_course="false"
-fi
-
 if [[ -z $edx_demo_course ]]; then
   edx_demo_course="false"
 fi
@@ -236,6 +232,14 @@ fi
 
 if [[ -z $learning_version ]]; then
   LEARNING_MFE_VERSION="master"
+fi
+
+if [[ -z $ora_grading ]]; then
+  ora_grading="false"
+fi
+
+if [[ -z $ora_grading_version ]]; then
+  ORA_GRADING_MFE_VERSION="master"
 fi
 
 # Lowercase the dns name to deal with an ansible bug
@@ -356,6 +360,12 @@ LEARNING_MFE_VERSION: $learning_version
 LEARNING_MFE_ENABLED: $learning
 LEARNING_SANDBOX_BUILD: True
 
+ORA_GRADING_NGINX_PORT: 80
+ORA_GRADING_SSL_NGINX_PORT: 443
+ORA_GRADING_MFE_VERSION: $ora_grading_version
+ORA_GRADING_MFE_ENABLED: $ora_grading
+ORA_GRADING_SANDBOX_BUILD: True
+
 mysql_server_version_5_7: True
 
 # User provided extra vars
@@ -409,7 +419,6 @@ COMMON_ENABLE_DATADOG: $enable_datadog
 COMMON_OAUTH_BASE_URL: "https://${deploy_host}"
 FORUM_NEW_RELIC_ENABLE: $enable_newrelic
 ENABLE_PERFORMANCE_COURSE: $performance_course
-ENABLE_DEMO_TEST_COURSE: $demo_test_course
 ENABLE_EDX_DEMO_COURSE: $edx_demo_course
 EDXAPP_ENABLE_AUTO_AUTH: $enable_automatic_auth_for_testing
 EDXAPP_NEWRELIC_LMS_APPNAME: sandbox-${dns_name}-edxapp-lms
@@ -482,7 +491,7 @@ ENTERPRISE_CATALOG_URL_ROOT: "https://enterprise-catalog-${deploy_host}"
 EOF
 fi
 
-encrypted_config_apps=(edxapp ecommerce ecommerce_worker analytics_api insights discovery credentials registrar edx_notes_api license_manager)
+encrypted_config_apps=(edxapp ecommerce ecommerce_worker analytics_api discovery credentials registrar edx_notes_api license_manager)
 
 for app in ${encrypted_config_apps[@]}; do
      eval app_decrypt_and_copy_config_enabled=\${${app}_decrypt_and_copy_config_enabled}
@@ -541,7 +550,7 @@ veda_encode_worker=${video_encode_worker:-false}
 video_pipeline_integration=${video_pipeline:-false}
 
 # ansible overrides for master's integration environment setup
-if [[ $registrar == "true" ]]; then
+if [[ $masters_integration_environment == "true" ]]; then
     cat << EOF >> $extra_vars_file
 COMMON_ENABLE_SPLUNKFORWARDER: true
 EDXAPP_ENABLE_ENROLLMENT_RESET: true
@@ -609,7 +618,7 @@ fi
 run_ansible set_hostname.yml -i "${deploy_host}," -e hostname_fqdn=${deploy_host} --user ubuntu
 
 # master's integration environment setup
-if [[ $registrar == "true" ]]; then
+if [[ $masters_integration_environment == "true" ]]; then
   # vars specific to master's integration environment
   cat << EOF >> $extra_vars_file
 username: $registrar_user_email

@@ -34,7 +34,7 @@ discovery_user: "{{ discovery_service_name }}"
 discovery_home: "{{ COMMON_APP_DIR }}/{{ discovery_service_name }}"
 discovery_code_dir: "{{ discovery_home }}/{{ discovery_service_name }}"
 
-DISCOVERY_NODE_VERSION: '12.11.1'
+DISCOVERY_NODE_VERSION: '16.14.0'
 DISCOVERY_USE_PYTHON38: True
 
 #
@@ -151,7 +151,7 @@ DISCOVERY_REPOS:
 DISCOVERY_EXTRA_REQUIREMENTS: []
 
 discovery_service_config_overrides:
-  ELASTICSEARCH_URL: '{{ DISCOVERY_ELASTICSEARCH_URL }}'
+  ELASTICSEARCH_CLUSTER_URL: '{{ DISCOVERY_ELASTICSEARCH_URL }}'
   ELASTICSEARCH_INDEX_NAME: '{{ DISCOVERY_ELASTICSEARCH_INDEX_NAME }}'
 
   PLATFORM_NAME: '{{ DISCOVERY_PLATFORM_NAME }}'

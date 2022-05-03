@@ -74,7 +74,7 @@ JENKINS_DATA_ENGINEERING_EXTRA_PKGS:
   - zip
 
 # See https://www.vaultproject.io/downloads for latest version.
-DE_JENKINS_VAULT_CLI_VERSION: 1.5.4
+DE_JENKINS_VAULT_CLI_VERSION: 1.9.4
 
 # plugins
 de_jenkins_plugins_list:
@@ -267,6 +267,9 @@ de_jenkins_plugins_list:
   - name: 'workflow-step-api'
     version: '2.21'
     group: 'org.jenkins-ci.plugins.workflow'
+  - name: 'ws-cleanup'
+    version: '0.39'
+    group: 'org.jenkins-ci.plugins'
   - name: 'xunit'
     version: '1.93'
     group: 'org.jenkins-ci.plugins'

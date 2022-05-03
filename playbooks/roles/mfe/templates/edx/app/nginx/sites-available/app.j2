@@ -13,10 +13,6 @@ server {
   large_client_header_buffers 8 16k;
 
 
-  # Increase accepted header size to account for overenthusiastic usage of cookies
-  large_client_header_buffers 8 16k;
-
-
 {% if nginx_ssl %}
   {% include "concerns/handle-ip-disclosure.j2" %}
   rewrite ^ https://$host$request_uri? permanent;

@@ -209,7 +209,11 @@ EDXAPP_ENABLE_CELERY_BEAT: false
 EDXAPP_SINGLE_BEAT_LOCK_TIME: 60
 # EDXAPP_SINGLE_BEAT_HEARTBEAT_INTERVAL must be smaller than EDXAPP_SINGLE_BEAT_LOCK_TIME / 2
 EDXAPP_SINGLE_BEAT_HEARTBEAT_INTERVAL: 29
-EDXAPP_SINGLE_BEAT_VERSION: "0.4.2"
+EDXAPP_SINGLE_BEAT_REPO: "https://github.com/akachanov/single-beat.git"
+EDXAPP_SINGLE_BEAT_VERSION: "e500ac4b56756cdf96836666883af8060aaef455"
+EDXAPP_SINGLE_BEAT_USER: "{{ EDXAPP_CELERY_USER }}"
+EDXAPP_SINGLE_BEAT_PASSWORD: "{{ EDXAPP_CELERY_PASSWORD }}"
+EDXAPP_SINGLE_BEAT_IDENTIFIER: "celerybeat"
 EDXAPP_BRANCH_IO_KEY: ""
 
 EDXAPP_AUTH_USE_OPENID_PROVIDER: true
@@ -563,7 +567,7 @@ EDXAPP_EXTRA_REQUIREMENTS: []
 #   - name: git+https://git.myproject.org/MyProject#egg=MyProject
 EDXAPP_PRIVATE_REQUIREMENTS:
     # For Harvard courses:
-    - name: xblock-problem-builder==5.0.0
+    - name: xblock-problem-builder==5.1.0
     # Oppia XBlock
     - name: git+https://github.com/oppia/xblock.git@1030adb3590ad2d32c93443cc8690db0985d76b6#egg=oppia-xblock
       extra_args: -e
@@ -589,7 +593,6 @@ EDXAPP_PRIVATE_REQUIREMENTS:
       extra_args: -e
     - name: git+https://github.com/open-craft/xblock-activetable.git@d3fb772435c382b59293e4e688a6a3096c4f6fd7#egg=activetable-xblock
       extra_args: -e
-    - name: edx-zoom==2.0.1
     # Stanford-developed XBlocks (technically unsupported, but here to ease migration of courses from Lagunita)
     - name: git+https://github.com/edx/xblock-qualtrics-survey.git@02d87f567ec2af4579642cf795bb851507d6edf9#egg=xblock_qualtrics_survey
       extra_args: -e
@@ -651,6 +654,9 @@ EDXAPP_DCS_SESSION_COOKIE_SAMESITE_FORCE_ALL: True
 
 # Whether to run reindex_course on deploy
 EDXAPP_REINDEX_ALL_COURSES: false
+
+# Whether to run compilejsi18n on deploy
+EDXAPP_COMPILE_JSI18N: false
 
 # XML Course related flags
 EDXAPP_XML_FROM_GIT: false
@@ -897,9 +903,15 @@ EDXAPP_COMPREHENSIVE_THEME_DIRS:
 # list of paths to the comprehensive theme locale directories
 EDXAPP_COMPREHENSIVE_THEME_LOCALE_PATHS: []
 
+# list of paths to locale directories to load first
+EDXAPP_PREPEND_LOCALE_PATHS: []
+
 # Name of the default site theme
 EDXAPP_DEFAULT_SITE_THEME: ""
 EDXAPP_ENABLE_COMPREHENSIVE_THEMING: false
+
+# Path to directory to load custom resource templates for the studio/lms.
+EDXAPP_CUSTOM_RESOURCE_TEMPLATES_DIRECTORY: null
 
 # Git repo for the comprehensive theme (if using a comprehensive theme
 # other than the ones bundled with edx/platform)
@@ -1097,6 +1109,9 @@ EDXAPP_COPY_CONFIG_ENABLED: "{{ COMMON_COPY_CONFIG_ENABLED }}"
 # Dashboard courses default limit
 EDXAPP_DASHBOARD_COURSE_LIMIT: null
 
+# Completion Aggregator URL needed for progress bar
+EDXAPP_COMPLETION_AGGREGATOR_URL: null
+
 #-------- Everything below this line is internal to the role ------------
 
 #Use YAML references (& and *) and hash merge <<: to factor out shared settings
@@ -1181,6 +1196,9 @@ edxapp_environment_default:
 edxapp_environment_extra: {}
 
 edxapp_environment: "{{ edxapp_environment_default | combine(edxapp_environment_extra) }}"
+
+git_ssh_environment_mixin:
+  GIT_SSH: "{{ edxapp_git_ssh }}"
 
 edxapp_generic_contentstore_config: &edxapp_generic_default_contentstore
   ENGINE:  'xmodule.contentstore.mongo.MongoContentStore'
@@ -1506,7 +1524,9 @@ generic_env_config:  &edxapp_generic_env
 
   COMPREHENSIVE_THEME_DIRS: "{{ EDXAPP_COMPREHENSIVE_THEME_DIRS }}"
   COMPREHENSIVE_THEME_LOCALE_PATHS: "{{ EDXAPP_COMPREHENSIVE_THEME_LOCALE_PATHS }}"
+  PREPEND_LOCALE_PATHS: "{{ EDXAPP_PREPEND_LOCALE_PATHS }}"
   ENABLE_COMPREHENSIVE_THEMING: "{{ EDXAPP_ENABLE_COMPREHENSIVE_THEMING }}"
+  CUSTOM_RESOURCE_TEMPLATES_DIRECTORY: "{{ EDXAPP_CUSTOM_RESOURCE_TEMPLATES_DIRECTORY }}"
   DEFAULT_SITE_THEME: "{{ EDXAPP_DEFAULT_SITE_THEME }}"
   SESSION_SAVE_EVERY_REQUEST: "{{ EDXAPP_SESSION_SAVE_EVERY_REQUEST }}"
   SOCIAL_SHARING_SETTINGS: "{{ EDXAPP_SOCIAL_SHARING_SETTINGS }}"
@@ -1549,6 +1569,7 @@ generic_env_config:  &edxapp_generic_env
   #RACCOONGANG#
   ADDL_INSTALLED_APPS: "{{ EDXAPP_ADDL_INSTALLED_APPS }}"
   #RACCOONGANG#
+  COMPLETION_AGGREGATOR_URL: "{{ EDXAPP_COMPLETION_AGGREGATOR_URL }}"
 
 lms_auth_config:
   <<: *edxapp_generic_auth
@@ -1755,7 +1776,7 @@ base_requirements_file:   "{{ edxapp_code_dir }}/requirements/edx/base.txt"
 django_requirements_file:   "{{ edxapp_code_dir }}/requirements/edx/django.txt"
 openstack_requirements_file: "{{ edxapp_code_dir }}/requirements/edx/openstack.txt"
 
-sandbox_base_requirements:  "{{ edxapp_code_dir }}/requirements/edx-sandbox/{% if edxapp_sandbox_python_version == 'python3.5' %}py35.txt{% else %}py38.txt{% endif %}"
+sandbox_base_requirements:  "{{ edxapp_code_dir }}/requirements/edx-sandbox/py38.txt"
 
 # The Python requirements files in the order they should be installed.  This order should
 # match the order of PYTHON_REQ_FILES in edx-platform/pavelib/prereqs.py.
@@ -1859,6 +1880,10 @@ SERVICE_WORKER_USERS:
     is_superuser: false
   - email: "{{ ENTERPRISE_CATALOG_SERVICE_USER_EMAIL }}"
     username: "{{ ENTERPRISE_CATALOG_SERVICE_USER_NAME }}"
+    is_staff: true
+    is_superuser: false
+  - email: "{{ ECOMMERCE_SERVICE_USER_EMAIL }}"
+    username: "{{ ECOMMERCE_SERVICE_USER_NAME }}"
     is_staff: true
     is_superuser: false
   - email: "{{ EDXAPP_RETIREMENT_SERVICE_USER_EMAIL }}"

@@ -4,6 +4,64 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top (right below this line).
 
+ - 2022-04-06
+    - Role: edxapp
+        - Added a new `EDXAPP_COMPILE_JSI18N` variable to control whether
+          to run the `compilejsi18n` management command on edxapp deploy.
+          Defaults to false.
+
+ - 2022-04-06
+    - Role: simple_theme
+       - Added a new `SIMPLETHEME_I18N_DJANGO` setting to allow operators to provide
+         additional translations, or override existing django translations.
+
+ - 2022-03-25
+    - Role: edxapp
+        - Added a new `CUSTOM_RESOURCE_TEMPLATES_DIRECTORY` setting to allow operators to
+          override the default resource templates.
+
+ - 2022-02-01
+    - Role: edxapp
+        - Added a new `EDXAPP_PREPEND_LOCALE_PATHS` setting to allow operators to
+          override the default translations.
+
+ - 2022-01-06
+    - Role: edx_notes_api
+       - Replaced `ELASTICSEARCH_URL` with `ELASTICSEARCH_DSL` in `edx_notes_api_service_config`.
+
+ - 2022-01-06
+    - Role: discovery
+       - Replaced `ELASTICSEARCH_URL` with `ELASTICSEARCH_CLUSTER_URL` in `discovery_service_config_overrides`.
+
+ - 2022-01-05
+	- Remove an extraneous `-A ecommerce_worker` from the ecomworker startup script,
+	  which was preventing the celery worker process from starting.
+
+ - 2021-11-30
+    - Upgrade celery to 5.2.0 and adjust CLI call parameters too
+    - Bumped single-beat to use a more supported fork of the project
+
+ - 2021-11-01
+    - Docker: edxapp
+       - Removed unnecessary `CELERY_QUEUES` overrides for LMS and Studio.
+         Instead, just use the default value of `CELERY_QUEUES` as set in
+         edx-platform's settings files.
+         Functionally, this means that in addition to the existing queues
+         that LMS and Studio defined, there is now a "low priority" queue
+         for Studio, suitable for tasks like a CourseGraph dump.
+
+ - 2021-10-20
+    - Role neo4j
+       - Upgrade Neo4j from 3.2.2 to 3.5.28.
+
+ - 2021-08-26
+    - Role neo4j
+      - Bring Neo4j role closer in with what we really deploy:
+        - Change Neo4j version from 3.2.2 to 3.3.1.
+        - Expose Bolt on 0.0.0.0:7687 with optional encryption.
+        - Enable `dbms.allow_upgrade`, which is the new name of the `dbms.allow_format_migration` key.
+        - Remove http->https redirection logic when NGINX_ENABLE_SSL is false.
+
  - 2021-09-28
     - Role nginx
       - Add `NGINX_ENABLE_IPV6` configuration variable to make nginx
