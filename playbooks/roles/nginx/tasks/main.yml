@@ -1,10 +1,13 @@
 ---
-- include: nginx.yml
+- include_tasks: nginx.yml
 
-- include: ssl_create.yml
+- include_tasks: ssl_create.yml
 
-- include: selfsigned.yml
+- include_tasks: selfsigned.yml
   when: nginx_ssl_selfsigned is defined and nginx_ssl_selfsigned == 'true'
 
-- include: htpasswd.yml
+- include_tasks: htpasswd.yml
   when: htpasswd_enabled is defined and htpasswd_enabled == 'true'
+
+- name: Restart or reload nginx if necessary
+  meta: flush_handlers

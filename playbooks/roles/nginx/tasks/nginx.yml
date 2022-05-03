@@ -19,6 +19,7 @@
     name: nginx
     state: latest
     update_cache: yes
+  notify: restart nginx
 
 - name: Remove the default site
   file:
@@ -61,7 +62,6 @@
     owner: root
     group: "{{ common_web_user }}"
     mode: 0644
-  notify: reload nginx
   when: NGINX_ROBOT_RULES|length > 0
 
 - name: Creating link for common nginx configuration
