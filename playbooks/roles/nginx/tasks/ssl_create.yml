@@ -1,13 +1,4 @@
 ---
-- name: Create robot rules
-  template:
-    src: robots.txt.j2
-    dest: "{{ nginx_app_dir }}/robots.txt"
-    owner: root
-    group: root
-    mode: 0644
-  when: NGINX_ROBOT_RULES|length > 0
-
 - name: create nginx config in "{{ nginx_app_dir }}"
   template:
     src: edx-ssl.conf.j2
@@ -130,6 +121,7 @@
         - name: 'raccoongang-ssl.key'
           content: "{{ raccoongang_ssl_key }}"
       no_log: True
+      notify: restart nginx
 
     - name: set lms_ssl_certificate_path fact
       set_fact:
@@ -152,11 +144,12 @@
     - name: create nginx ssl-config in "{{ nginx_app_dir }}"
       template:
         src: edx-ssl.conf.j2
+        dest: "{{ nginx_ssl_config_path }}"
         owner: root
         group: root
         mode: 0644
-        dest: "{{ nginx_ssl_config_path }}"
         force: yes
+      notify: restart nginx
 
     - name: remove link for nginx config if exist
       file:
@@ -185,8 +178,3 @@
         group: "root"
         mode: 0600
   when: use_raccoongang_ssl or use_letsencrypt
-
-- name: test nginx config
-  command: "/usr/sbin/nginx -t"
-  register: nginx_test_result
-  notify: reload nginx
