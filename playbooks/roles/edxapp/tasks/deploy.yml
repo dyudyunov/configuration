@@ -647,6 +647,16 @@
     - manage
     - manage:db
 
+- name: add mfe task course progress waffle flag
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone course_home.course_home_mfe_progress_tab"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: COMMON_ENABLE_MFE | default(false)
+  tags:
+    - manage
+    - manage:db
+
 - name: add use legacy frontend waffle flag if mfe is not enabled
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone courseware.use_legacy_frontend"
   args:
