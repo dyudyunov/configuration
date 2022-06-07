@@ -7,7 +7,7 @@ MONGO_VERSION_MAJOR_MINOR: "3.6"
 mongo_version_major_minor: "{{ MONGO_VERSION_MAJOR_MINOR }}"
 MONGO_VERSION_PATCH: "21"
 mongo_version_patch: "{{ MONGO_VERSION_PATCH }}"
-PYMONGO_VERSION: "3.6.1"
+PYMONGO_VERSION: "3.12.3"
 MONGO_VERSION: "{{ MONGO_VERSION_MAJOR_MINOR }}.{{ MONGO_VERSION_PATCH }}"
 mongo_port: "27017"
 mongo_extra_conf: ''
