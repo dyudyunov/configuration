@@ -5,6 +5,6 @@ directory={{ COMMON_APP_DIR }}/edxapp/edx-platform
 stdout_logfile={{ supervisor_log_dir }}/%(program_name)s-stdout.log
 stderr_logfile={{ supervisor_log_dir }}/%(program_name)s-stderr.log
 
-command={{ COMMON_APP_DIR + '/edxapp/venvs/edxapp/bin/newrelic-admin run-program ' if EDXAPP_CELERY_BEAT.monitor and COMMON_ENABLE_NEWRELIC_APP else ''}}{{ COMMON_APP_DIR }}/edxapp/venvs/edxapp/bin/python3.8 {{ COMMON_APP_DIR }}/edxapp/venvs/edxapp/bin/celery beat -A lms.celery:APP  --loglevel=info --pidfile={{ EDXAPP_CELERY_BEAT.pid_file }} -s {{ EDXAPP_CELERY_BEAT.beat_file }}
+command={{ COMMON_APP_DIR + '/edxapp/venvs/edxapp/bin/newrelic-admin run-program ' if EDXAPP_CELERY_BEAT.monitor and COMMON_ENABLE_NEWRELIC_APP else ''}}{{ COMMON_APP_DIR }}/edxapp/venvs/edxapp/bin/python3.8 {{ COMMON_APP_DIR }}/edxapp/venvs/edxapp/bin/celery -A lms.celery:APP beat  --loglevel=info --pidfile={{ EDXAPP_CELERY_BEAT.pid_file }} -s {{ EDXAPP_CELERY_BEAT.beat_file }}
 killasgroup=true
 stopwaitsecs={{ EDXAPP_CELERY_BEAT.stopwaitsecs | default('900') }}
