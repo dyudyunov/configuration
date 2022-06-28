@@ -91,7 +91,7 @@ DISCOVERY_PLATFORM_NAME: 'Your Platform Name Here'
 
 DISCOVERY_DATA_DIR: '{{ COMMON_DATA_DIR }}/{{ discovery_service_name }}'
 DISCOVERY_MEDIA_ROOT: '{{ DISCOVERY_DATA_DIR }}/media'
-DISCOVERY_MEDIA_URL: '/media/'
+DISCOVERY_MEDIA_URL: '{{ DISCOVERY_URL_ROOT }}/media/'
 
 DISCOVERY_MEDIA_STORAGE_BACKEND:
   DEFAULT_FILE_STORAGE: 'django.core.files.storage.FileSystemStorage'
