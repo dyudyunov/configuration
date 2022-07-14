@@ -89,7 +89,7 @@
   command: "npm install -g npm@{{ MFE_NPM_VERSION }}"
   become_user: "{{ MFE_USER }}"
   environment: "{{ MFE_ENVIRONMENT }}"
-#  when: mfe_repo_status is changed
+  when: mfe_repo_status is changed
   tags:
     - install
     - install:system-requirements
@@ -100,7 +100,7 @@
     chdir: "{{ MFE_CODE_DIR }}"
   become_user: "{{ MFE_USER }}"
   environment: "{{ MFE_ENVIRONMENT }}"
-#  when: mfe_repo_status is changed
+  when: mfe_repo_status is changed
   tags:
     - install
     - install:app-requirements
@@ -112,7 +112,7 @@
   become_user: "{{ MFE_USER }}"
   environment: "{{ MFE_ENVIRONMENT }}"
   with_items: "{{ MFE_NPM_OVERRIDES }}"
-#  when: mfe_repo_status is changed
+  when: mfe_repo_status is changed
   tags:
     - install
     - install:app-requirements
@@ -123,7 +123,7 @@
     chdir: "{{ MFE_CODE_DIR }}"
   become_user: "{{ MFE_USER }}"
   environment: "{{ MFE_ENVIRONMENT }}"
-#  when: mfe_repo_status is changed
+  when: mfe_repo_status is changed
   tags:
     - install:base
 
@@ -141,7 +141,7 @@
   args:
     chdir: "{{ MFE_CODE_DIR }}"
   become_user: "{{ MFE_USER }}"
-#  when: mfe_repo_status is changed
+  when: mfe_repo_status is changed
   tags:
     - install
     - install:base
