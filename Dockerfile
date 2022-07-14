@@ -1,7 +1,6 @@
 FROM python:3.8
 
 RUN pip install ansible \
-    ansible-core==2.12.6 \
     datadog \
     PyYAML \
     zabbix-api \

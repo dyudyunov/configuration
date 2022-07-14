@@ -10,6 +10,5 @@ dependencies:
     repo_group: "{{ common_web_group }}"
     GIT_REPOS: "{{ MFE_REPOS }}"
     git_home: "{{ MFE_HOME }}"
-    GIT_CLONE_CLEAR: False
     when: MFE_REPOS is defined
 
