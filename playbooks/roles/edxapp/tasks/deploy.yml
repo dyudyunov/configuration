@@ -251,7 +251,7 @@
 
 - name: Install node and set version
   become_user: "{{ edxapp_user }}"
-  shell: "source /edx/app/edxapp/.nvm/nvm.sh && nvm install 12.22.22" 
+  shell: "source /edx/app/edxapp/.nvm/nvm.sh && nvm install 12.22.12" 
   args:
     executable: /bin/bash
 
