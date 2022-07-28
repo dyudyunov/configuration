@@ -249,16 +249,11 @@
     - install
     - install:app-requirements
 
-- name: Install node and set version
-  become_user: "{{ edxapp_user }}"
-  shell: "source /edx/app/edxapp/.nvm/nvm.sh && nvm use 12.22.12" 
-  args:
-    executable: /bin/bash
-
 - name: install node dependencies
-  shell: "easy_install --version && npm ci"
+  shell: "source /edx/app/edxapp/.nvm/nvm.sh && nvm use 12.22.12 && easy_install --version && npm ci"
   args:
     chdir: "{{ edxapp_code_dir }}"
+    executable: /bin/bash
   environment: "{{ edxapp_environment | combine(git_ssh_environment_mixin) }}"
   become_user: "{{ edxapp_user }}"
   tags:
