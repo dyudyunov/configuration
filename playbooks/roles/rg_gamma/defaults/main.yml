@@ -1,10 +1,10 @@
 ---
 
-GAMMA_VERSION: master
+GAMMA_VERSION: 3.2.3
 GAMMA_REPO:
   - PROTOCOL: 'ssh'
     DOMAIN: 'gitlab.raccoongang.com'
-    PATH: 'Duck-Team/rg-projects/rg-gamification'
+    PATH: 'products/rg-gamification'
     REPO: 'gamma.git'
     VERSION: "{{ GAMMA_VERSION }}"
     DESTINATION: "{{ GAMMA_APP_DIR }}"
