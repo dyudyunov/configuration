@@ -69,6 +69,7 @@
 - import_role:
     name: ecommerce
   when: COMMON_ENABLE_ECOMMERCE
+  tags: [ "ecommerce" ]
 
 - import_role:
     name: ecomworker
