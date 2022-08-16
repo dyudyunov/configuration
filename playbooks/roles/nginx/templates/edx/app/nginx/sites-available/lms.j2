@@ -123,7 +123,7 @@ error_page {{ k }} {{ v }};
   # via hiera.
   client_max_body_size {{ RG_NGINX_LMS_CLIENT_MAX_BODY_SIZE }};
 
-  rewrite ^(.*)/favicon.ico$ /static/images/favicon.ico last;
+  # rewrite ^(.*)/favicon.ico$ /static/images/favicon.ico last;
 
   {% include "python_lib.zip.j2" %}
   {% include "common-settings.j2" %}
