@@ -74,6 +74,7 @@
 - import_role:
     name: ecomworker
   when: COMMON_ENABLE_ECOMMERCE
+  tags: [ "ecommerce" ]
 
 #- import_role:
 #    name: rg_instructor_analytics_log_collector
@@ -98,6 +99,7 @@
 - import_role:
     name: forum
   when: COMMON_ENABLE_FORUM
+  tags: [ "forum" ]
 
 #- import_role:
 #    name: notifier
@@ -110,6 +112,7 @@
 - import_role:
     name: credentials
   when: COMMON_ENABLE_CREDENTIALS
+  tags: [ "credentials" ]
 
 - import_role:
     name: blockstore
