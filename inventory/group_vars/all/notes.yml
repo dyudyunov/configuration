@@ -1,7 +1,7 @@
 ---
 EDXAPP_ENABLE_EDXNOTES: "{{ COMMON_ENABLE_EDXNOTES }}"
 
-EDX_NOTES_API_VERSION: "open-release/juniper.master"
+EDX_NOTES_API_VERSION: "open-release/nutmeg.master"
 
 EDX_NOTES_RG_PUBLIC_DNS: "{{ EDXAPP_LMS_BASE }}"
 EDX_NOTES_RG_PUBLIC_URI: "{{ EDXAPP_LMS_BASE_SCHEME | default('https') }}://{{ EDX_NOTES_RG_PUBLIC_DNS }}/edx_notes"
