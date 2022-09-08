@@ -14,6 +14,10 @@
 - import_role:
     name: filebeat
 
+- import_role:
+    name: mongo-pruner
+  when: COMMON_MONGOPRUNER_SERVICE_SETUP
+
 - include: edx-backup-duplicity.yml
 
 - include: edx-zabbix-single.yml

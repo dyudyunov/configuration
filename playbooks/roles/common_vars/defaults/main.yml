@@ -329,6 +329,8 @@ COMMON_ENABLE_BACKUPS_AZURE_RECOVERY_VAULT: False
 COMMON_ENABLE_FILEBEAT: False
 COMMON_ENABLE_ENTERPRISE: False
 
+# Variable to control setting up the mongo-pruner service
+COMMON_MONGOPRUNER_SERVICE_SETUP: False
 
 COMMON_LOGO_URL: "https://edx-cdn.org/v3/default/logo.svg"
 COMMON_LOGO_TRADEMARK_URL: "https://edx-cdn.org/v3/default/logo-trademark.svg"

@@ -1,0 +1,11 @@
+dependencies:
+  - common
+  - role: add_user
+    user_name: "{{ mongopruner_service_user }}"
+    user_home: "{{ mongopruner_service_home }}"
+    group_name: "{{ common_web_group }}"
+  - role: git_clone
+    repo_owner: "{{ mongopruner_service_user }}"
+    repo_group: "{{ mongopruner_service_user }}"
+    GIT_REPOS: "{{ MONGOPRUNER_SERVICE_GIT_REPOS }}"
+    git_home: "{{ mongopruner_service_home }}"

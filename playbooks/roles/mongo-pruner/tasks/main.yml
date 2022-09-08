@@ -1,0 +1,121 @@
+- name: Install development packages necessary for building Python
+  apt:
+    pkg: "{{ mongopruner_pyenv_debian_packages }}"
+    state: present
+  tags:
+    - install
+    - install:configuration
+
+- name: Create data and log directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ mongopruner_service_user }}"
+    group: "{{ common_web_group }}"
+    mode: 0755
+  with_items:
+    - "{{ mongopruner_service_data_dir }}"
+    - "{{ mongopruner_service_log_dir }}"
+  tags:
+    - install
+    - install:configuration
+
+- name: Download pyenv-installer
+  get_url:
+    url: https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer
+    dest: "{{ mongopruner_service_home }}"
+    mode: 0755
+  become_user: "{{ mongopruner_service_user }}"
+  tags:
+    - install
+    - install:configuration
+
+- name: Execute pyenv-installer script
+  shell: bash {{ mongopruner_service_home }}/pyenv-installer
+  args:
+    creates: "{{ mongopruner_service_pyenv_dir }}"
+  become_user: "{{ mongopruner_service_user }}"
+  tags:
+    - install
+    - install:configuration
+
+- name: Add path etc to .bashrc.
+  lineinfile:
+    dest: "{{ mongopruner_service_home }}/.bashrc"
+    state: present
+    create: yes
+    line: "{{ item }}"
+  become_user: "{{ mongopruner_service_user }}"
+  with_items:
+    - 'export PYENV_ROOT="$HOME/.pyenv"'
+    - 'export PATH="$PYENV_ROOT/bin:$PATH"'
+    - 'eval "$(pyenv init --path)"'
+    - 'eval "$(pyenv virtualenv-init -)"'
+  tags:
+    - install
+    - install:configuration
+
+- name: Install default python version
+  shell: >
+    source {{ mongopruner_service_home }}/.bashrc &&
+    {{ mongopruner_service_pyenv_dir }}/bin/pyenv install {{ mongopruner_service_python_version }}
+  args:
+      creates: "{{ mongopruner_service_pyenv_dir }}/versions/{{ mongopruner_service_python_version }}"
+      executable: "{{ mongopruner_service_user_shell }}"
+  become_user: "{{ mongopruner_service_user }}"
+  tags:
+    - install
+    - install:configuration
+
+- name: Set python version
+  shell: >
+    source {{ mongopruner_service_home }}/.bashrc &&
+    {{ mongopruner_service_pyenv_dir }}/bin/pyenv global {{ mongopruner_service_python_version }} &&
+    {{ mongopruner_service_pyenv_dir }}/bin/pyenv rehash
+  args:
+      executable: "{{ mongopruner_service_user_shell }}"
+  become_user: "{{ mongopruner_service_user }}"
+  tags:
+    - install
+    - install:requirements
+
+- name: Upgrade pip version
+  command: "{{ mongopruner_service_pyenv_dir }}/shims/pip install -U pip"
+  become_user: "{{ mongopruner_service_user }}"
+  tags:
+    - install
+    - install:requirements
+
+- name: Install python requirements
+  command: "{{ mongopruner_service_pyenv_dir }}/shims/pip install -r requirements.txt"
+  args:
+    chdir: "{{ mongopruner_service_app_dir }}"
+  become_user: "{{ mongopruner_service_user }}"
+  tags:
+    - install
+    - install:requirements
+
+- name: Set up user mongopruner script
+  template:
+    src: "mongo-pruner.sh.j2"
+    dest: "{{ mongopruner_service_home }}/mongo-pruner.sh"
+    mode: 0750
+    owner: "{{ mongopruner_service_user }}"
+    group: "{{ common_web_group }}"
+  tags:
+    - install
+    - install:configuration
+
+- name: Install cron job for automatically running User Retirement
+  cron:
+    name: "Run user mongopruner pipeline"
+    job: "{{mongopruner_service_home}}/mongo-pruner.sh"
+    hour: "{{ MONGOPRUNER_SERVICE_CRON_JOB_HOURS }}"
+    minute: "{{ MONGOPRUNER_SERVICE_CRON_JOB_MINUTES }}"
+    weekday: "{{ MONGOPRUNER_SERVICE_CRON_JOB_WEEKDAY }}"
+    cron_file: mongo-pruner
+    user: "{{ mongopruner_service_user }}"
+  when: MONGOPRUNER_SERVICE_ENABLE_CRON_JOB
+  tags:
+    - install
+    - install:configuration

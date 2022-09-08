@@ -1,0 +1,54 @@
+#!/bin/bash
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv virtualenv-init -)"
+
+MONGO_USER="{{ MONGO_ADMIN_USER | default('admin')  }}"
+MONGO_PASSWORD="{{ MONGO_ADMIN_PASSWORD }}"
+MONGO_HOSTS="{{ EDXAPP_MONGO_HOSTS | default('localhost') }}"
+DATABASE_NAME="{{ EDXAPP_MONGO_DB_NAME | default('edxapp') }}"
+MONGO_PORT="{{ EDXAPP_MONGO_PORT | default('27017') }}"
+
+# Log to console and to file
+LOG_LOCATION={{mongopruner_service_log_dir}}
+TIMESTAMP=$(date +%d-%m-%Y-%T -u)
+exec > >(tee -ia "$LOG_LOCATION/edx.log")
+exec 2>&1
+
+echo -e "[`date +%B\ %d\ %T -u`] Job started\n"
+
+# Ensure only one instance of the mongopruner script is running
+LOCKFILE={{mongopruner_service_data_dir }}/mongopruner.lock
+if [ -e ${LOCKFILE} ] && kill -0 `cat ${LOCKFILE}`; then
+    echo "Mongo-Pruner Pipeline already running!"
+    exit
+fi
+# make sure the lockfile is removed when we exit and then claim it
+trap "rm -f ${LOCKFILE}; exit" INT TERM EXIT
+echo $$ > ${LOCKFILE}
+
+export LC_ALL=C.UTF-8
+export LANG=C.UTF-8
+
+python {{mongopruner_service_app_dir}}/scripts/structures.py \
+  --connection="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOSTS}:${MONGO_PORT}" \
+  --database-name ${DATABASE_NAME} \
+  make_plan -v DEBUG plan.json \
+  --details details.txt \
+  --retain 5
+
+echo -e "\n######  Details  ######\n"
+cat details.txt
+
+python {{mongopruner_service_app_dir}}/scripts/structures.py \
+  --connection="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOSTS}:${MONGO_PORT}" \
+  --database-name edxapp prune plan.json
+
+echo -e "[`date +%B\ %d\ %T -u`] Job finished\n\n"
+
+rm -f details.txt plan.json
+
+# Clear the lockfile
+rm -f $LOCKFILE
