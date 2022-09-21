@@ -689,7 +689,7 @@
     - manage:db
 
 - name: add catalog integrations to lms
-  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} create_catalog_integrations --enabled --internal_api_url={{ EDXAPP_LMS_BASE_SCHEME }}://{{ EDXAPP_DISCOVERY_API_URL }} --service_username={{ DISCOVERY_SERVICE_USER_NAME }}"
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} enable_programs --discovery-api-url={{ EDXAPP_LMS_BASE_SCHEME }}://{{ EDXAPP_DISCOVERY_API_URL }} --service-username={{ DISCOVERY_SERVICE_USER_NAME }}"
   args:
     chdir: "{{ edxapp_code_dir }}"
   become_user: "{{ common_web_user }}"
