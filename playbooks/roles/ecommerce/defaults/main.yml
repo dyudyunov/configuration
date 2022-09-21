@@ -192,7 +192,7 @@ ECOMMERCE_COMPREHENSIVE_THEME_DIRS:
 ecommerce_git_home: "{{ COMMON_APP_DIR }}/{{ ecommerce_service_name }}"
 ECOMMERCE_STATIC_ROOT: "{{ COMMON_DATA_DIR }}/{{ ecommerce_service_name }}/staticfiles"
 ECOMMERCE_THEME_DIR: "{{ COMMON_DATA_DIR }}/{{ ecommerce_service_name }}"
-ECOMMERCE_THEME_VERSION: 'koa-rg'
+ECOMMERCE_THEME_VERSION: 'nutmeg-rg'
 ECOMMERCE_THEMES_REPOS:
   - PROTOCOL: 'ssh'
     DOMAIN: "gitlab.raccoongang.com"

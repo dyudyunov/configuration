@@ -17,6 +17,7 @@
 - import_role:
     name: mongo-pruner
   when: COMMON_MONGOPRUNER_SERVICE_SETUP
+  tags: [ "pruner" ]
 
 - include: edx-backup-duplicity.yml
 
