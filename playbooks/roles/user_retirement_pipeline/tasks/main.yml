@@ -76,4 +76,6 @@
     hour: "{{ RETIREMENT_SERVICE_CRON_JOB_HOURS }}"
     minute: "{{ RETIREMENT_SERVICE_CRON_JOB_MINUTES }}"
     day: "*"
+    cron_file: retirement-service
+    user: "{{ retirement_service_user }}"
   when: RETIREMENT_SERVICE_ENABLE_CRON_JOB

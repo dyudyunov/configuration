@@ -6,6 +6,7 @@
 - import_role: 
     name: user_retirement_pipeline
   when: COMMON_RETIREMENT_SERVICE_SETUP
+  tags: [ "retirement" ]
 
 - import_role:
     name: edx-user-attr
