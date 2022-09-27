@@ -53,6 +53,7 @@
 
 - import_role:
     name: edxapp
+  tags: [ "edxapp" ]
 
 - import_role:
     name: mockprock
@@ -61,20 +62,22 @@
 - import_role:
     name: mfe_deployer
   when: COMMON_ENABLE_MFE
+  tags: [ "mfe" ]
 
 - import_role:
     name: enterprise_catalog
   when: COMMON_ENABLE_ENTERPRISE
+  tags: [ "services" ]
 
 - import_role:
     name: ecommerce
   when: COMMON_ENABLE_ECOMMERCE
-  tags: [ "ecommerce" ]
+  tags: [ "services" ]
 
 - import_role:
     name: ecomworker
   when: COMMON_ENABLE_ECOMMERCE
-  tags: [ "ecommerce" ]
+  tags: [ "services" ]
 
 #- import_role:
 #    name: rg_instructor_analytics_log_collector
@@ -87,19 +90,22 @@
 - import_role:
     name: analytics_api
   when: COMMON_ENABLE_ANALYTICS_API
+  tags: [ "services" ]
 
 - import_role:
     name: insights
   when: COMMON_ENABLE_INSIGHTS
+  tags: [ "services" ]
 
 - import_role:
     name: edx_notes_api
   when: EDXAPP_ENABLE_EDXNOTES
+  tags: [ "services" ]
 
 - import_role:
     name: forum
   when: COMMON_ENABLE_FORUM
-  tags: [ "forum" ]
+  tags: [ "services", "forum" ]
 
 #- import_role:
 #    name: notifier
@@ -108,21 +114,25 @@
 - import_role:
     name: discovery
   when: COMMON_ENABLE_DISCOVERY
+  tags: [ "services" ]
 
 - import_role:
     name: credentials
   when: COMMON_ENABLE_CREDENTIALS
   tags: [ "credentials" ]
+  tags: [ "services" ]
 
 - import_role:
     name: blockstore
   when: SANDBOX_ENABLE_BLOCKSTORE
+  tags: [ "services" ]
 
 - import_role:
     name: xqueue
   vars:
     update_users: True
   when: COMMON_ENABLE_XQUEUE
+  tags: [ "services" ]
 
 - import_role:
     name: demo
