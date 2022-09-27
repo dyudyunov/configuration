@@ -119,7 +119,6 @@
 - import_role:
     name: credentials
   when: COMMON_ENABLE_CREDENTIALS
-  tags: [ "credentials" ]
   tags: [ "services" ]
 
 - import_role:
