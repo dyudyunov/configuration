@@ -608,6 +608,56 @@
     - manage
     - manage:db
 
+- name: add completion.enable_completion_tracking waffle switch
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_switch --settings={{ edxapp_settings }} --create completion.enable_completion_tracking on"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: True
+  tags:
+    - manage
+    - manage:db
+
+- name: add student.courseenrollment_admin waffle switch
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_switch --settings={{ edxapp_settings }} --create student.courseenrollment_admin on"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: True
+  tags:
+    - manage
+    - manage:db
+
+- name: add mfe course goals waffle flag
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone course_experience.enable_course_goals"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: True
+  tags:
+    - manage
+    - manage:db
+
+- name: add mfe experience relative dates waffle flag
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone course_experience.relative_dates"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: True
+  tags:
+    - manage
+    - manage:db
+
+- name: add mfe course exit waffle flag
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone courseware.microfrontend_course_exit_page"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: COMMON_ENABLE_MFE | default(false)
+  tags:
+    - manage
+    - manage:db
+
 - name: add mfe account waffle flag
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone account.redirect_to_microfrontend"
   args:
