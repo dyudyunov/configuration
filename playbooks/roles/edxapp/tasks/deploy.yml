@@ -250,7 +250,7 @@
     - install:app-requirements
 
 - name: install node dependencies
-  shell: "source /edx/app/edxapp/.nvm/nvm.sh && nvm use 12.22.12 && easy_install --version && npm ci"
+  shell: "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && source /edx/app/edxapp/.nvm/nvm.sh && nvm use 12.22.12 && easy_install --version && npm ci"
   args:
     chdir: "{{ edxapp_code_dir }}"
     executable: /bin/bash
