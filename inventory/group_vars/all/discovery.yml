@@ -1,5 +1,5 @@
 ---
-DISCOVERY_VERSION: 'open-release/nutmeg.master'
+DISCOVERY_VERSION: 'open-release/olive.master'
 
 DISCOVERY_DOMAIN: 'discovery.example.com'
 DISCOVERY_URL_ROOT: "{{ EDXAPP_LMS_BASE_SCHEME | default('https') }}://{{ DISCOVERY_DOMAIN }}"

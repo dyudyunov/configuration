@@ -2,7 +2,7 @@
 # production, stage, dev
 project_environment: 'production'
 project_team: ''
-project_name: 'nutmeg'
+project_name: 'olive'
 project_support_package: 'Default'
 # aws, azure, kvm, custom
 cloud_provider: ''

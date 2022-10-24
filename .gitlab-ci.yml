@@ -16,7 +16,7 @@ build-base-image:
         - docker push $BASE_IMAGE
         - echo image built - $BASE_IMAGE
     only:
-        - nutmeg-rg
+        - olive-rg
 
 # version tag template: release-rg-v.X.Y.Z
 #
@@ -31,8 +31,8 @@ build-version-image:
         - FULL_VERSION=$BASE_IMAGE
         - MINOR_VERSION=$(echo $FULL_VERSION | sed -n -e "s/\(^.*\)-.*$/\1/p")
         - MAJOR_VERSION=$(echo $MINOR_VERSION | sed -n -e "s/\(^.*\)-.*$/\1/p")
-        - docker pull $CI_REGISTRY_IMAGE:nutmeg-rg-develop || true
-        - docker --cache-from $CI_REGISTRY_IMAGE:nutmeg-rg-develop build -t $FULL_VERSION .
+        - docker pull $CI_REGISTRY_IMAGE:olive-rg-develop || true
+        - docker --cache-from $CI_REGISTRY_IMAGE:olive-rg-develop build -t $FULL_VERSION .
         - docker tag $FULL_VERSION $MINOR_VERSION
         - docker tag $FULL_VERSION $MAJOR_VERSION
         - docker push $FULL_VERSION

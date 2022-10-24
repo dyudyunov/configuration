@@ -1,10 +1,10 @@
 ---
 
-FORUM_VERSION: "open-release/nutmeg.master"
-NOTIFIER_VERSION: "open-release/nutmeg.master"
-XQUEUE_VERSION: "open-release/nutmeg.master"
-CERTS_VERSION: "open-release/nutmeg.master"
-DEMO_VERSION: "open-release/nutmeg.master"
+FORUM_VERSION: "open-release/olive.master"
+NOTIFIER_VERSION: "open-release/olive.master"
+XQUEUE_VERSION: "open-release/olive.master"
+CERTS_VERSION: "open-release/olive.master"
+DEMO_VERSION: "open-release/olive.master"
 
 mysql_host: "localhost"
 worker_host: "127.0.0.1"
