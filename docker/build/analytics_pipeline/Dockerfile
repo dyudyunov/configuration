@@ -29,7 +29,7 @@ ENV BOTO_CONFIG=/dev/null \
     ANALYTICS_PIPELINE_VENV=/edx/app/analytics_pipeline/venvs \
     BOOTSTRAP=/etc/bootstrap.sh \
     COMMON_BASE_DIR=/edx \
-    COMMON_PIP_PACKAGES_PIP='pip==20.3.4' \
+    COMMON_PIP_PACKAGES_PIP='pip==21.2.1' \
     COMMON_PIP_PACKAGES_SETUPTOOLS='setuptools==44.1.0' \
     COMMON_PIP_PACKAGES_VIRTUALENV='virtualenv==20.1.0' \
     COMMON_MYSQL_READ_ONLY_USER='read_only' \
@@ -123,7 +123,7 @@ RUN chown hadoop:hadoop /etc/bootstrap.sh \
 # Analytics pipeline
 ARG OPENEDX_RELEASE=master
 ENV OPENEDX_RELEASE=${OPENEDX_RELEASE}
-RUN git clone https://github.com/edx/edx-analytics-pipeline \
+RUN git clone https://github.com/openedx/edx-analytics-pipeline \
     && cd edx-analytics-pipeline \
     && git checkout ${OPENEDX_RELEASE} \
     && cd .. \

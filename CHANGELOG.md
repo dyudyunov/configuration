@@ -4,6 +4,22 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top (right below this line).
 
+ - 2022-07-25
+    - Add new routing key for individual learner course regrade queue
+ - 2022-06-08
+    - Role: edxapp
+        - Added a new `CELERY_RESULT_BACKEND` setting to allow operators to
+          override the default celery result backend.
+
+ - 2022-06-06
+    - Role: common
+        - Remove PPA for `watchman` as we have shifted to Ubuntu 20.04,
+          if you are running this against Ubuntu version less than 20.04
+          then installation will fail.
+
+ - 2022-06-01
+    - Upgrade ansible to 2.9
+
  - 2022-04-06
     - Role: edxapp
         - Added a new `EDXAPP_COMPILE_JSI18N` variable to control whether

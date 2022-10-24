@@ -2,10 +2,10 @@
 #
 # edX Configuration
 #
-# github:     https://github.com/edx/configuration
-# wiki:       https://github.com/edx/configuration/wiki
-# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
-# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+# github:     https://github.com/openedx/configuration
+# wiki:       https://github.com/openedx/configuration/wiki
+# code style: https://github.com/openedx/configuration/wiki/Ansible-Coding-Conventions
+# license:    https://github.com/openedx/configuration/blob/master/LICENSE.TXT
 #
 #
 #
@@ -58,7 +58,8 @@
   command: "{{ edxapp_venv_dir }}/bin/pip install {{ COMMON_PIP_VERBOSITY }} -i {{ COMMON_PYPI_MIRROR_URL }} --exists-action w -r {{ openstack_requirements_file }}"
   args:
     chdir: "{{ edxapp_code_dir }}"
-  sudo_user: "{{ edxapp_user }}"
+  become: true
+  become_user: "{{ edxapp_user }}"
   environment: "{{ edxapp_environment }}"
   when: edxapp_code_dir is defined
   tags:

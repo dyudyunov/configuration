@@ -56,6 +56,7 @@
     ECOMMERCE_ENABLE_COMPREHENSIVE_THEMING: false
     EDXAPP_ENABLE_MEMCACHE: true
     EDXAPP_ENABLE_ELASTIC_SEARCH: true
+    EDXAPP_ENABLE_OPEN_SEARCH: TRUE
     # Ecommerce
     ECOMMERCE_CORS_ORIGIN_WHITELIST: [
       "{{ EDXAPP_LMS_BASE_SCHEME }}://{{ MFE_BASE }}",
@@ -67,6 +68,9 @@
     # For the mfe role.
     COMMON_ECOMMERCE_BASE_URL: '{{ ECOMMERCE_ECOMMERCE_URL_ROOT }}'
     ECOMMERCE_ENABLE_PAYMENT_MFE: true
+
+    EDXAPP_ENABLE_CLOUDWATCH: false
+    cloudwatch_logs_enabled: '{{ EDXAPP_ENABLE_CLOUDWATCH }}'
   roles:
     - role: swapfile
       SWAPFILE_SIZE: 4GB
@@ -115,6 +119,8 @@
     - oauth_client_setup
     - role: elasticsearch
       when: EDXAPP_ENABLE_ELASTIC_SEARCH
+    - role: opensearch
+      when: EDXAPP_ENABLE_OPEN_SEARCH
     - forum
     - role: discovery
       when: SANDBOX_ENABLE_DISCOVERY
@@ -125,6 +131,8 @@
       when: COMMON_ENABLE_DATADOG
     - role: splunkforwarder
       when: COMMON_ENABLE_SPLUNKFORWARDER
+    - role: aws_cloudwatch_agent
+      when: EDXAPP_ENABLE_CLOUDWATCH
     - role: postfix_queue
       when: POSTFIX_QUEUE_EXTERNAL_SMTP_HOST != ''
     - role: datadog-uninstall

@@ -147,6 +147,10 @@ EDXAPP_SEARCH_HOST: 'localhost'
 EDXAPP_SEARCH_PORT: 9200
 EDXAPP_SEARCH_USE_SSL: false
 
+EDXAPP_OPENSEARCH_HOST: 'localhost'
+EDXAPP_OPENSEARCH_PORT: 9202
+EDXAPP_OPENSEARCH_USE_SSL: false
+
 # list of dictionaries of the format
 # { 'host': 'hostname', 'port': 'portnumber', 'otherconfigsuchas use_ssl': 'True' }
 # http://elasticsearch-py.readthedocs.org/en/master/api.html#elasticsearch
@@ -154,6 +158,11 @@ EDXAPP_ELASTIC_SEARCH_CONFIG:
   - host: "{{ EDXAPP_SEARCH_HOST }}"
     port: "{{ EDXAPP_SEARCH_PORT }}"
     use_ssl: "{{ EDXAPP_SEARCH_USE_SSL }}"
+
+EDXAPP_OPEN_SEARCH_CONFIG:
+  - host: "{{ EDXAPP_OPENSEARCH_HOST }}"
+    port: "{{ EDXAPP_OPENSEARCH_PORT }}"
+    use_ssl: "{{ EDXAPP_OPENSEARCH_USE_SSL }}"
 
 EDXAPP_SETTINGS: '{{ COMMON_EDXAPP_SETTINGS }}'
 
@@ -205,6 +214,7 @@ EDXAPP_CELERY_BROKER_USE_SSL: false
 EDXAPP_CELERY_EVENT_QUEUE_TTL: !!null
 EDXAPP_CELERY_TIMEZONE: "UTC"
 EDXAPP_CELERYBEAT_SCHEDULER: "celery.beat:PersistentScheduler"
+EDXAPP_CELERY_RESULT_BACKEND: "django-cache"
 EDXAPP_ENABLE_CELERY_BEAT: false
 EDXAPP_SINGLE_BEAT_LOCK_TIME: 60
 # EDXAPP_SINGLE_BEAT_HEARTBEAT_INTERVAL must be smaller than EDXAPP_SINGLE_BEAT_LOCK_TIME / 2
@@ -462,7 +472,7 @@ EDXAPP_JWT_AUTH_COOKIE_HEADER_PAYLOAD: '{{ COMMON_JWT_AUTH_COOKIE_HEADER_PAYLOAD
 EDXAPP_JWT_AUTH_COOKIE_SIGNATURE: '{{ COMMON_JWT_AUTH_COOKIE_SIGNATURE }}'
 EDXAPP_JWT_AUTH_REFRESH_COOKIE: '{{ COMMON_JWT_AUTH_REFRESH_COOKIE }}'
 
-# See https://github.com/edx/edx-platform/blob/master/openedx/core/djangoapps/oauth_dispatch/docs/decisions/0008-use-asymmetric-jwts.rst
+# See https://github.com/openedx/edx-platform/blob/master/openedx/core/djangoapps/oauth_dispatch/docs/decisions/0008-use-asymmetric-jwts.rst
 EDXAPP_JWT_SIGNING_ALGORITHM: !!null
 EDXAPP_JWT_PRIVATE_SIGNING_JWK: !!null
 
@@ -574,17 +584,17 @@ EDXAPP_PRIVATE_REQUIREMENTS:
       extra_args: -e
     # This repository contains schoolyourself-xblock, which is used in
     # edX's "AlgebraX" and "GeometryX" courses.
-    - name: git+https://github.com/edx/schoolyourself-xblock.git@2093048720cfb36cc05b3143cd6f2585c7c64d85#egg=schoolyourself-xblock
+    - name: git+https://github.com/openedx/schoolyourself-xblock.git@2093048720cfb36cc05b3143cd6f2585c7c64d85#egg=schoolyourself-xblock
       extra_args: -e
     # Prototype XBlocks from edX learning sciences limited roll-outs and user testing.
     # Concept XBlock, in particular, is nowhere near finished and an early prototype.
     # Profile XBlock is there so we can play with XBlock arguments in the platform, but isn't ready for use outside of
     # edX.
-    - name: git+https://github.com/edx/ConceptXBlock.git@a45a6560c92b6d8b62be1f939ff1d00dfff84e70#egg=concept-xblock
+    - name: git+https://github.com/openedx/ConceptXBlock.git@a45a6560c92b6d8b62be1f939ff1d00dfff84e70#egg=concept-xblock
       extra_args: -e
-    - name: git+https://github.com/edx/AudioXBlock.git@20538c6e9bb704801a71ecbb6981f794556dfc45#egg=audio-xblock
+    - name: git+https://github.com/openedx/AudioXBlock.git@20538c6e9bb704801a71ecbb6981f794556dfc45#egg=audio-xblock
       extra_args: -e
-    - name: git+https://github.com/edx/AnimationXBlock.git@c950ffdda2f69effda93bf03df8646f61d3ffada#egg=animation-xblock
+    - name: git+https://github.com/openedx/AnimationXBlock.git@c950ffdda2f69effda93bf03df8646f61d3ffada#egg=animation-xblock
       extra_args: -e
     # Peer instruction XBlock
     - name: git+https://github.com/ubc/ubcpi.git@1.0.0#egg=ubcpi-xblock
@@ -595,17 +605,17 @@ EDXAPP_PRIVATE_REQUIREMENTS:
     - name: git+https://github.com/open-craft/xblock-activetable.git@d3fb772435c382b59293e4e688a6a3096c4f6fd7#egg=activetable-xblock
       extra_args: -e
     # Stanford-developed XBlocks (technically unsupported, but here to ease migration of courses from Lagunita)
-    - name: git+https://github.com/edx/xblock-qualtrics-survey.git@02d87f567ec2af4579642cf795bb851507d6edf9#egg=xblock_qualtrics_survey
+    - name: git+https://github.com/openedx/xblock-qualtrics-survey.git@02d87f567ec2af4579642cf795bb851507d6edf9#egg=xblock_qualtrics_survey
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-in-video-quiz.git@a703acd9ef82434fc7ca2bc230496f45a584bb9a#egg=invideoquiz-xblock
+    - name: git+https://github.com/openedx/xblock-in-video-quiz.git@a703acd9ef82434fc7ca2bc230496f45a584bb9a#egg=invideoquiz-xblock
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-submit-and-compare@8f0b3279f36e25aff8cce3f0b1793b9f19dc8729#egg=xblock-submit-and-compare
+    - name: git+https://github.com/openedx/xblock-submit-and-compare@8f0b3279f36e25aff8cce3f0b1793b9f19dc8729#egg=xblock-submit-and-compare
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-free-text-response@83a389e0a4b0a464e5d1e4a4a201678aed5eee9a#egg=xblock-free-text-response
+    - name: git+https://github.com/openedx/xblock-free-text-response@83a389e0a4b0a464e5d1e4a4a201678aed5eee9a#egg=xblock-free-text-response
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-sql-grader@5257b4a1aa07aa572fd3865647d91d0628f0cbd3#egg=xblock-sql-grader
+    - name: git+https://github.com/openedx/xblock-sql-grader@5257b4a1aa07aa572fd3865647d91d0628f0cbd3#egg=xblock-sql-grader
       extra_args: -e
-    - name: git+https://github.com/edx/xblock-image-modal@bef91413447e15570863ab08316a04c0b546b268#egg=xblock-image-modal
+    - name: git+https://github.com/openedx/xblock-image-modal@bef91413447e15570863ab08316a04c0b546b268#egg=xblock-image-modal
       extra_args: -e
     # XBlocks associated with the LabXchange project
     - name: git+https://github.com/open-craft/labxchange-xblocks.git@a0a8a8dad13199014d4bb29cee416289880bde0b#egg=labxchange-xblocks
@@ -640,10 +650,6 @@ EDXAPP_VERIFY_STUDENT:
 
 EDXAPP_CONTENTSTORE_ADDITIONAL_OPTS: {}
 EDXAPP_BULK_EMAIL_EMAILS_PER_TASK: 500
-# If using microsites this should point to the microsite repo
-EDXAPP_MICROSITE_ROOT_DIR: "{{ edxapp_app_dir }}/edx-microsite"
-# this dictionary defines what microsites are configured
-EDXAPP_MICROSITE_CONFIGURATION: {}
 # Instructor code that will not be run in the code sandbox
 EDXAPP_COURSES_WITH_UNSAFE_CODE: []
 EDXAPP_SESSION_COOKIE_DOMAIN: ""
@@ -736,6 +742,7 @@ EDXAPP_CELERY_WORKERS:
     prefetch_optimization: default
 EDXAPP_RECALCULATE_GRADES_ROUTING_KEY: 'edx.lms.core.default'
 EDXAPP_POLICY_CHANGE_GRADES_ROUTING_KEY: 'edx.lms.core.default'
+EDXAPP_SINGLE_LEARNER_COURSE_REGRADE_ROUTING_KEY: 'edx.lms.core.default'
 EDXAPP_BULK_EMAIL_ROUTING_KEY_SMALL_JOBS: 'edx.lms.core.default'
 EDXAPP_PROGRAM_CERTIFICATES_ROUTING_KEY: 'edx.lms.core.default'
 EDXAPP_LMS_CELERY_QUEUES: "{{ edxapp_workers|selectattr('service_variant', 'equalto', 'lms')|map(attribute='queue')|map('regex_replace', '^(.*)$', 'edx.lms.core.\\1')|list }}"
@@ -887,6 +894,32 @@ EDXAPP_RETIRED_USER_SALTS:
 # These are the required states, environmental overrides are in edx-internal.
 EDXAPP_RETIREMENT_STATES:
   - "PENDING"
+  - "RETIRING_FORUMS"
+  - "FORUMS_COMPLETE"
+  - "RETIRING_SALESFORCE_LEADS"
+  - "SALESFORCE_LEADS_COMPLETE"
+  - "RETIRING_SEGMENT"
+  - "SEGMENT_COMPLETE"
+  - "RETIRING_HUBSPOT"
+  - "HUBSPOT_COMPLETE"
+  - "RETIRING_BRAZE"
+  - "BRAZE_COMPLETE"
+  - "RETIRING_ENROLLMENTS"
+  - "ENROLLMENTS_COMPLETE"
+  - "RETIRING_NOTES"
+  - "NOTES_COMPLETE"
+  - "RETIRING_PROCTORING"
+  - "PROCTORING_COMPLETE"
+  - "RETIRING_DEMOGRAPHICS"
+  - "DEMOGRAPHICS_COMPLETE"
+  - "RETIRING_LICENSE_MANAGER"
+  - "LICENSE_MANAGER_COMPLETE"
+  - "RETIRING_LMS_MISC"
+  - "LMS_MISC_COMPLETE"
+  - "RETIRING_LMS"
+  - "LMS_COMPLETE"
+  - "ADDING_TO_PARTNER_QUEUE"
+  - "PARTNER_QUEUE_COMPLETE"
   - "ERRORED"
   - "ABORTED"
   - "COMPLETE"
@@ -1019,6 +1052,10 @@ DESIGNER_SERVICE_USER_NAME: "designer_worker"
 LICENSE_MANAGER_SERVICE_USER_EMAIL: "license_manager_worker@example.com"
 LICENSE_MANAGER_SERVICE_USER_NAME: "license_manager_worker"
 
+# Configuration needed for LMS to communicate with the Commerce Coordinator service
+COMMERCE_COORDINATOR_SERVICE_USER_EMAIL: "commerce_coordinator_worker@example.com"
+COMMERCE_COORDINATOR_SERVICE_USER_NAME: "commerce_coordinator_worker"
+
 ENTERPRISE_CATALOG_SERVICE_USER_EMAIL: "enterprise_catalog_worker@example.com"
 ENTERPRISE_CATALOG_SERVICE_USER_NAME: "enterprise_catalog_worker"
 
@@ -1126,14 +1163,17 @@ edxapp_venv_dir: "{{ edxapp_venvs_dir }}/edxapp"
 edxapp_venv_bin: "{{ edxapp_venv_dir }}/bin"
 edxapp_nodeenv_dir: "{{ edxapp_app_dir }}/nodeenvs/edxapp"
 edxapp_nodeenv_bin: "{{ edxapp_nodeenv_dir }}/bin"
+edxapp_npm_dir: "{{ edxapp_app_dir }}/.npm"
+edxapp_npm_bin: "{{ edxapp_npm_dir }}/bin"
 edxapp_settings: '{{ EDXAPP_SETTINGS }}'
-EDXAPP_NODE_VERSION: "12"
+EDXAPP_NODE_VERSION: "16"
+EDXAPP_NPM_VERSION: "8.5.0"
 # This is where node installs modules, not node itself
 edxapp_node_bin: "{{ edxapp_code_dir }}/node_modules/.bin"
 edxapp_user: edxapp
 edxapp_user_createhome: 'no'
 edxapp_user_shell: '/bin/false'
-edxapp_deploy_path: "{{ edxapp_venv_bin }}:{{ edxapp_code_dir }}/bin:{{ edxapp_node_bin }}:{{ edxapp_nodeenv_bin }}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+edxapp_deploy_path: "{{ edxapp_venv_bin }}:{{ edxapp_code_dir }}/bin:{{ edxapp_npm_bin }}:{{ edxapp_node_bin }}:{{ edxapp_nodeenv_bin }}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 edxapp_staticfile_dir: "{{ edxapp_data_dir }}/staticfiles"
 edxapp_media_dir: "{{ edxapp_data_dir }}/media"
 edxapp_media_dir_s3: "{{ edxapp_media_dir | regex_replace('^\\/', '') }}"
@@ -1193,6 +1233,8 @@ edxapp_environment_default:
   STUDIO_CFG: "{{ edxapp_studio_cfg }}"
   BOTO_CONFIG: "{{ edxapp_app_dir }}/.boto"
   REVISION_CFG: "{{ edxapp_revision_cfg }}"
+  NODE_PATH: "{{ edxapp_npm_dir }}/lib/modules:/usr/lib/node_modules"
+  MANPATH: "{{ edxapp_npm_dir }}/share/man:$(manpath)"
 
 edxapp_environment_extra: {}
 
@@ -1368,13 +1410,12 @@ generic_env_config:  &edxapp_generic_env
   CELERY_BROKER_VHOST: "{{ EDXAPP_CELERY_BROKER_VHOST }}"
   CELERY_BROKER_USE_SSL: "{{ EDXAPP_CELERY_BROKER_USE_SSL }}"
   CELERY_EVENT_QUEUE_TTL: "{{ EDXAPP_CELERY_EVENT_QUEUE_TTL }}"
+  CELERY_RESULT_BACKEND: "{{ EDXAPP_CELERY_RESULT_BACKEND }}"
   PAYMENT_SUPPORT_EMAIL: "{{ EDXAPP_PAYMENT_SUPPORT_EMAIL }}"
   ZENDESK_URL: "{{ EDXAPP_ZENDESK_URL }}"
   ZENDESK_CUSTOM_FIELDS: "{{ EDXAPP_ZENDESK_CUSTOM_FIELDS }}"
   COURSES_WITH_UNSAFE_CODE: "{{ EDXAPP_COURSES_WITH_UNSAFE_CODE }}"
   BULK_EMAIL_EMAILS_PER_TASK: "{{ EDXAPP_BULK_EMAIL_EMAILS_PER_TASK }}"
-  MICROSITE_ROOT_DIR: "{{ EDXAPP_MICROSITE_ROOT_DIR }}"
-  MICROSITE_CONFIGURATION: "{{ EDXAPP_MICROSITE_CONFIGURATION }}"
   DEFAULT_FILE_STORAGE:  "{{ EDXAPP_DEFAULT_FILE_STORAGE }}"
   GRADES_DOWNLOAD:
     STORAGE_CLASS: "{{ EDXAPP_GRADE_STORAGE_CLASS | default(None) }}"
@@ -1533,12 +1574,13 @@ generic_env_config:  &edxapp_generic_env
   SOCIAL_SHARING_SETTINGS: "{{ EDXAPP_SOCIAL_SHARING_SETTINGS }}"
   SESSION_COOKIE_SECURE: "{{ EDXAPP_SESSION_COOKIE_SECURE }}"
   CODE_JAIL:
-    # from https://github.com/edx/codejail/blob/master/codejail/django_integration.py#L24, '' should be same as None
+    # from https://github.com/openedx/codejail/blob/master/codejail/django_integration.py#L24, '' should be same as None
     python_bin: '{% if EDXAPP_PYTHON_SANDBOX %}{{ edxapp_sandbox_venv_dir }}/bin/python{% endif %}'
     limits: "{{ EDXAPP_CODE_JAIL_LIMITS }}"
     user: '{{ edxapp_sandbox_user }}'
   AFFILIATE_COOKIE_NAME: "{{ EDXAPP_AFFILIATE_COOKIE_NAME }}"
   ELASTIC_SEARCH_CONFIG: "{{ EDXAPP_ELASTIC_SEARCH_CONFIG }}"
+  OPEN_SEARCH_CONFIG: "{{ EDXAPP_OPEN_SEARCH_CONFIG }}"
   PLATFORM_TWITTER_ACCOUNT: "{{ EDXAPP_PLATFORM_TWITTER_ACCOUNT }}"
   PLATFORM_FACEBOOK_ACCOUNT: "{{ EDXAPP_PLATFORM_FACEBOOK_ACCOUNT }}"
   HELP_TOKENS_BOOKS: "{{ EDXAPP_HELP_TOKENS_BOOKS }}"
@@ -1549,6 +1591,7 @@ generic_env_config:  &edxapp_generic_env
   BASE_COOKIE_DOMAIN: "{{ EDXAPP_BASE_COOKIE_DOMAIN }}"
 
   POLICY_CHANGE_GRADES_ROUTING_KEY: "{{ EDXAPP_POLICY_CHANGE_GRADES_ROUTING_KEY }}"
+  SINGLE_LEARNER_COURSE_REGRADE_ROUTING_KEY: "{{ EDXAPP_SINGLE_LEARNER_COURSE_REGRADE_ROUTING_KEY }}"
   PROCTORING_SETTINGS: "{{ EDXAPP_PROCTORING_SETTINGS }}"
   EXTRA_MIDDLEWARE_CLASSES: "{{ EDXAPP_EXTRA_MIDDLEWARE_CLASSES }}"
   MAINTENANCE_BANNER_TEXT: "{{ EDXAPP_MAINTENANCE_BANNER_TEXT }}"
@@ -1877,6 +1920,10 @@ SERVICE_WORKER_USERS:
     is_superuser: false
   - email: "{{ LICENSE_MANAGER_SERVICE_USER_EMAIL }}"
     username: "{{ LICENSE_MANAGER_SERVICE_USER_NAME }}"
+    is_staff: true
+    is_superuser: false
+  - email: "{{ COMMERCE_COORDINATOR_SERVICE_USER_EMAIL }}"
+    username: "{{ COMMERCE_COORDINATOR_SERVICE_USER_NAME }}"
     is_staff: true
     is_superuser: false
   - email: "{{ ENTERPRISE_CATALOG_SERVICE_USER_EMAIL }}"

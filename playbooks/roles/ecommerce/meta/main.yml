@@ -2,10 +2,10 @@
 #
 # edX Configuration
 #
-# github:     https://github.com/edx/configuration
+# github:     https://github.com/openedx/configuration
 # wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
 # code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
-# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+# license:    https://github.com/openedx/configuration/blob/master/LICENSE.TXT
 #
 ##
 # Role includes for role ecommerce
@@ -52,6 +52,8 @@ dependencies:
     edx_django_service_language_code: '{{ ECOMMERCE_LANGUAGE_CODE }}'
     edx_django_service_secret_key: '{{ ECOMMERCE_SECRET_KEY }}'
     edx_django_service_memcache: '{{ ECOMMERCE_MEMCACHE }}'
+    edx_django_service_node_version: '{{ ECOMMERCE_NODE_VERSION }}'
+    edx_django_service_npm_version: '{{ ECOMMERCE_NPM_VERSION }}'
     edx_django_service_databases:
       default:
         ENGINE: 'django.db.backends.mysql'

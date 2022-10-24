@@ -163,14 +163,21 @@
   tags:
     - install
     - install:app-requirements
+  
+- name: Install local edxapp requirements
+  command: "{{ edxapp_venv_dir }}/bin/pip install -e {{ edxapp_code_dir }}/."
+  become_user: "{{ edxapp_user }}"
+  tags:
+    - install
+    - install:app-requirements
 
-# Private requriements require a ssh key to install, use the same key as the private key for edx-platform
+# Private requirements require a ssh key to install, use the same key as the private key for edx-platform
 # If EDXAPP_INSTALL_PRIVATE_REQUIREMENTS is set to true EDXAPP_USE_GIT_IDENTITY must also be true
 - name: install python private requirements
   # Need to use shell rather than pip so that we can maintain the context of our current working directory; some
   # requirements are pathed relative to the edx-platform repo. Using the pip from inside the virtual environment implicitly
   # installs everything into that virtual environment.
-  shell: "{{ edxapp_venv_dir }}/bin/pip install {{ COMMON_PIP_VERBOSITY }} -i {{ COMMON_PYPI_MIRROR_URL }} --exists-action w {{ item.extra_args|default('') }} {{ item.name }}"
+  shell: "{{ edxapp_venv_dir }}/bin/pip install {{ COMMON_PIP_VERBOSITY }} -i {{ COMMON_PYPI_MIRROR_URL }} --exists-action w {{ item.extra_args|default('') }} {{ item.name|quote }}"
   args:
     chdir: "{{ edxapp_code_dir }}"
   with_items:
@@ -250,7 +257,8 @@
     - install:app-requirements
 
 - name: install node dependencies
-  shell: "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && source /edx/app/edxapp/.nvm/nvm.sh && nvm install 12.22.12 && nvm use 12.22.12 && easy_install --version && npm ci"
+#  shell: "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && source /edx/app/edxapp/.nvm/nvm.sh && nvm install 12.22.12 && nvm use 12.22.12 && easy_install --version && npm ci"
+  shell: "easy_install --version && npm clean-install"
   args:
     chdir: "{{ edxapp_code_dir }}"
     executable: /bin/bash
@@ -287,7 +295,7 @@
 
 - name: Pin pip to a specific version.
   # Not pinning to the same version as everything else because sandboxes are still python 2.7
-  command: "{{ edxapp_sandbox_venv_dir }}/bin/pip install pip==20.3.4"
+  command: "{{ edxapp_sandbox_venv_dir }}/bin/pip install pip==21.2.1"
   args:
     chdir: "{{ edxapp_code_dir }}"
   become_user: "{{ edxapp_sandbox_user }}"

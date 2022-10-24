@@ -2,10 +2,10 @@
 #
 # edX Configuration
 #
-# github:     https://github.com/edx/configuration
+# github:     https://github.com/openedx/configuration
 # wiki:       https://openedx.atlassian.net/wiki/display/OpenOPS
 # code style: https://openedx.atlassian.net/wiki/display/OpenOPS/Ansible+Code+Conventions
-# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+# license:    https://github.com/openedx/configuration/blob/master/LICENSE.TXT
 #
 #
 #
@@ -81,6 +81,7 @@
   shell: test ! -e "{{ item }}/.git" || git -C "{{ item }}" status --porcelain --untracked-files=no
   become_user: "{{ repo_owner }}"
   register: dirty_files
+  become_user: "{{ repo_owner }}"
   # Using the map here means that the items will only be the DESTINATION strings,
   # rather than the full GIT_REPOS structures, which have data we don't want to log,
   # so we don't have to use no_log on this task.
