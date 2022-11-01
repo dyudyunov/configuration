@@ -1,0 +1,162 @@
+---
+
+- name: install required packages
+  apt:
+    pkg:
+    - python3-docker
+    - python3-websocket
+
+- name: create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ RG_PORTAL_USER }}"
+    group: "{{ RG_PORTAL_USER }}"
+    mode: 0755
+  with_items:
+    - "{{ RG_PORTAL_APP_DIR }}/data/media/{{ RG_PORTAL_SITE_NAME }}"
+    - "{{ RG_PORTAL_APP_DIR }}/data/db/{{ RG_PORTAL_SITE_NAME }}"
+    - "{{ RG_PORTAL_APP_DIR }}/env.d"
+    - "{{ RG_PORTAL_APP_DIR }}/docker/files/etc/nginx/conf.d"
+
+- name: log into private registry and force re-authorization
+  docker_login:
+    registry: "{{ RG_PORTAL_REGISTRY }}"
+    username: "{{ RG_PORTAL_REGISTRY_USERNAME }}"
+    password: "{{ RG_PORTAL_REGISTRY_PASSWORD }}"
+    reauthorize: yes
+  become_user: "{{ RG_PORTAL_USER }}"
+
+- name: create production env file
+  template:
+    src: production.env.j2
+    dest: "{{ RG_PORTAL_APP_DIR }}/env.d/production"
+    owner: "{{ RG_PORTAL_USER }}"
+    group: "{{ RG_PORTAL_USER }}"
+    mode: 0640
+
+- name: create NGINX configuration file
+  template:
+    src: "nginx/conf.d/default.conf.j2"
+    dest: "{{ RG_PORTAL_APP_DIR }}/docker/files/etc/nginx/conf.d/default.conf"
+    owner: "{{ RG_PORTAL_USER }}"
+    group: "{{ RG_PORTAL_USER }}"
+    mode: 0640
+
+- name: create docker-compose file
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ RG_PORTAL_APP_DIR }}/docker-compose.yml"
+    owner: "{{ RG_PORTAL_USER }}"
+    group: "{{ RG_PORTAL_USER }}"
+    mode: 0640
+
+- name: install docker-compose
+  ansible.builtin.pip:
+    name: docker-compose
+  become_user: "{{ RG_PORTAL_USER }}"
+
+- name: get user info
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ RG_PORTAL_USER }}"
+
+- name: set user's uid and gig
+  set_fact:
+    portal_user_uid_gid: "{{ getent_passwd[item][1] }}:{{ getent_passwd[item][2] }}"
+  with_items:
+    - "{{ RG_PORTAL_USER }}"
+
+- name: tear down existing services
+  community.docker.docker_compose:
+    project_src: "{{ RG_PORTAL_APP_DIR }}"
+    remove_volumes: yes
+    remove_orphans: yes
+    state: absent
+  become_user: "{{ RG_PORTAL_USER }}"
+  environment:
+    DOCKER_USER: "{{ portal_user_uid_gid }}"
+#
+# - name: prune containers
+#   community.docker.docker_prune:
+#     containers: true
+#     networks: true
+#     volumes: true
+#   become_user: "{{ RG_PORTAL_USER }}"
+
+- name: create and start services
+  community.docker.docker_compose:
+    project_src: "{{ RG_PORTAL_APP_DIR }}"
+    restarted: yes
+    scale:
+      redis-sentinel: 2
+    pull: yes
+  register: docker_compose_status
+  become_user: "{{ RG_PORTAL_USER }}"
+  environment:
+    DOCKER_USER: "{{ portal_user_uid_gid }}"
+
+# - ansible.builtin.debug:
+#     var: docker_compose_status.results[0].services.app
+
+# container name "app_app_1" is hardcoded, needs to be fixed
+- name: migrations
+  community.docker.docker_container_exec:
+    container: app_app_1
+    command: python manage.py migrate
+  become_user: "{{ RG_PORTAL_USER }}"
+
+- name: create base site structure
+  community.docker.docker_container_exec:
+    container: app_app_1
+    command: python manage.py richie_init
+  become_user: "{{ RG_PORTAL_USER }}"
+
+# - name: restart app
+#   command: docker-compose restart app
+#   become_user: "{{ RG_PORTAL_USER }}"
+#   args:
+#     chdir: "{{ RG_PORTAL_APP_DIR }}"
+#   environment:
+#     DOCKER_USER: "{{ portal_user_uid_gid }}"
+
+- name: (re)generate the Elasticsearch index
+  community.docker.docker_container_exec:
+    container: app_app_1
+    command: python manage.py bootstrap_elasticsearch
+  become_user: "{{ RG_PORTAL_USER }}"
+
+- name: create superuser if not exists
+  community.docker.docker_container_exec:
+    container: app_app_1
+    command: >
+      python manage.py
+      shell -c "from django.contrib.auth.models import User;
+      User.objects.filter(username='staff').exists() or
+      User.objects.create_superuser('staff', 'staff@example.com', '{{ RG_PORTAL_STAFF_PASSWORD }}')"
+  become_user: "{{ RG_PORTAL_USER }}"
+
+- name: check if site configured
+  community.docker.docker_container_exec:
+    container: app_app_1
+    command: >
+      python manage.py
+      shell -c "from django.contrib.sites.models import Site;
+      Site.objects.filter(domain='{{ RG_PORTAL_PUBLIC_DNS }}').exists() or sys.exit(1)"
+  register: site_exists
+  ignore_errors: yes
+  become_user: "{{ RG_PORTAL_USER }}"
+
+- name: set site name and domain
+  community.docker.docker_container_exec:
+    container: app_app_1
+    # Site.objects.filter(domain='{{ RG_PORTAL_PUBLIC_DNS }}').exists() or
+    command: >
+      python manage.py
+      shell -c "from django.contrib.sites.models import Site;
+      site = Site.objects.get(id=1);
+      site.name = '{{ RG_PORTAL_SITE_NAME }}';
+      site.domain = '{{ RG_PORTAL_PUBLIC_DNS }}';
+      site.save()"
+  become_user: "{{ RG_PORTAL_USER }}"
+  when: site_exists.rc != 0
