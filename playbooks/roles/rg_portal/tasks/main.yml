@@ -76,13 +76,6 @@
   become_user: "{{ RG_PORTAL_USER }}"
   environment:
     DOCKER_USER: "{{ portal_user_uid_gid }}"
-#
-# - name: prune containers
-#   community.docker.docker_prune:
-#     containers: true
-#     networks: true
-#     volumes: true
-#   become_user: "{{ RG_PORTAL_USER }}"
 
 - name: create and start services
   community.docker.docker_compose:
@@ -111,14 +104,6 @@
     container: app_app_1
     command: python manage.py richie_init
   become_user: "{{ RG_PORTAL_USER }}"
-
-# - name: restart app
-#   command: docker-compose restart app
-#   become_user: "{{ RG_PORTAL_USER }}"
-#   args:
-#     chdir: "{{ RG_PORTAL_APP_DIR }}"
-#   environment:
-#     DOCKER_USER: "{{ portal_user_uid_gid }}"
 
 - name: (re)generate the Elasticsearch index
   community.docker.docker_container_exec:
