@@ -79,32 +79,47 @@ RICHIE_MINIMUM_COURSE_RUNS_ENROLLMENT_COUNT=1
 EDXAPP_INSTALL_PRIVATE_REQUIREMENTS: True
 
 EDXAPP_ENABLE_CROSS_DOMAIN_CSRF_COOKIE: True
-EDXAPP_CROSS_DOMAIN_CSRF_COOKIE_DOMAIN: '.raccoongang.com'
+EDXAPP_CROSS_DOMAIN_CSRF_COOKIE_DOMAIN: '.example.com'
 EDXAPP_CROSS_DOMAIN_CSRF_COOKIE_NAME: 'edx_csrf_token'
 EDXAPP_CORS_ORIGIN_WHITELIST:
-  - "{{ EDXAPP_PORTAL_BASE_URL }}"
+  - "{{ EDXAPP_PORTAL_URL }}"
 
 EDXAPP_PRIVATE_REQUIREMENTS:
   - name: 'git+git@gitlab.raccoongang.com:rg-developers/rg-portal-openedx-sync@2.0.1#egg=richie_openedx_sync'
     extra_args: '-e'
 
 EDXAPP_LMS_ENV_EXTRA:
+  RICHIE_BASE_URL: "{{ EDXAPP_PORTAL_URL }}"
   RICHIE_OPENEDX_SYNC_COURSE_HOOKS:
     - url: "{{ EDXAPP_PORTAL_BASE_URL }}/api/v1.0/course-runs-sync/"
       secret: {{ RG_PORTAL_DJANGO_RICHIE_COURSE_RUN_SYNC_SECRETS }}
 
 EDXAPP_CMS_ENV_EXTRA:
+  RICHIE_BASE_URL: "{{ EDXAPP_PORTAL_URL }}"
   RICHIE_OPENEDX_SYNC_COURSE_HOOKS:
-    - url: "{{ EDXAPP_PORTAL_BASE_URL }}/api/v1.0/course-runs-sync/"
+    - url: "{{ EDXAPP_PORTAL_URL }}/api/v1.0/course-runs-sync/"
       secret: {{ RG_PORTAL_DJANGO_RICHIE_COURSE_RUN_SYNC_SECRETS }}
 
-EDXAPP_PORTAL_BASE_URL: "https://{{ RG_PORTAL_PUBLIC_DNS }}"
+EDXAPP_PORTAL_URL: "https://{{ RG_PORTAL_PUBLIC_DNS }}"
 
+
+RG_PORTAL_PUBLIC_DNS: portal.example.com
+
+## Add this block to vault
 RG_PORTAL_REGISTRY_PASSWORD: SET_ME_PLEASE
-RG_PORTAL_PUBLIC_DNS: portal-rg-portal-box-dev.raccoongang.com
 RG_PORTAL_DB_PASSWORD: SET_ME_PLEASE
 RG_PORTAL_DJANGO_SECRET_KEY: SET_ME_PLEASE
 RG_PORTAL_DJANGO_RICHIE_COURSE_RUN_SYNC_SECRETS: "SET_ME_PLEASE"
+
+
+## Optional add NGINX config ##
+NGINX_ADDITIONAL_SERVICES_CONFIG:
+ - name: portal
+   server_name: "{{ RG_PORTAL_PUBLIC_DNS }}"
+   nginx_port: 443
+   nging_proxy_pass_port: "8081"
+   nginx_ssl_certificate_path: '/etc/nginx/ssl/raccoongang-ssl.crt'
+   nginx_ssl_certificate_key_path: '/etc/nginx/ssl/raccoongang-ssl.key'
 ```
 
 ### Useful links from official docs
