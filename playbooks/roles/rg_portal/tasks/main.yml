@@ -108,7 +108,12 @@
 - name: (re)generate the Elasticsearch index
   community.docker.docker_container_exec:
     container: app_app_1
-    command: python manage.py bootstrap_elasticsearch
+    command: >
+      bash -c
+      '[[ "$(curl --retry 30 --retry-connrefused -s -o /dev/null -m 3 -L -w
+      ''%{http_code}'' http://elasticsearch:9200)" == "200" ]]
+      &&
+      python manage.py bootstrap_elasticsearch'
   become_user: "{{ RG_PORTAL_USER }}"
 
 - name: create superuser if not exists
