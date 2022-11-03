@@ -257,8 +257,8 @@
     - install:app-requirements
 
 - name: install node dependencies
-  shell: "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && source /edx/app/edxapp/.nvm/nvm.sh && nvm install v16.14.0 && nvm use --delete-prefix v16.14.0 && easy_install --version && npm ci"
-#  shell: "easy_install --version && npm clean-install"
+#  shell: "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && source /edx/app/edxapp/.nvm/nvm.sh && nvm install v16.14.0 && nvm use --delete-prefix v16.14.0 && easy_install --version && npm ci"
+  shell: "easy_install --version && npm clean-install"
   args:
     chdir: "{{ edxapp_code_dir }}"
     executable: /bin/bash
