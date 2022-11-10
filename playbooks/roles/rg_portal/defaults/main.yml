@@ -54,3 +54,26 @@ RG_PORTAL_ROBOTS_DISALLOW: True
 
 RG_PORTAL_STAFF_PASSWORD: "{{ EDXAPP_STAFF_PASSWORD }}"
 
+RG_PORTAL_BOOTSTRAP_TASKS:
+  - name: migrations
+    command: 'python manage.py migrate'
+  - name: create base site structure
+    command: 'python manage.py richie_init'
+  - name: (re)generate the Elasticsearch index
+    command: >
+      bash -c
+      '[[ "$(curl --retry 30 --retry-connrefused -s -o /dev/null -m 3 -L -w
+      ''%{http_code}'' http://elasticsearch:9200)" == "200" ]]
+      &&
+      python manage.py bootstrap_elasticsearch'
+  - name: create superuser if not exists
+    command: >
+      python manage.py
+      shell -c "from django.contrib.auth.models import User;
+      User.objects.filter(username='staff').exists() or
+      User.objects.create_superuser('staff', 'staff@example.com', '{{ RG_PORTAL_STAFF_PASSWORD }}')"
+  - name: set site name and domain
+    command: >
+      python manage.py
+      shell -c "from django.contrib.sites.models import Site;
+      Site.objects.update_or_create(pk=1, defaults={'domain': '{{ RG_PORTAL_PUBLIC_DNS }}', 'name': '{{ RG_PORTAL_SITE_NAME }}'})"

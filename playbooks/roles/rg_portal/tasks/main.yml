@@ -92,60 +92,9 @@
 #     var: docker_compose_status.results[0].services.app
 
 # container name "app_app_1" is hardcoded, needs to be fixed
-- name: migrations
+- name: bootstraping tasks
   community.docker.docker_container_exec:
     container: app_app_1
-    command: python manage.py migrate
+    command: "{{ item.command }}"
   become_user: "{{ RG_PORTAL_USER }}"
-
-- name: create base site structure
-  community.docker.docker_container_exec:
-    container: app_app_1
-    command: python manage.py richie_init
-  become_user: "{{ RG_PORTAL_USER }}"
-
-- name: (re)generate the Elasticsearch index
-  community.docker.docker_container_exec:
-    container: app_app_1
-    command: >
-      bash -c
-      '[[ "$(curl --retry 30 --retry-connrefused -s -o /dev/null -m 3 -L -w
-      ''%{http_code}'' http://elasticsearch:9200)" == "200" ]]
-      &&
-      python manage.py bootstrap_elasticsearch'
-  become_user: "{{ RG_PORTAL_USER }}"
-
-- name: create superuser if not exists
-  community.docker.docker_container_exec:
-    container: app_app_1
-    command: >
-      python manage.py
-      shell -c "from django.contrib.auth.models import User;
-      User.objects.filter(username='staff').exists() or
-      User.objects.create_superuser('staff', 'staff@example.com', '{{ RG_PORTAL_STAFF_PASSWORD }}')"
-  become_user: "{{ RG_PORTAL_USER }}"
-
-- name: check if site configured
-  community.docker.docker_container_exec:
-    container: app_app_1
-    command: >
-      python manage.py
-      shell -c "from django.contrib.sites.models import Site;
-      Site.objects.filter(domain='{{ RG_PORTAL_PUBLIC_DNS }}').exists() or sys.exit(1)"
-  register: site_exists
-  ignore_errors: yes
-  become_user: "{{ RG_PORTAL_USER }}"
-
-- name: set site name and domain
-  community.docker.docker_container_exec:
-    container: app_app_1
-    # Site.objects.filter(domain='{{ RG_PORTAL_PUBLIC_DNS }}').exists() or
-    command: >
-      python manage.py
-      shell -c "from django.contrib.sites.models import Site;
-      site = Site.objects.get(id=1);
-      site.name = '{{ RG_PORTAL_SITE_NAME }}';
-      site.domain = '{{ RG_PORTAL_PUBLIC_DNS }}';
-      site.save()"
-  become_user: "{{ RG_PORTAL_USER }}"
-  when: site_exists.rc != 0
+  with_items: "{{ RG_PORTAL_BOOTSTRAP_TASKS }}"
