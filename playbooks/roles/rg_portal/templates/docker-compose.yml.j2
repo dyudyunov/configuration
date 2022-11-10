@@ -41,7 +41,7 @@ services:
       - "db"
 {% endif %}
       - "elasticsearch"
-      - "redis-sentinel"
+      - "redis-primary"
     user: ${DOCKER_USER:-1000}
     restart: always
 
@@ -56,33 +56,12 @@ services:
       - app
     restart: always
 
-  redis-sentinel:
-    image: docker.io/bitnami/redis-sentinel:6.2-debian-11
-    environment:
-      - REDIS_MASTER_HOST=redis-primary
-      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=6000
-      - REDIS_SENTINEL_FAILOVER_TIMEOUT=6000
-    depends_on:
-      - redis-primary
-      - redis-replica1
-    restart: always
-
   redis-primary:
     image: docker.io/bitnami/redis:6.2-debian-11
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_REPLICATION_MODE=master
     restart: always
 
-  redis-replica1:
-    image: docker.io/bitnami/redis:6.2-debian-11
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_REPLICATION_MODE=slave
-      - REDIS_MASTER_HOST=redis-primary
-    depends_on:
-      - redis-primary
-    restart: always
 
 networks:
   lms_outside:
