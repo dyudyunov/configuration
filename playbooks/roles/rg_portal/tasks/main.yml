@@ -70,7 +70,6 @@
 - name: tear down existing services
   community.docker.docker_compose:
     project_src: "{{ RG_PORTAL_APP_DIR }}"
-    remove_volumes: yes
     remove_orphans: yes
     state: absent
   become_user: "{{ RG_PORTAL_USER }}"
