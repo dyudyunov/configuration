@@ -3,12 +3,21 @@
 
 from elasticsearch import Elasticsearch
 import sys
+import os
+import configparser
 
-# Try to establish a connection to elasticsearch.
+esServer = '127.0.0.1'
+esPort = '9200'
+
+config = configparser.ConfigParser( { 'host': esServer, 'port': esPort } )
+if config.read(os.path.dirname(os.path.realpath(__file__)) + '/scripts.cfg'):
+    esServer = config.get('elasticsearch', 'host')
+    esPort = config.get('elasticsearch', 'port')
+
 try:
-    es = Elasticsearch()
+    es = Elasticsearch([ "{}:{}".format(esServer, esPort) ])
 except Exception as e:
-    print('Connection failed.')
+    print('Initialization failed. {}'.format(e))
     sys.exit(1)
 
 # Print error message in case of unsupported  metric.
@@ -20,14 +29,23 @@ def err_message(option, metric):
 
 def cluster_health(metric):
 
-    result = es.cluster.health()
+    try:
+        result = es.cluster.health()
+    except Exception as e:
+        print('Connection failed. {}'.format(e))
+        sys.exit(1)
 
     print(result[metric])
 
 
 def cluster_mem_stats(metric):
 
-    result = es.cluster.stats()
+    try:
+        result = es.cluster.stats()
+    except Exception as e:
+        print('Connection failed. {}'.format(e))
+        sys.exit(1)
+
     size = result['nodes']['jvm']['mem'][metric]
 
     print(size)
@@ -35,7 +53,12 @@ def cluster_mem_stats(metric):
 
 def node_mem_stats(metric):
 
-    node_stats = es.nodes.stats(node_id='_local', metric='jvm')
+    try:
+        node_stats = es.nodes.stats(node_id='_local', metric='jvm')
+    except Exception as e:
+        print('Connection failed. {}'.format(e))
+        sys.exit(1)
+
     node_id = list(node_stats['nodes'].keys())[0]
 
     if 'heap_used_percent' in metric:
@@ -65,7 +88,12 @@ def node_mem_stats(metric):
 
 def node_index_stats(metric):
 
-    node_stats = es.nodes.stats(node_id='_local', metric='indices')
+    try:
+        node_stats = es.nodes.stats(node_id='_local', metric='indices')
+    except Exception as e:
+        print('Connection failed. {}'.format(e))
+        sys.exit(1)
+
     node_id = list(node_stats['nodes'].keys())[0]
 
     if metric == 'total_merges_mem':

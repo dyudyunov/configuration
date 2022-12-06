@@ -30,11 +30,10 @@ def responder(array,item):
 
     try:
         if replica_name:
-            client = MongoClient(host, port, ssl=use_ssl, replicaSet=replica_name)
+            client = MongoClient(host, port, username=user, password=password, ssl=use_ssl, replicaSet=replica_name)
         else:
-            client = MongoClient(host, port, ssl=use_ssl)
+            client = MongoClient(host, port, username=user, password=password, ssl=use_ssl)
         db = client[database]
-        db.authenticate(user, password)
         assert isinstance(db, object)
         responder_array = db.command("serverStatus")[str(array)]
         return(responder_array[str(item)])

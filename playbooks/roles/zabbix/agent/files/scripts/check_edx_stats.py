@@ -51,7 +51,13 @@ try:
         cursor.execute(query, None)
         row = cursor.fetchone()
         if row and len(row):
-            print("{}: {}".format(metric,row[len(row)-1]))
+            # some rows can be a bytes objects
+            value = row[len(row)-1]
+
+            if isinstance(value, bytes):
+                value = value.decode("utf-8")
+
+            print("{}: {}".format(metric, value))
         else:
             print("Failed: No such item ({})".format(metric))
 
