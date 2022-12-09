@@ -163,7 +163,7 @@
   tags:
     - install
     - install:app-requirements
-  
+
 - name: Install local edxapp requirements
   command: "{{ edxapp_venv_dir }}/bin/pip install -e {{ edxapp_code_dir }}/."
   become_user: "{{ edxapp_user }}"
@@ -636,16 +636,6 @@
     - manage
     - manage:db
 
-#- name: add persistent grades model
-#  shell: ". {{ edxapp_app_dir }}/edxapp_env && echo 'from lms.djangoapps.grades.config.models import PersistentGradesEnabledFlag; PersistentGradesEnabledFlag.objects.create(enabled=True, enabled_for_all_courses=False) if not PersistentGradesEnabledFlag.objects.exists() else None' | {{ edxapp_venv_bin }}/python ./manage.py lms shell --settings={{ edxapp_settings }} "
-#  args:
-#    chdir: "{{ edxapp_code_dir }}"
-#  become_user: "{{ common_web_user }}"
-#  when: EDXAPP_PERSISTENT_GRADES_FLAG_ENABLE
-#  tags:
-#    - manage
-#    - manage:db
-
 - name: add mfe course goals waffle flag
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone course_experience.enable_course_goals"
   args:
@@ -757,7 +747,7 @@
     - manage:db
 
 - name: add catalog integrations to lms
-  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} enable_programs --discovery-api-url={{ EDXAPP_LMS_BASE_SCHEME }}://{{ EDXAPP_DISCOVERY_API_URL }} 
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} enable_programs --discovery-api-url={{ EDXAPP_LMS_BASE_SCHEME }}://{{ EDXAPP_DISCOVERY_API_URL }}
 --service-username={{ DISCOVERY_SERVICE_USER_NAME }}"
   args:
     chdir: "{{ edxapp_code_dir }}"
@@ -765,7 +755,7 @@
   when: COMMON_ENABLE_DISCOVERY | default(false)
 
 #- name: add catalog integrations to lms
-#  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} create_catalog_integrations --enabled --internal_api_url={{ EDXAPP_LMS_BASE_SCHEME }}://{{ 
+#  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} create_catalog_integrations --enabled --internal_api_url={{ EDXAPP_LMS_BASE_SCHEME }}://{{
 #EDXAPP_DISCOVERY_API_URL }} --service_username={{ DISCOVERY_SERVICE_USER_NAME }}"
 #  args:
 #    chdir: "{{ edxapp_code_dir }}"
