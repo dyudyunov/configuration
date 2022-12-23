@@ -706,6 +706,16 @@
     - manage
     - manage:db
 
+- name: add mfe learning waffle flag
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone discussions.enable_discussions_mfe"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: COMMON_ENABLE_MFE | default(false)
+  tags:
+    - manage
+    - manage:db
+
 - name: add mfe task course progress waffle flag
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone course_home.course_home_mfe_progress_tab"
   args:
