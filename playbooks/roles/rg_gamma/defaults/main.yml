@@ -19,8 +19,8 @@ GAMMA_EDX_API_KEY: "{{ EDXAPP_EDX_API_KEY | default('PUT_YOUR_API_KEY_HERE') }}"
 
 GAMMA_DEBUG: False
 
-GAMMA_APP_KEY: "SET_ME_PLEASE"
-GAMMA_APP_SECRET: "SET_ME_PLEASE"
+GAMMA_APP_KEY: "{{ RG_GAMIFICATION_KEY | default('Set-Me-Please') }}"
+GAMMA_APP_SECRET: "{{ RG_GAMIFICATION_SECRET | default('Set-Me-Please') }}"
 GAMMA_DJANGO_ADMIN_EMAIL: 'staff@example.com'
 GAMMA_DJANGO_ADMIN_USER: 'staff'
 GAMMA_DJANGO_ADMIN_PASS: "{{ EDXAPP_STAFF_PASSWORD | default('MegoSecret1ras') }}"
@@ -44,3 +44,16 @@ GAMMA_MONGO_DATABASE: 'gamma_data'
 
 GAMMA_CELERY_BROKER_URL: 'amqp://guest@rabbit'
 GAMMA_CELERY_RESULT_BACKEND: 'redis://redis:6379'
+
+GAMMA_BOOTSTRAP_TASKS:
+  - name: create superuser if not exists
+    command: >
+      python manage.py
+      shell -c "from django.contrib.auth.models import User;
+      User.objects.filter(username='{{ GAMMA_DJANGO_ADMIN_USER }}').exists() or
+      User.objects.create_superuser('{{ GAMMA_DJANGO_ADMIN_USER }}', '{{ GAMMA_DJANGO_ADMIN_EMAIL }}', '{{ GAMMA_DJANGO_ADMIN_PASS }}')"
+  - name: set secret and key
+    command: >
+      python manage.py
+      shell -c "from core.models import AppClient;
+      AppClient.objects.get_or_create(name='main', key='{{ GAMMA_APP_KEY }}', secret='{{ GAMMA_APP_SECRET }}')"

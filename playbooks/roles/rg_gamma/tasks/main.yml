@@ -4,6 +4,12 @@
   apt:
     name: make
 
+- name: install required packages
+  apt:
+    pkg:
+    - python3-docker
+    - python3-websocket
+
 - name: deploy private.env
   template:
     src: private.env.j2
@@ -27,3 +33,10 @@
   args:
     chdir: "{{ GAMMA_APP_DIR }}"
   become_user: "{{ GAMMA_USER }}"
+
+- name: creating superuser and secrets
+  community.docker.docker_container_exec:
+    container: gamma_dashboard
+    command: "{{ item.command }}"
+  become_user: "{{ GAMMA_USER }}"
+  with_items: "{{ GAMMA_BOOTSTRAP_TASKS }}"
