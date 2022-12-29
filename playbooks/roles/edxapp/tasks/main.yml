@@ -221,4 +221,4 @@
      app_config_owner: "{{ edxapp_user }}"
      app_config_group: root
      app_config_mode: 0644
-     CAN_GENERATE_NEW_JWT_SIGNATURE: True
+     CAN_GENERATE_NEW_JWT_SIGNATURE: "{{ EDXAPP_CAN_GENERATE_NEW_JWT_SIGNATURE }}"
