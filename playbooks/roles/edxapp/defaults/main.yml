@@ -579,11 +579,6 @@ EDXAPP_EXTRA_REQUIREMENTS: []
 
 EDXAPP_PRIVATE_REQUIREMENTS: []
 
-PRIVATE_REQUIREMENTS_RGA: "{{ EDXAPP_PRIVATE_REQUIREMENTS_RGA if COMMON_RG_INSTRUCTOR_ANALYTICS_ENABLE  else [] }}"
-PRIVATE_REQUIREMENTS_RGG: "{{ EDXAPP_PRIVATE_REQUIREMENTS_RGG if COMMON_ENABLE_GAMMA  else [] }}"
-
-EDXAPP_PRIVATE_REQUIREMENTS: "{{ EDXAPP_PRIVATE_REQUIREMENTS + PRIVATE_REQUIREMENTS_RGA + PRIVATE_REQUIREMENTS_RGG }}"
-
 # List of custom middlewares that should be used in edxapp to process
 # incoming HTTP resquests. Should be a list of plain strings that fully
 # qualify Python classes or functions that can be used as Django middleware.

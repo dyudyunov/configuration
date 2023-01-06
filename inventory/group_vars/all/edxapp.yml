@@ -130,3 +130,17 @@ _EDXAPP_FEATURES:
   ENABLE_ACCOUNT_DELETION: "{{ COMMON_ENABLE_ACCOUNT_DELETION }}"
   ENABLE_SHOPPING_CART: "{{ COMMON_ENABLE_SHOPPING_CART }}"
   ENABLE_PAID_COURSE_REGISTRATION: "{{ COMMON_ENABLE_SHOPPING_CART }}"
+
+EDXAPP_PRIVATE_REQUIREMENTS_RGA:
+  - name: 'git+ssh://git@gitlab.raccoongang.com/owlox-team/productsforge/rga/instructor-analytics@master#egg=instructor_analytics'
+    extra_args: '-e'
+EDXAPP_PRIVATE_REQUIREMENTS_RGG:
+  - name: 'git+ssh://git@gitlab.raccoongang.com/owlox-team/productsforge/rgg/edx-gamma-dashboard@master#egg=edx_gamma_dashboard'
+    extra_args: '-e'
+  - name: 'git+ssh://git@gitlab.raccoongang.com/owlox-team/productsforge/rgg/gamification-bridge@master#egg=edx_gamma_bridge'
+    extra_args: '-e'
+
+PRIVATE_REQUIREMENTS_RGA: "{{ EDXAPP_PRIVATE_REQUIREMENTS_RGA if COMMON_RG_INSTRUCTOR_ANALYTICS_ENABLE else [] }}"
+PRIVATE_REQUIREMENTS_RGG: "{{ EDXAPP_PRIVATE_REQUIREMENTS_RGG if COMMON_ENABLE_GAMMA else [] }}"
+
+EDXAPP_PRIVATE_REQUIREMENTS: "{{ EDXAPP_PRIVATE_REQUIREMENTS + PRIVATE_REQUIREMENTS_RGA + PRIVATE_REQUIREMENTS_RGG }}"
