@@ -824,6 +824,17 @@ EDXAPP_SOCIAL_SHARING_SETTINGS:
   CERTIFICATE_TWITTER: false
   DASHBOARD_TWITTER: false
 
+EDXAPP_MOBILE_STORE_ACE_URLS:
+  reddit: None
+  twitter: None
+  linkedin: None
+  facebook: None
+
+
+EDXAPP_SOCIAL_MEDIA_FOOTER_ACE_URLS:
+  google: None
+  apple: None
+
 #To use AWS S3 as your backend, you need different kwargs:
 # EDXAPP_PROFILE_IMAGE_BACKEND_CONFIG:
 #   class: storages.backends.s3boto.S3BotoStorage
@@ -1739,6 +1750,8 @@ lms_env_config:
   AUTHN_MICROFRONTEND_URL: "{{ EDXAPP_AUTHN_MICROFRONTEND_URL }}"
   AUTHN_MICROFRONTEND_DOMAIN: "{{ EDXAPP_AUTHN_MICROFRONTEND_DOMAIN }}"
   DISCUSSIONS_MICROFRONTEND_URL: "{{ EDXAPP_DISCUSSIONS_MICROFRONTEND_URL }}"
+  MOBILE_STORE_ACE_URLS: "{{ EDXAPP_MOBILE_STORE_ACE_URLS }}"
+  SOCIAL_MEDIA_FOOTER_ACE_URLS: "{{ EDXAPP_SOCIAL_MEDIA_FOOTER_ACE_URLS }}"
 
 cms_auth_config:
   <<: *edxapp_generic_auth
