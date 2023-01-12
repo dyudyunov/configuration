@@ -1169,6 +1169,8 @@ EDXAPP_DASHBOARD_COURSE_LIMIT: null
 # Completion Aggregator URL needed for progress bar
 EDXAPP_COMPLETION_AGGREGATOR_URL: null
 
+# Search skip in catalog filtering
+EDXAPP_SEARCH_SKIP_SHOW_IN_CATALOG_FILTERING: False
 #-------- Everything below this line is internal to the role ------------
 
 #Use YAML references (& and *) and hash merge <<: to factor out shared settings
@@ -1752,7 +1754,7 @@ lms_env_config:
   DISCUSSIONS_MICROFRONTEND_URL: "{{ EDXAPP_DISCUSSIONS_MICROFRONTEND_URL }}"
   MOBILE_STORE_ACE_URLS: "{{ EDXAPP_MOBILE_STORE_ACE_URLS }}"
   SOCIAL_MEDIA_FOOTER_ACE_URLS: "{{ EDXAPP_SOCIAL_MEDIA_FOOTER_ACE_URLS }}"
-
+  SEARCH_SKIP_SHOW_IN_CATALOG_FILTERING: "{{ EDXAPP_SEARCH_SKIP_SHOW_IN_CATALOG_FILTERING }}"
 cms_auth_config:
   <<: *edxapp_generic_auth
   CONTENTSTORE:
