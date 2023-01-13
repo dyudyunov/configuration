@@ -12,7 +12,7 @@ server {
 {% if nginx_ssl %}
   {% include "concerns/handle-ip-disclosure.j2" %}
   rewrite ^ https://$host$request_uri? permanent;
-{% else %}  
+{% else %}
   {% if NGINX_REDIRECT_TO_HTTPS %}
     {% include "concerns/handle-tls-terminated-elsewhere-ip-disclosure.j2" %}
     {% include "concerns/handle-tls-terminated-elsewhere-redirect.j2" %}
@@ -30,8 +30,20 @@ server {
   {% if NGINX_ENABLE_IPV6 %}
   listen [::]:{{ MFE_DEPLOY_SSL_NGINX_PORT }} ssl;
   {% endif %}
-  ssl_certificate /etc/ssl/certs/{{ NGINX_SSL_CERTIFICATE|basename }};
-  ssl_certificate_key /etc/ssl/private/{{ NGINX_SSL_KEY|basename }};
+  {% if lms_ssl_certificate_path is defined and lms_ssl_certificate_path %}
+  ssl_certificate {{ lms_ssl_certificate_path }};
+  {% else %}
+  {% if nginx_letsencrypt %}
+  ssl_certificate {{ letsencrypt_ssl_certificate | lower }};
+  {% endif %}
+  {% endif %}
+  {% if lms_ssl_certificate_key_path is defined and lms_ssl_certificate_key_path %}
+  ssl_certificate_key {{ lms_ssl_certificate_key_path }};
+  {% else %}
+  {% if nginx_letsencrypt %}
+  ssl_certificate_key {{ letsencrypt_ssl_certificate_key | lower }};
+  {% endif %}
+  {% endif %}
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
 
   {% include "concerns/mfe.j2" %}
