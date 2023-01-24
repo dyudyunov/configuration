@@ -99,6 +99,11 @@ MFE_USER_INFO_COOKIE_NAME: edx-user-info
 MFE_NEW_RELIC_APP_ID: 'fake_app'
 MFE_NEW_RELIC_LICENSE_KEY: 'fake_license'
 
+#Learning
+MFE_SUPPORT_URL_CALCULATOR_MATH: "https://support.edx.org/hc/en-us/articles/360000038428-Entering-math-expressions-in-assignments-or-the-calculator"
+MFE_SUPPORT_URL_ID_VERIFICATION: "https://support.edx.org/hc/en-us/articles/206503858-How-do-I-verify-my-identity"
+MFE_SUPPORT_URL_VERIFIED_CERTIFICATE: "https://support.edx.org/hc/en-us/articles/206502008-What-is-a-verified-certificate"
+
 # Discussions MFE
 MFE_TA_FEEDBACK_FORM: ''
 MFE_STAFF_FEEDBACK_FORM: ''
@@ -202,6 +207,10 @@ MFE_ENVIRONMENT_DEFAULT:
   APP_ID: "{{ MFE_APP_ID }}"
   MFE_CONFIG_API_URL: "{{ MFE_MFE_CONFIG_API_URL }}"
   SHOW_CONFIGURABLE_EDX_FIELDS: "{{ MFE_SHOW_CONFIGURABLE_EDX_FIELDS }}"
+  SUPPORT_URL_CALCULATOR_MATH: "{{ MFE_SUPPORT_URL_CALCULATOR_MATH }}"
+  SUPPORT_URL_ID_VERIFICATION: "{{ MFE_SUPPORT_URL_ID_VERIFICATION }}"
+  SUPPORT_URL_VERIFIED_CERTIFICATE: "{{ MFE_SUPPORT_URL_VERIFIED_CERTIFICATE }}"
+
 MFE_STANDALONE_NGINX: true
 
 # NOTE: This should be overridden by inheriting MFE-specific role.
