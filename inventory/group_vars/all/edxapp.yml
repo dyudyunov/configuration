@@ -13,7 +13,7 @@ EDXAPP_EDX_PLATFORM_REVISION: "studio"
 
 # Enable "visibility in catalog" functionality
 EDXAPP_COURSE_CATALOG_VISIBILITY_PERMISSION: see_exists
-EDXAPP_COURSE_ABOUT_VISIBILITY_PERMISSION: "see_about_page"
+EDXAPP_COURSE_ABOUT_VISIBILITY_PERMISSION: 'see_exists'
 
 # If you want disable link on page, just set null
 EDXAPP_MKTG_URL_LINK_MAP:
