@@ -34,6 +34,7 @@ zabbix_support_conf:
       - "Active Template App APT Updates"
       - "Nginx connections"
       - "Template NMAP open ports"
+      - "Template DNS expiration check"
   Strong:
     groups:
       - "Client Prod on support"
@@ -50,6 +51,7 @@ zabbix_support_conf:
       - "Active Template App Redis"
       - "Nginx connections"
       - "Template NMAP open ports"
+      - "Template DNS expiration check"
   VIP:
     groups:
       - "Client VIP Support"
@@ -66,3 +68,4 @@ zabbix_support_conf:
       - "Active Template App Redis"
       - "Nginx connections"
       - "Template NMAP open ports"
+      - "Template DNS expiration check"
