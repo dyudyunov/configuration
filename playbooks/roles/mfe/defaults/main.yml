@@ -138,7 +138,9 @@ MFE_PASSWORD_RESET_SUPPORT_LINK: ''
 MFE_ENABLE_COOKIE_POLICY_BANNER: true
 
 # Coocie policy banner (frontend-component-cookie-policy-banner)
-MFE_COOKIE_POLICY_COOKIE_DOMAIN: "{{ EDXAPP_SITE_NAME }}"  # LMS domain
+MFE_COOKIE_POLICY_COOKIE_DOMAIN: "{{ EDXAPP_SESSION_COOKIE_DOMAIN }}"
+# Use the instance-specific cookie name to separate cookies properly
+# e.g. MFE_COOKIE_POLICY_VIEWED_COOKIE_NAME: "{{ COMMON_HOSTNAME }}_cookieconsent_status"
 MFE_COOKIE_POLICY_VIEWED_COOKIE_NAME: 'cookieconsent_status'
 
 # Account
