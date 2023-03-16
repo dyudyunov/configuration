@@ -766,8 +766,18 @@
     - manage
     - manage:db
 
-- name: add ora grading mfe waffle flag 
-  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone openresponseassessment.enhanced_staff_grader"
+- name: add mfe progress milestones waffle flag 
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone courseware.mfe_progress_milestones"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: COMMON_ENABLE_MFE | default(false)
+  tags:
+    - manage
+    - manage:db
+
+- name: add mfe milestones streak celebration waffle flag
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone courseware.mfe_progress_milestones_streak_celebration"
   args:
     chdir: "{{ edxapp_code_dir }}"
   become_user: "{{ common_web_user }}"
@@ -782,7 +792,7 @@
   args:
     chdir: "{{ edxapp_code_dir }}"
   become_user: "{{ common_web_user }}"
-  when: COMMON_ENABLE_DISCOVERY | default(false)
+  when: COMMON_ENABLE_CREDENTIALS | default(false)
 
 #- name: add catalog integrations to lms
 #  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} create_catalog_integrations --enabled --internal_api_url={{ EDXAPP_LMS_BASE_SCHEME }}://{{
