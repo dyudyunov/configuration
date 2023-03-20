@@ -756,17 +756,7 @@
     - manage
     - manage:db
 
-- name: populate retirement states
-  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} populate_retirement_states"
-  args:
-    chdir: "{{ edxapp_code_dir }}"
-  become_user: "{{ common_web_user }}"
-  when: COMMON_RETIREMENT_SERVICE_SETUP | default(false)
-  tags:
-    - manage
-    - manage:db
-
-- name: add mfe progress milestones waffle flag 
+- name: add mfe progress milestones waffle flag
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone courseware.mfe_progress_milestones"
   args:
     chdir: "{{ edxapp_code_dir }}"
@@ -782,6 +772,16 @@
     chdir: "{{ edxapp_code_dir }}"
   become_user: "{{ common_web_user }}"
   when: COMMON_ENABLE_MFE | default(false)
+  tags:
+    - manage
+    - manage:db
+
+- name: populate retirement states
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} populate_retirement_states"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: COMMON_RETIREMENT_SERVICE_SETUP | default(false)
   tags:
     - manage
     - manage:db
