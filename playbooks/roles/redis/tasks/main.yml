@@ -65,3 +65,7 @@
   notify:
     - reload redis
 
+- name: enable redis
+  service:
+    name: redis-server
+    enabled: true
