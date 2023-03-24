@@ -6,6 +6,7 @@ RUN pip install ansible \
     PyYAML \
     zabbix-api \
     mysqlclient \
+    mitogen \
     && rm -rf ~/.cache
 
 RUN adduser --system --home /home/ansible --disabled-password  --group ansible
@@ -25,6 +26,7 @@ ENV ANSIBLE_ROLES_PATH=/home/ansible/playbooks/roles \
     ANSIBLE_VAULT_PASSWORD_FILE=/home/ansible/vault_password \
     ANSIBLE_RETRY_FILES_SAVE_PATH=/tmp \
     ANSIBLE_LIBRARY=/home/ansible/playbooks/library \
-    ANSIBLE_INVENTORY=/home/ansible/inventory/hosts.yml,./hosts.yml
+    ANSIBLE_INVENTORY=/home/ansible/inventory/hosts.yml,./hosts.yml \
+    ANSIBLE_STRATEGY_PLUGINS=/usr/local/lib/python3.8/site-packages/ansible_mitogen/plugins/strategy
 
 ENTRYPOINT ["./bootstrap.sh"]
