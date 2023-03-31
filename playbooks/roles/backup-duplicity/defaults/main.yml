@@ -23,62 +23,63 @@ backup_sys_packages:
   Ubuntu:
     common:
       - gzip
-      - python-boto
+      - python3-boto
       - cron
       - build-essential
-      - python-dev
+      - python3-dev
       - librsync-dev
+      - postgresql-client
     ftp:
       - ncftp
       - lftp
-  CentOS:
-    common:
-      - gzip
-      - python-boto
-      - gcc
-      - python-devel
-      - python-virtualenv
-      - python-pip
-      - mysql-devel
-      - cronie
-      - librsync-devel
-      - mongodb-org-shell
-    ftp:
-      - ncftp
-      - lftp
-  Amazon:
-    common:
-      - gzip
-      - python-boto
-      - gcc
-      - python-devel
-      - python-virtualenv
-      - python-pip
-      - mysql-devel
-      - cronie
-      - librsync-devel
-      - mongodb-org-shell
-    ftp:
-      - ncftp
-      - lftp
+  # CentOS:
+  #   common:
+  #     - gzip
+  #     - python-boto
+  #     - gcc
+  #     - python-devel
+  #     - python-virtualenv
+  #     - python-pip
+  #     - mysql-devel
+  #     - cronie
+  #     - librsync-devel
+  #     - mongodb-org-shell
+  #   ftp:
+  #     - ncftp
+  #     - lftp
+  # Amazon:
+  #   common:
+  #     - gzip
+  #     - python-boto
+  #     - gcc
+  #     - python-devel
+  #     - python-virtualenv
+  #     - python-pip
+  #     - mysql-devel
+  #     - cronie
+  #     - librsync-devel
+  #     - mongodb-org-shell
+  #   ftp:
+  #     - ncftp
+  #     - lftp
 
 backup_venv: "{{ backup_home }}/.venv"
 backup_venv_packages:
   common:
-    - duplicity
+    - duplicity==0.8.18
   s3:
-    - boto==2.48.0
-    - boto3==1.4.4
-    - botocore==1.5.95
-    - s3transfer==0.1.10
+    - boto==2.49.0
+    - boto3==1.17.76
+    - botocore==1.20.76
+    - s3transfer==0.4.2
     - s3cmd
   rsync:
-    - pyrsync
+    - pyrsync2
   ftp:
     - pyftp
   azure:
-    - azure==2.0.0
-    - azure-storage==0.20.0
+    - azure==4.0.0
+    - azure-storage==0.36.0
 
 backup_duply_template: "duply" # duply_2.0.4_rg, duply_1.9.1_rg
 backup_logdir: "/var/log/duplicity"
@@ -115,11 +116,11 @@ backup_target_method: 'file'
 backup_target_user: ''
 backup_target_pass: ''
 
-# Time frame for old backups to keep, Used for the "purge" command.  
+# Time frame for old backups to keep, Used for the "purge" command.
 # see duplicity man page, chapter TIME_FORMATS)
 backup_max_age: 1M
 
-# Number of full backups to keep. Used for the "purge-full" command. 
+# Number of full backups to keep. Used for the "purge-full" command.
 # See duplicity man page, action "remove-all-but-n-full".
 backup_max_full_backups: 1
 
