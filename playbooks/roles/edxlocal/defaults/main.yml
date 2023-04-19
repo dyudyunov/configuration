@@ -24,6 +24,8 @@ edxlocal_databases:
   - "{{ LICENSE_MANAGER_DEFAULT_DB_NAME | default(None) }}"
   - "{{ ENTERPRISE_CATALOG_DEFAULT_DB_NAME | default(None) }}"
   - "{{ COMMERCE_COORDINATOR_DEFAULT_DB_NAME | default(None) }}"
+  - "{{ EDX_EXAMS_DEFAULT_DB_NAME | default(None) }}"
+  - "{{ SUBSCRIPTIONS_DEFAULT_DB_NAME | default(None) }}"
 
 edxlocal_extra_databases: []
 
@@ -108,6 +110,14 @@ edxlocal_database_users:
       user: "{{ COMMERCE_COORDINATOR_MYSQL_USER | default(None) }}",
       pass: "{{ COMMERCE_COORDINATOR_MYSQL_PASSWORD | default(None) }}"
     }
-
-
+  - {
+    db: "{{ EDX_EXAMS_DEFAULT_DB_NAME | default(None) }}",
+    user: "{{ EDX_EXAMS_MYSQL_USER | default(None) }}",
+    pass: "{{ EDX_EXAMS_MYSQL_PASSWORD | default(None) }}"
+    }
+  - {
+    db: "{{ SUBSCRIPTIONS_DEFAULT_DB_NAME | default(None) }}",
+    user: "{{ SUBSCRIPTIONS_MYSQL_USER | default(None) }}",
+    pass: "{{ SUBSCRIPTIONS_MYSQL_PASSWORD | default(None) }}"
+  }
 edxlocal_extra_database_users: []

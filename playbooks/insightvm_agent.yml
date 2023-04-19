@@ -1,4 +1,4 @@
-- name: Deploy Analytics API
+- name: Deploy insightvm_agent
   hosts: all
   become: True
   gather_facts: True
@@ -6,5 +6,6 @@
     serial_count: 1
   serial: "{{ serial_count }}"
   roles:
-    - common
-    - analytics_api
+    - role: aws
+      when: COMMON_ENABLE_AWS_ROLE
+    - insightvm_agent

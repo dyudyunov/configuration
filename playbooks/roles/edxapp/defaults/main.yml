@@ -98,7 +98,8 @@ EDXAPP_MONGO_PORT: 27017
 EDXAPP_MONGO_USER: 'edxapp'
 EDXAPP_MONGO_DB_NAME: 'edxapp'
 EDXAPP_MONGO_USE_SSL: False
-EDXAPP_MONGO_REPLICA_SET: 'rs0'
+#EDXAPP_MONGO_REPLICA_SET: 'rs0'
+EDXAPP_MONGO_REPLICA_SET: null
 EDXAPP_MONGO_AUTH_DB: ''
 # Used only if EDXAPP_MONGO_REPLICA_SET is provided.
 EDXAPP_MONGO_CMS_READ_PREFERENCE: 'PRIMARY'
@@ -147,10 +148,6 @@ EDXAPP_SEARCH_HOST: 'localhost'
 EDXAPP_SEARCH_PORT: 9200
 EDXAPP_SEARCH_USE_SSL: false
 
-EDXAPP_OPENSEARCH_HOST: 'localhost'
-EDXAPP_OPENSEARCH_PORT: 9202
-EDXAPP_OPENSEARCH_USE_SSL: false
-
 # list of dictionaries of the format
 # { 'host': 'hostname', 'port': 'portnumber', 'otherconfigsuchas use_ssl': 'True' }
 # http://elasticsearch-py.readthedocs.org/en/master/api.html#elasticsearch
@@ -158,11 +155,6 @@ EDXAPP_ELASTIC_SEARCH_CONFIG:
   - host: "{{ EDXAPP_SEARCH_HOST }}"
     port: "{{ EDXAPP_SEARCH_PORT }}"
     use_ssl: "{{ EDXAPP_SEARCH_USE_SSL }}"
-
-EDXAPP_OPEN_SEARCH_CONFIG:
-  - host: "{{ EDXAPP_OPENSEARCH_HOST }}"
-    port: "{{ EDXAPP_OPENSEARCH_PORT }}"
-    use_ssl: "{{ EDXAPP_OPENSEARCH_USE_SSL }}"
 
 EDXAPP_SETTINGS: '{{ COMMON_EDXAPP_SETTINGS }}'
 
@@ -1604,7 +1596,6 @@ generic_env_config:  &edxapp_generic_env
     user: '{{ edxapp_sandbox_user }}'
   AFFILIATE_COOKIE_NAME: "{{ EDXAPP_AFFILIATE_COOKIE_NAME }}"
   ELASTIC_SEARCH_CONFIG: "{{ EDXAPP_ELASTIC_SEARCH_CONFIG }}"
-  OPEN_SEARCH_CONFIG: "{{ EDXAPP_OPEN_SEARCH_CONFIG }}"
   PLATFORM_TWITTER_ACCOUNT: "{{ EDXAPP_PLATFORM_TWITTER_ACCOUNT }}"
   PLATFORM_FACEBOOK_ACCOUNT: "{{ EDXAPP_PLATFORM_FACEBOOK_ACCOUNT }}"
   HELP_TOKENS_BOOKS: "{{ EDXAPP_HELP_TOKENS_BOOKS }}"
@@ -1664,14 +1655,14 @@ lms_auth_config:
               ENGINE: 'xmodule.modulestore.split_mongo.split_draft.DraftVersioningModuleStore'
               DOC_STORE_CONFIG: "{{ EDXAPP_LMS_SPLIT_DOC_STORE_CONFIG }}"
               OPTIONS:
-                default_class: 'xmodule.hidden_module.HiddenDescriptor'
+                default_class: 'xmodule.hidden_block.HiddenBlock'
                 fs_root:  "{{ edxapp_course_data_dir }}"
                 render_template: 'common.djangoapps.edxmako.shortcuts.render_to_string'
             - NAME: 'draft'
               ENGINE: 'xmodule.modulestore.mongo.DraftMongoModuleStore'
               DOC_STORE_CONFIG: "{{ EDXAPP_LMS_DRAFT_DOC_STORE_CONFIG }}"
               OPTIONS:
-                default_class: 'xmodule.hidden_module.HiddenDescriptor'
+                default_class: 'xmodule.hidden_block.HiddenBlock'
                 fs_root:  "{{ edxapp_course_data_dir }}"
                 render_template: 'common.djangoapps.edxmako.shortcuts.render_to_string'
   SOCIAL_AUTH_OAUTH_SECRETS: "{{ EDXAPP_SOCIAL_AUTH_OAUTH_SECRETS }}"
@@ -1776,14 +1767,14 @@ cms_auth_config:
               ENGINE: 'xmodule.modulestore.split_mongo.split_draft.DraftVersioningModuleStore'
               DOC_STORE_CONFIG: "{{ EDXAPP_CMS_DOC_STORE_CONFIG }}"
               OPTIONS:
-                default_class: 'xmodule.hidden_module.HiddenDescriptor'
+                default_class: 'xmodule.hidden_block.HiddenBlock'
                 fs_root:  "{{ edxapp_course_data_dir }}"
                 render_template: 'common.djangoapps.edxmako.shortcuts.render_to_string'
             - NAME: 'draft'
               ENGINE: 'xmodule.modulestore.mongo.DraftMongoModuleStore'
               DOC_STORE_CONFIG: "{{ EDXAPP_CMS_DOC_STORE_CONFIG }}"
               OPTIONS:
-                default_class: 'xmodule.hidden_module.HiddenDescriptor'
+                default_class: 'xmodule.hidden_block.HiddenBlock'
                 fs_root:  "{{ edxapp_course_data_dir }}"
                 render_template: 'common.djangoapps.edxmako.shortcuts.render_to_string'
   SEGMENT_KEY: "{{ EDXAPP_CMS_SEGMENT_KEY }}"
@@ -1959,6 +1950,14 @@ SERVICE_WORKER_USERS:
     is_superuser: false
   - email: "{{ ENTERPRISE_CATALOG_SERVICE_USER_EMAIL }}"
     username: "{{ ENTERPRISE_CATALOG_SERVICE_USER_NAME }}"
+    is_staff: true
+    is_superuser: false
+  - email: "{{ EDX_EXAMS_SERVICE_USER_EMAIL }}"
+    username: "{{ EDX_EXAMS_SERVICE_USER_NAME }}"
+    is_staff: true
+    is_superuser: false
+  - email: "{{ ECOMMERCE_SERVICE_USER_EMAIL }}"
+    username: "{{ ECOMMERCE_SERVICE_USER_NAME }}"
     is_staff: true
     is_superuser: false
   - email: "{{ EDXAPP_RETIREMENT_SERVICE_USER_EMAIL }}"
