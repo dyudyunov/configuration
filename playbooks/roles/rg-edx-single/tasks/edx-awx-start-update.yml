@@ -26,6 +26,16 @@
   delegate_to: localhost
   become: False
 
+- name: Check for expired apt keys
+  shell: "apt-key list | grep expired: | cat"
+  register: ppa_key_status
+
+- name: Remove MONGO 4.0 apt repository
+  file:
+    path: "/etc/apt/sources.list.d/repo_mongodb_org_apt_ubuntu.list"
+    state: absent
+  when: "'expired' in ppa_key_status.stdout"
+  
 - name: Sending slack notification
   slack:
     token: "{{ slack_notification_token }}"

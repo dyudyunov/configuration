@@ -24,7 +24,7 @@
   when: "'localhost' in ' '.join(EDXAPP_MEMCACHE) or '127.0.0.1' in ' '.join(EDXAPP_MEMCACHE)"
 
 - import_role:
-    name: mongo_4_4
+    name: mongo_4_2
   when: "'localhost' in EDXAPP_MONGO_HOSTS or '127.0.0.1' in EDXAPP_MONGO_HOSTS"
 
 - import_role:
