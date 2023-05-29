@@ -35,7 +35,7 @@
     path: "/etc/apt/sources.list.d/repo_mongodb_org_apt_ubuntu.list"
     state: absent
   when: "'expired' in ppa_key_status.stdout"
-  
+
 - name: Sending slack notification
   slack:
     token: "{{ slack_notification_token }}"
