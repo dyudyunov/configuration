@@ -50,18 +50,6 @@
     - "mongo_packages"
   when: ansible_distribution_release != 'focal'
 
-# mongo 4.2 does not have any source list for Focal
-# use Bionci repo source list to install mongo 4.2
-- name: add the mongodb repo to the sources list
-  apt_repository:
-    repo: "{{ MONGODB_REPO_BIONIC }}"
-    state: present
-  tags:
-    - "install"
-    - "install:app-requirements"
-    - "mongo_packages"
-  when: ansible_distribution_release == 'focal'
-
 - name: install mongo server and recommends
   apt:
     pkg: "{{ item }}"
