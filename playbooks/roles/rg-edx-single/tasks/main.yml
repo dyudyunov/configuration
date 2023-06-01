@@ -1,27 +1,29 @@
 ---
 - include: edx-awx-start-update.yml
+  tags: [ "edx-awx-start-update" ]
 
 - include: edx_single.yml
+  tags: [ "edx_single" ]
 
 - import_role: 
     name: user_retirement_pipeline
   when: COMMON_RETIREMENT_SERVICE_SETUP
-  tags: [ "retirement" ]
+  tags: [ "user_retirement_pipeline" ]
 
 - import_role:
     name: edx-user-attr
-  tags: [ "edx_user_attr" ]
-
-- import_role:
-    name: filebeat
+  tags: [ "edx-user-attr" ]
 
 - import_role:
     name: mongo-pruner
   when: COMMON_MONGOPRUNER_SERVICE_SETUP
-  tags: [ "pruner" ]
+  tags: [ "mongo-pruner" ]
 
 - include: edx-backup-duplicity.yml
+  tags: [ "edx-backup-duplicity" ]
 
 - include: edx-zabbix-single.yml
+  tags: [ "edx-zabbix-single" ]
 
 - include: edx-awx-stop-update.yml
+  tags: [ "edx-awx-stop-update" ]

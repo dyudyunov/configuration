@@ -5,10 +5,12 @@
 
 - import_role:
     name: python
+  tags: [ "python" ]
 
 - import_role:
     name: swapfile
   when: SWAPFILE_SIZE is defined and SWAPFILE_SIZE != ''
+  tags: [ "swapfile" ]
 
 - import_role:
     name: mysql
@@ -17,26 +19,26 @@
 
 - import_role:
     name: edxlocal
-  tags: [ "mysql" ]
+  tags: [ "edxlocal" ]
 
 - import_role:
     name: memcache
   when: "'localhost' in ' '.join(EDXAPP_MEMCACHE) or '127.0.0.1' in ' '.join(EDXAPP_MEMCACHE)"
+  tags: [ "memcache" ]
 
 - import_role:
     name: mongo_4_2
   when: "'localhost' in EDXAPP_MONGO_HOSTS or '127.0.0.1' in EDXAPP_MONGO_HOSTS"
+  tags: [ "mongo", "mongo_4_2" ]
 
 - import_role:
     name: redis
-
-#- import_role:
-#    name: rabbitmq
-#  when: rabbitmq_ip == 'localhost' or rabbitmq_ip == '127.0.0.1'
+  tags: [ "redis" ]
 
 - import_role:
     name: elasticsearch
   when: "'localhost' in EDXAPP_ELASTIC_SEARCH_CONFIG|map(attribute='host') or '127.0.0.1' in EDXAPP_ELASTIC_SEARCH_CONFIG|map(attribute='host')"
+  tags: [ "elasticsearch" ]
 
 - import_role:
     name: nginx
@@ -58,86 +60,82 @@
 - import_role:
     name: mockprock
   when: COMMON_ENABLE_MOCKPROCK
+  tags: [ "mockprock" ]
 
 - import_role:
     name: mfe_deployer
   when: COMMON_ENABLE_MFE
-  tags: [ "mfe" ]
+  tags: [ "mfe", "mfe_deployer" ]
 
 - import_role:
     name: enterprise_catalog
   when: COMMON_ENABLE_ENTERPRISE
-  tags: [ "services" ]
+  tags: [ "enterprise_catalog" ]
 
 - import_role:
     name: ecommerce
   when: COMMON_ENABLE_ECOMMERCE
-  tags: [ "services" ]
+  tags: [ "ecommerce" ]
 
 - import_role:
     name: ecomworker
   when: COMMON_ENABLE_ECOMMERCE
-  tags: [ "services" ]
-
-#- import_role:
-#    name: rg_instructor_analytics_log_collector
-#  when: COMMON_RG_INSTRUCTOR_ANALYTICS_ENABLE
+  tags: [ "ecomworker" ]
 
 - import_role:
     name: celerybeat
   when: COMMON_ENABLE_CELERYBEAT
+  tags: [ "celerybeat" ]
 
 - import_role:
     name: analytics_api
   when: COMMON_ENABLE_ANALYTICS_API
-  tags: [ "services" ]
+  tags: [ "analytics_api" ]
 
 - import_role:
     name: insights
   when: COMMON_ENABLE_INSIGHTS
-  tags: [ "services" ]
+  tags: [ "insights" ]
 
 - import_role:
     name: edx_notes_api
   when: EDXAPP_ENABLE_EDXNOTES
-  tags: [ "services" ]
+  tags: [ "edx_notes_api" ]
 
 - import_role:
     name: forum
   when: COMMON_ENABLE_FORUM
-  tags: [ "services", "forum" ]
-
-#- import_role:
-#    name: notifier
-#  when: COMMON_ENABLE_FORUM
+  tags: [ "forum" ]
 
 - import_role:
     name: discovery
   when: COMMON_ENABLE_DISCOVERY
-  tags: [ "services" ]
+  tags: [ "discovery" ]
 
 - import_role:
     name: credentials
   when: COMMON_ENABLE_CREDENTIALS
-  tags: [ "services" ]
+  tags: [ "credentials" ]
 
 - import_role:
     name: blockstore
   when: SANDBOX_ENABLE_BLOCKSTORE
-  tags: [ "services" ]
+  tags: [ "blockstore" ]
 
 - import_role:
     name: xqueue
   vars:
     update_users: True
   when: COMMON_ENABLE_XQUEUE
-  tags: [ "services" ]
+  tags: [ "xqueue" ]
 
 - import_role:
     name: demo
+  tags: [ "demo" ]
 
 - import_role:
     name: oauth_client_setup
+  tags: [ "oauth_client_setup" ]
 
 - import_role:
     name: rg_gamma
@@ -145,14 +143,11 @@
   tags: [ "rg_gamma" ]
 
 - import_role:
-    name: filebeat
-  vars:
-    filebeat_enable: "{{ COMMON_ENABLE_FILEBEAT }}"
-
-- import_role:
     name: datadog
   when: COMMON_ENABLE_DATADOG
+  tags: [ "datadog" ]
 
 - import_role:
     name: datadog-uninstall
   when: not COMMON_ENABLE_DATADOG
+  tags: [ "datadog" ]
