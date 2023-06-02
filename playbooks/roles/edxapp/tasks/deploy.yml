@@ -587,7 +587,7 @@
     chdir: "{{ edxapp_code_dir }}"
   become_user: "{{ common_web_user }}"
   with_items: "{{ SERVICE_WORKER_USERS }}"
-  when: CREATE_SERVICE_WORKER_USERS and item.enabled|default(true)
+  when: CREATE_SERVICE_WORKER_USERS and item.enabled|default(true) and item.username and item.email
   tags:
     - manage
     - manage:db

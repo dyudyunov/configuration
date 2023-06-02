@@ -1904,64 +1904,73 @@ EDXAPP_CELERY_HEARTBEAT_ENABLED: true
 
 # Add default service worker users
 SERVICE_WORKER_USERS:
-  - email: "{{ EDXAPP_ENTERPRISE_SERVICE_WORKER_EMAIL }}"
-    username: "{{ EDXAPP_ENTERPRISE_SERVICE_WORKER_USERNAME }}"
+  - email: "{{ EDXAPP_ENTERPRISE_SERVICE_WORKER_EMAIL | default('') }}"
+    username: "{{ EDXAPP_ENTERPRISE_SERVICE_WORKER_USERNAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ EDXAPP_VEDA_SERVICE_USER_EMAIL }}"
-    username: "{{ EDXAPP_VEDA_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_ENTERPRISE | default('') }}"
+  - email: "{{ EDXAPP_VEDA_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ EDXAPP_VEDA_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ DISCOVERY_SERVICE_USER_EMAIL }}"
-    username: "{{ DISCOVERY_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_VEDA | default('') }}"
+  - email: "{{ DISCOVERY_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ DISCOVERY_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ INSIGHTS_SERVICE_USER_EMAIL }}"
-    username: "{{ INSIGHTS_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_DISCOVERY | default('') }}"
+  - email: "{{ INSIGHTS_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ INSIGHTS_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ CREDENTIALS_SERVICE_USER_EMAIL }}"
-    username: "{{ CREDENTIALS_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_INSIGHTS | default('') }}"
+  - email: "{{ CREDENTIALS_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ CREDENTIALS_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ ECOMMERCE_SERVICE_USER_EMAIL }}"
-    username: "{{ ECOMMERCE_SERVICE_USER_NAME }}"
-    is_staff: true
-    is_superuser: true
-  - email: "{{ DESIGNER_SERVICE_USER_EMAIL }}"
-    username: "{{ DESIGNER_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_CREDENTIALS | default('') }}"
+  - email: "{{ DESIGNER_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ DESIGNER_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ REGISTRAR_SERVICE_USER_EMAIL }}"
-    username: "{{ REGISTRAR_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_DESIGNER | default('') }}"
+  - email: "{{ REGISTRAR_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ REGISTRAR_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ EDXAPP_CMS_SERVICE_USER_EMAIL }}"
-    username: "{{ EDXAPP_CMS_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_REGISTRAR | default('') }}"
+  - email: "{{ EDXAPP_CMS_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ EDXAPP_CMS_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ LICENSE_MANAGER_SERVICE_USER_EMAIL }}"
-    username: "{{ LICENSE_MANAGER_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_EDXAPP_CMS | default('') }}"
+  - email: "{{ LICENSE_MANAGER_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ LICENSE_MANAGER_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ COMMERCE_COORDINATOR_SERVICE_USER_EMAIL }}"
-    username: "{{ COMMERCE_COORDINATOR_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_LICENSE_MANAGER | default('') }}"
+  - email: "{{ COMMERCE_COORDINATOR_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ COMMERCE_COORDINATOR_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ ENTERPRISE_CATALOG_SERVICE_USER_EMAIL }}"
-    username: "{{ ENTERPRISE_CATALOG_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_COMMERCE_COORDINATOR | default('') }}"
+  - email: "{{ ENTERPRISE_CATALOG_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ ENTERPRISE_CATALOG_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ EDX_EXAMS_SERVICE_USER_EMAIL }}"
-    username: "{{ EDX_EXAMS_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_ENTERPRISE_CATALOG | default('') }}"
+  - email: "{{ EDX_EXAMS_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ EDX_EXAMS_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ ECOMMERCE_SERVICE_USER_EMAIL }}"
-    username: "{{ ECOMMERCE_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_EDX_EXAMS | default('') }}"
+  - email: "{{ ECOMMERCE_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ ECOMMERCE_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
-  - email: "{{ EDXAPP_RETIREMENT_SERVICE_USER_EMAIL }}"
-    username: "{{ EDXAPP_RETIREMENT_SERVICE_USER_NAME }}"
+    enabled: "{{ COMMON_ENABLE_ECOMMERCE | default('') }}"
+  - email: "{{ EDXAPP_RETIREMENT_SERVICE_USER_EMAIL | default('') }}"
+    username: "{{ EDXAPP_RETIREMENT_SERVICE_USER_NAME | default('') }}"
     is_staff: true
     is_superuser: false
     enabled: "{{ COMMON_RETIREMENT_SERVICE_SETUP | default(false) }}"
