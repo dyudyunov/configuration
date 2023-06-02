@@ -93,7 +93,7 @@
     update_cache: yes
   when: >
       ansible_distribution in common_debian_variants and
-      ({{ devstack | default(False) }} or {{ edx_django_service_is_devstack | default(False) }})
+      (devstack | default(False)) or (edx_django_service_is_devstack | default(False))
   tags:
     - "devstack"
 

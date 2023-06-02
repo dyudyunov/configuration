@@ -1,7 +1,6 @@
-FROM python:3.8
+FROM python:3.9
 
-RUN pip install ansible \
-    ansible-core==2.12.6 \
+RUN pip install ansible==7.6.0 \
     datadog \
     PyYAML \
     zabbix-api \

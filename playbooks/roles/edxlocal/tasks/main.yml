@@ -18,7 +18,7 @@
     login_user: "{{ COMMON_MYSQL_ADMIN_USER }}"
     login_password: "{{ COMMON_MYSQL_ADMIN_PASS }}"
   when: item != None and item != ''
-  with_items: "{{ edxlocal_databases }} + {{ edxlocal_extra_databases }}"
+  with_items: "{{ edxlocal_databases + edxlocal_extra_databases }}"
   run_once: True
 
 - name: create database users
@@ -32,7 +32,7 @@
     login_user: "{{ COMMON_MYSQL_ADMIN_USER }}"
     login_password: "{{ COMMON_MYSQL_ADMIN_PASS }}"
   when: item.db != None and item.db != ''
-  with_items: "{{ edxlocal_database_users }} + {{ edxlocal_extra_database_users }}"
+  with_items: "{{ edxlocal_database_users + edxlocal_extra_database_users }}"
   run_once: True
 
 - name: setup the migration db user
@@ -46,7 +46,7 @@
     login_user: "{{ COMMON_MYSQL_ADMIN_USER }}"
     login_password: "{{ COMMON_MYSQL_ADMIN_PASS }}"
   when: item != None and item != ''
-  with_items: "{{ edxlocal_databases }} + {{ edxlocal_extra_databases }}"
+  with_items: "{{ edxlocal_databases + edxlocal_extra_databases }}"
   run_once: True
 
 - name: create api user for the analytics api
