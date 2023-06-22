@@ -3,7 +3,7 @@
 
 import MySQLdb
 from sys import argv
-import ConfigParser
+import configparser
 import os
 
 user = 'root'
@@ -12,7 +12,7 @@ database = 'mysql'
 host = 'localhost'
 port = 3306
 
-config = ConfigParser.SafeConfigParser( { 'host': host, 'port': str(port), 'user': user, 'password': password, 'database': database } )
+config = configparser.ConfigParser( { 'host': host, 'port': str(port), 'user': user, 'password': password, 'database': database } )
 if config.read(os.path.dirname(os.path.realpath(__file__)) + '/scripts.cfg'):
 
     user = config.get('client', 'user')
@@ -29,6 +29,8 @@ def responder(item):
     try:
         if(item == 'Version'):
             query = 'SELECT VERSION()'
+        elif(item == 'max_connections'):
+            query = 'SHOW GLOBAL VARIABLES WHERE Variable_name="{}"'.format(item)
         else:
             query = 'SHOW GLOBAL STATUS WHERE Variable_name="{}"'.format(item)
 
@@ -43,8 +45,8 @@ def responder(item):
         cursor.close()
         client.close()
 
-    except MySQLdb.Error, e:
-        print "Failed: MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+    except MySQLdb.Error as e:
+        print("Failed: MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
         exit(255)
 
     return ret

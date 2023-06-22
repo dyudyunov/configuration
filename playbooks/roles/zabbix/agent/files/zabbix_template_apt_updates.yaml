@@ -1,0 +1,87 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-06-07T08:50:02Z'
+  groups:
+    -
+      name: Templates
+  templates:
+    -
+      template: 'Active Template App APT Updates'
+      name: 'Active Template App APT Updates'
+      groups:
+        -
+          name: Templates
+      applications:
+        -
+          name: APT
+      items:
+        -
+          name: 'Security Updates'
+          type: ZABBIX_ACTIVE
+          key: apt.security
+          delay: 1h
+          history: 30d
+          trends: 90d
+          applications:
+            -
+              name: APT
+          triggers:
+            -
+              expression: '{last()}>0'
+              name: '{ITEM.LASTVALUE} security updates on {HOST.NAME}'
+              priority: WARNING
+              description: |
+                Ubuntu has pending security updates.
+                Please consider installing updates as soon as possible.
+                You may need to reboot after installing updates.
+              manual_close: 'YES'
+              dependencies:
+                -
+                  name: '{ITEM.LASTVALUE} security updates on {HOST.NAME}'
+                  expression: '{Active Template App APT Updates:apt.security.last()}>10'
+            -
+              expression: '{last()}>10'
+              name: '{ITEM.LASTVALUE} security updates on {HOST.NAME}'
+              priority: HIGH
+              description: |
+                Ubuntu has pending security updates.
+                Please consider installing updates as soon as possible.
+                You may need to reboot after installing updates.
+              manual_close: 'YES'
+        -
+          name: 'Non-Critical Updates'
+          type: ZABBIX_ACTIVE
+          key: apt.updates
+          delay: 1h
+          history: 30d
+          trends: 90d
+          applications:
+            -
+              name: APT
+          triggers:
+            -
+              expression: '{last()}>0'
+              name: '{ITEM.LASTVALUE} regular updates on {HOST.NAME}'
+              priority: INFO
+              description: 'Ubuntu has pending regular updates. Please consider installing regular updates.'
+              manual_close: 'YES'
+              dependencies:
+                -
+                  name: '{ITEM.LASTVALUE} regular updates on {HOST.NAME}'
+                  expression: '{Active Template App APT Updates:apt.updates.last()}>20'
+            -
+              expression: '{last()}>20'
+              name: '{ITEM.LASTVALUE} regular updates on {HOST.NAME}'
+              priority: AVERAGE
+              description: 'Ubuntu has pending regular updates. Please consider installing regular updates.'
+              manual_close: 'YES'
+              dependencies:
+                -
+                  name: '{ITEM.LASTVALUE} regular updates on {HOST.NAME}'
+                  expression: '{Active Template App APT Updates:apt.updates.last()}>50'
+            -
+              expression: '{last()}>50'
+              name: '{ITEM.LASTVALUE} regular updates on {HOST.NAME}'
+              priority: HIGH
+              description: 'Ubuntu has pending regular updates. Please consider installing regular updates.'
+              manual_close: 'YES'

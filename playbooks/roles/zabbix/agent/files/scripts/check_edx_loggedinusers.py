@@ -3,7 +3,7 @@
 
 import MySQLdb
 from sys import argv
-import ConfigParser
+import configparser
 import os
 import time
 
@@ -24,7 +24,7 @@ if os.path.exists(touchfile):
 else:
     open(touchfile, 'a').close()
 
-config = ConfigParser.SafeConfigParser( { 'host': host, 'port': str(port), 'user': user, 'password': password, 'database': database } )
+config = configparser.ConfigParser( { 'host': host, 'port': str(port), 'user': user, 'password': password, 'database': database } )
 if config.read(os.path.dirname(os.path.realpath(__file__)) + '/scripts.cfg'):
 
     user = config.get('client', 'user')
@@ -44,12 +44,12 @@ try:
     cursor.execute(query, None)
     row = cursor.fetchone()
     if row and len(row):
-        print row[len(row)-1]
+        print(row[len(row)-1])
     else:
-        print "Failed: No such item ({})".format(item)
+        print("Failed: No such item ({})".format(item))
     cursor.close()
     client.close()
 
-except MySQLdb.Error, e:
-    print "Failed: MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+except MySQLdb.Error as e:
+    print("Failed: MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
     exit(255)

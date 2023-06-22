@@ -3,7 +3,7 @@
 
 import getopt, sys
 from telnetlib import Telnet
-import ConfigParser
+import configparser
 import os
 
 # default memcached server to check
@@ -41,13 +41,14 @@ class MemcachedStatsReader(object):
 
     def _read_stats(self):
         connection = Telnet(self._server, self._port, timeout=30)
-        connection.write('stats\n')
-        connection.write('quit\n')
+        connection.write('stats\n'.encode('ascii'))
+        connection.write('quit\n'.encode('ascii'))
         self._stats_raw = connection.read_all()
 
     def _parse_stats(self):
         self._stats = {}
         for line in self._stats_raw.splitlines():
+            line = line.decode('utf-8')
             if not line.startswith('STAT'):
                 continue
             parts = line.split()
@@ -67,7 +68,7 @@ class MemcachedStatsReader(object):
         self._stats["usage"] = round (usage, 2)
 
 def Usage ():
-        print "Usage: getMemcachedInfo.py [ -h 127.0.0.1 ] [ -p 11211 ] -a <item>"
+        print("Usage: getMemcachedInfo.py [ -h 127.0.0.1 ] [ -p 11211 ] -a <item>")
         sys.exit(2)
 
 
@@ -75,7 +76,7 @@ def main(host, port):
 
     getInfo = "ratio"
 
-    config = ConfigParser.SafeConfigParser( { 'host': host, 'port': str(port) } )
+    config = configparser.ConfigParser( { 'host': host, 'port': str(port) } )
     if config.read(os.path.dirname(os.path.realpath(__file__)) + '/scripts.cfg'):
         host = config.get('memcached', 'host')
         port = config.getint('memcached', 'port')
@@ -96,9 +97,9 @@ def main(host, port):
     data = MemcachedStatsReader(host, port)
     items = data.read()
     try:
-        print items[getInfo]
+        print(items[getInfo])
     except:
-        print "Not valid item: %s".format(getInfo)
+        print("Not valid item: %s".format(getInfo))
 
 if __name__ == '__main__':
     main(memcachedServer, memcachedPort)

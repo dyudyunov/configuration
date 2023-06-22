@@ -3,45 +3,68 @@
 
 from elasticsearch import Elasticsearch
 import sys
+import os
+import configparser
 
-# Try to establish a connection to elasticsearch.
+esServer = '127.0.0.1'
+esPort = '9200'
+
+config = configparser.ConfigParser( { 'host': esServer, 'port': esPort } )
+if config.read(os.path.dirname(os.path.realpath(__file__)) + '/scripts.cfg'):
+    esServer = config.get('elasticsearch', 'host')
+    esPort = config.get('elasticsearch', 'port')
+
 try:
-    es = Elasticsearch()
+    es = Elasticsearch([ "{}:{}".format(esServer, esPort) ])
 except Exception as e:
-    print 'Connection failed.'
+    print('Initialization failed. {}'.format(e))
     sys.exit(1)
 
 # Print error message in case of unsupported  metric.
 def err_message(option, metric):
 
-    print "%s metric is not under support for %s option." % (metric, option)
+    print("%s metric is not under support for %s option." % (metric, option))
     sys.exit(1)
 
 
 def cluster_health(metric):
 
-    result = es.cluster.health()
+    try:
+        result = es.cluster.health()
+    except Exception as e:
+        print('Connection failed. {}'.format(e))
+        sys.exit(1)
 
-    print result[metric]
+    print(result[metric])
 
 
 def cluster_mem_stats(metric):
 
-    result = es.cluster.stats()
+    try:
+        result = es.cluster.stats()
+    except Exception as e:
+        print('Connection failed. {}'.format(e))
+        sys.exit(1)
+
     size = result['nodes']['jvm']['mem'][metric]
 
-    print size
+    print(size)
 
 
 def node_mem_stats(metric):
 
-    node_stats = es.nodes.stats(node_id='_local', metric='jvm')
-    node_id = node_stats['nodes'].keys()[0]
+    try:
+        node_stats = es.nodes.stats(node_id='_local', metric='jvm')
+    except Exception as e:
+        print('Connection failed. {}'.format(e))
+        sys.exit(1)
+
+    node_id = list(node_stats['nodes'].keys())[0]
 
     if 'heap_used_percent' in metric:
 
         result = node_stats['nodes'][node_id]['jvm']['mem'][metric]
-        print result
+        print(result)
     else:
         if 'pool_young' in metric:
 
@@ -60,13 +83,18 @@ def node_mem_stats(metric):
             result = node_stats['nodes'][node_id]['jvm']['mem']
             size = result[metric]
 
-        print size
+        print(size)
 
 
 def node_index_stats(metric):
 
-    node_stats = es.nodes.stats(node_id='_local', metric='indices')
-    node_id = node_stats['nodes'].keys()[0]
+    try:
+        node_stats = es.nodes.stats(node_id='_local', metric='indices')
+    except Exception as e:
+        print('Connection failed. {}'.format(e))
+        sys.exit(1)
+
+    node_id = list(node_stats['nodes'].keys())[0]
 
     if metric == 'total_merges_mem':
         result = node_stats['nodes'][node_id]['indices']['merges']
@@ -80,7 +108,7 @@ def node_index_stats(metric):
         result = node_stats['nodes'][node_id]['indices']['fielddata']
         size = result['memory_size_in_bytes']
 
-    print size
+    print(size)
 
 
 # Definition of checks
@@ -109,7 +137,7 @@ node_checks = {'heap_pool_young_gen_mem': node_mem_stats,
 if __name__ == '__main__':
 
     if len(sys.argv) < 3:
-        print "Positional arguments count should be 3."
+        print("Positional arguments count should be 3.")
         sys.exit(2)
 
     try:

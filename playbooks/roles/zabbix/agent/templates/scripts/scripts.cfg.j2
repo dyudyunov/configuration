@@ -14,6 +14,7 @@ database = {{ zabbix_agent_mysql_database }}
 
 [elasticsearch]
 host = {{ zabbix_agent_elasticsearch_host }}
+port = {{ zabbix_agent_elasticsearch_port }}
 
 [memcached]
 host = {{ zabbix_agent_memcached_host }}
@@ -23,3 +24,8 @@ port = {{ zabbix_agent_memcached_port }}
 hostname = {{ zabbix_agent_rabbitmq_host }}
 username = {{ zabbix_agent_rabbitmq_user }}
 password = {{ zabbix_agent_rabbitmq_password }}
+
+[redis]
+host = {{ zabbix_agent_redis_host }}
+port = {{ zabbix_agent_redis_port }}
+password = {{ zabbix_agent_redis_password }}
