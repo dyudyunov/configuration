@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # Log to console and to file
-LOG_LOCATION={{retirement_service_log_dir}}
 TIMESTAMP=$(date -u)
-exec > >(tee -i "$LOG_LOCATION/retirement-logs-[$TIMESTAMP].log")
+LOG_LOCATION="{{ retirement_service_log_file }}"
+mkdir -p $(dirname ${LOG_LOCATION})
+exec > >(tee -i "${LOG_LOCATION}")
 exec 2>&1
-echo "Writing logs to: [ $LOG_LOCATION ]"
+echo "=== [${TIMESTAMP}] $0: Started"
+echo "Writing logs to: $LOG_LOCATION"
 
 # Ensure only one instance of the retirement script is running
 LOCKFILE={{retirement_service_data_dir }}/retirement.lock
