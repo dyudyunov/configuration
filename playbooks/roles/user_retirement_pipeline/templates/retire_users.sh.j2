@@ -4,7 +4,7 @@
 TIMESTAMP=$(date -u)
 LOG_LOCATION="{{ retirement_service_log_file }}"
 mkdir -p $(dirname ${LOG_LOCATION})
-exec > >(tee -i "${LOG_LOCATION}")
+exec > >(tee -ia "${LOG_LOCATION}")
 exec 2>&1
 echo "=== [${TIMESTAMP}] $0: Started"
 echo "Writing logs to: $LOG_LOCATION"
