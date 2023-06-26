@@ -72,7 +72,7 @@
 - name: Install cron job for automatically running User Retirement
   cron:
     name: "Run user retirement pipeline"
-    job: "{{retirement_service_home}}/retire_users.sh"
+    job: "{{retirement_service_home}}/retire_users.sh > /dev/null 2>&1"
     hour: "{{ RETIREMENT_SERVICE_CRON_JOB_HOURS }}"
     minute: "{{ RETIREMENT_SERVICE_CRON_JOB_MINUTES }}"
     day: "*"
