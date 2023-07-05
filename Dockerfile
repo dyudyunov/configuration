@@ -6,6 +6,7 @@ RUN pip install ansible==7.6.0 \
     zabbix-api \
     mysqlclient \
     mitogen \
+    hvac==1.1.1 \
     && rm -rf ~/.cache
 
 RUN adduser --system --home /home/ansible --disabled-password  --group ansible
