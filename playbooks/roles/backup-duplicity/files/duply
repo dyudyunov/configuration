@@ -2148,7 +2148,7 @@ TARGET_URL_PROT_lowercase="$(tolower "${TARGET_URL_PROT%%:*}")"
 
 # issue some warnings
 case "$TARGET_URL_PROT_lowercase" in
-  's3'|'s3+http')
+  's3'|'s3+http'|'boto3+s3')
     BACKEND_PARAMS="AWS_ACCESS_KEY_ID='${TARGET_URL_USER}' AWS_SECRET_ACCESS_KEY='${TARGET_URL_PASS}'"
     BACKEND_URL="${TARGET_URL_PROT}${TARGET_URL_HOSTPATH}"
     ;;
@@ -2186,7 +2186,7 @@ esac
 # for sec�rity reasons, we url_encode username to protect special chars
 # first sortout backends with special ways to handle password
 case "$TARGET_URL_PROT_lowercase" in
-  's3'|'s3+http')
+  's3'|'s3+http'|'boto3+s3')
     BACKEND_PARAMS="AWS_ACCESS_KEY_ID='${TARGET_URL_USER}' AWS_SECRET_ACCESS_KEY='${TARGET_URL_PASS}'"
     BACKEND_URL="${TARGET_URL_PROT}${TARGET_URL_HOSTPATH}"
     ;;
@@ -2204,7 +2204,7 @@ case "$TARGET_URL_PROT_lowercase" in
     ;;
 esac
 # insert url encoded username into target url if needed
-if var_isset 'TARGET_URL_USER' && [ "$TARGET_URL_PROT_lowercase" != "file" ] && [ "$TARGET_URL_PROT_lowercase" != "azure" ]; then
+if var_isset 'TARGET_URL_USER' && [ "$TARGET_URL_PROT_lowercase" != "file" ] && [ "$TARGET_URL_PROT_lowercase" != "azure" ] && [ "$TARGET_URL_PROT_lowercase" != "boto3+s3" ]; then
   BACKEND_URL="${TARGET_URL_PROT}$(url_encode "${TARGET_URL_USER}")@${TARGET_URL_HOSTPATH}"
 else
   BACKEND_URL="$TARGET"

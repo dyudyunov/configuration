@@ -47,7 +47,7 @@
 - name: patching duplicity for AWS_DEFAULT_REGION
   lineinfile:
     path: "{{ _boto_single.stdout }}"
-    regexp: "^( *)self.my_location = ''$"
+    regexp: "^( *)self.my_location = u*''$"
     line: "\\1self.my_location = os.environ.get('AWS_DEFAULT_REGION', '')"
     backrefs: yes
     state: present
