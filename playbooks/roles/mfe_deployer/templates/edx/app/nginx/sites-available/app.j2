@@ -9,6 +9,12 @@ server {
   listen [::]:{{ MFE_DEPLOY_NGINX_PORT }};
   {% endif %}
 
+  location '/.well-known/acme-challenge' {
+    allow all;
+    default_type "text/plain";
+    root /var/www/letsencrypt;
+  }
+
 {% if nginx_ssl %}
   {% include "concerns/handle-ip-disclosure.j2" %}
   rewrite ^ https://$host$request_uri? permanent;
@@ -45,6 +51,12 @@ server {
   {% endif %}
   {% endif %}
   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+
+  location '/.well-known/acme-challenge' {
+    allow all;
+    default_type "text/plain";
+    root /var/www/letsencrypt;
+  }
 
   {% include "concerns/mfe.j2" %}
 }
