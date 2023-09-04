@@ -9,6 +9,11 @@ server {
         }
         stub_status;
     }
+    location '/.well-known/acme-challenge' {
+      allow all;
+      default_type "text/plain";
+      root /var/www/letsencrypt;
+    }
     location / {
         rewrite ^ https://$http_host$request_uri?  permanent;
     }
