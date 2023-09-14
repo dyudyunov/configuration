@@ -66,6 +66,9 @@ server {
     }
 {% endif %}
     resolver 8.8.8.8;
+    proxy_busy_buffers_size   64k;
+    proxy_buffers   4 32k;
+    proxy_buffer_size   64k;
 
     client_max_body_size {{ RG_NGINX_LMS_CLIENT_MAX_BODY_SIZE }};
 
