@@ -46,11 +46,11 @@
     - name: Installing certbot via snap
       command: snap install --classic certbot
 
-    # - name: Symlinking /snap/bin/certbot /usr/bin/certbot
-      # file:
-        # src: /snap/bin/certbot
-        # dest: /usr/bin/certbot
-        # state: link
+    - name: Symlinking /snap/bin/certbot /usr/bin/certbot
+      file:
+        src: /snap/bin/certbot
+        dest: /usr/bin/certbot
+        state: link
 
     - name: Creating check directory for nginx
       file:
