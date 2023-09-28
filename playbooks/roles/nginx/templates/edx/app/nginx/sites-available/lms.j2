@@ -100,7 +100,9 @@ error_page {{ k }} {{ v }};
   ssl_certificate /etc/ssl/certs/{{ NGINX_SSL_CERTIFICATE|basename }};
   ssl_certificate_key /etc/ssl/private/{{ NGINX_SSL_KEY|basename }};
   {% endif %}
-
+  proxy_busy_buffers_size   64k;
+  proxy_buffers   4 32k;
+  proxy_buffer_size   64k;
   {% if NGINX_ENABLE_SSL or NGINX_REDIRECT_TO_HTTPS %}
   # request the browser to use SSL for all connections
   add_header Strict-Transport-Security "max-age={{ NGINX_HSTS_MAX_AGE }}; includeSubDomains";
