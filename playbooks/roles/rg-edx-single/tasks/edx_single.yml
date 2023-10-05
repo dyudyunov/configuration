@@ -27,9 +27,9 @@
   tags: [ "memcache" ]
 
 - import_role:
-    name: mongo_4_2
+    name: mongo_4_4
   when: "'localhost' in EDXAPP_MONGO_HOSTS or '127.0.0.1' in EDXAPP_MONGO_HOSTS"
-  tags: [ "mongo", "mongo_4_2" ]
+  tags: [ "mongo", "mongo_4_4" ]
 
 - import_role:
     name: redis
