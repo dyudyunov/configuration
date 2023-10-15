@@ -89,7 +89,7 @@ from ansible.module_utils.basic import *
 
 try:
     from pymongo import MongoClient
-    from pymongo.errors import OperationFailure
+    from pymongo.errors import OperationFailure,ServerSelectionTimeoutError
     from bson import json_util
 except ImportError:
     pymongo_found = False
@@ -223,7 +223,10 @@ def is_member_subset(old_members,new_members):
 
 def update_replset(rs_config):
     changed = False
-    old_rs_config = get_replset()
+    try:
+        old_rs_config = get_replset()
+    except (OperationFailure,ServerSelectionTimeoutError):
+        old_rs_config = None
     fix_host_port(rs_config)  #fix host, port to host:port
 
     #Decide whether we need to initialize
@@ -284,7 +287,7 @@ def update_replset(rs_config):
 
 
 ######### Client making stuff #########
-def get_mongo_uri(host, port, username, password, auth_database):
+def get_mongo_uri(host, port, username, password, auth_database, direct_connection=False):
     mongo_uri = 'mongodb://'
     if username and password:
         mongo_uri += "{}:{}@".format(*list(map(quote_plus, [username,password])))
@@ -293,7 +296,11 @@ def get_mongo_uri(host, port, username, password, auth_database):
 
     if auth_database:
         mongo_uri += "/{}".format(quote_plus(auth_database))
+    else:
+        mongo_uri += "/"
 
+    mongo_uri += "?directConnection={}".format("true" if direct_connection else "false")
+    print("{}".format(mongo_uri))
     return mongo_uri
 
 def primary_client(some_host, some_port, username, password, auth_database):
@@ -333,7 +340,7 @@ def get_client(some_host, some_port, username, password, auth_database):
     This function connects to Mongo, and as such can throw any of the PyMongo
     exceptions.
     '''
-    mongo_uri = get_mongo_uri(some_host, some_port, username, password, auth_database)
+    mongo_uri = get_mongo_uri(some_host, some_port, username, password, auth_database, direct_connection=True)
     client = MongoClient(mongo_uri)
     return client
 
@@ -379,7 +386,7 @@ if __name__ == '__main__':
 
     try:
         client = primary_client(rs_host, rs_port, username, password, auth_database)
-    except OperationFailure:
+    except (OperationFailure,ServerSelectionTimeoutError):
         client = get_client(rs_host, rs_port, username, password, auth_database)
 
     update_replset(module.params['rs_config'])
