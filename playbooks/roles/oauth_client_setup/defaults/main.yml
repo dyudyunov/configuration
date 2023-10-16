@@ -27,6 +27,7 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ ECOMMERCE_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ ECOMMERCE_LOGOUT_URL | default('None') }}",
         username: "{{ ECOMMERCE_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_ECOMMERCE | default('') }}",
       }
     - {
         name: "{{ EDXAPP_CMS_SERVICE_NAME | default('None') }}",
@@ -49,6 +50,7 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ INSIGHTS_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ INSIGHTS_LOGOUT_URL | default('None') }}",
         username: "{{ INSIGHTS_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_INSIGHTS | default('') }}",
       }
     - {
         name: "{{ credentials_service_name | default('None') }}",
@@ -59,6 +61,7 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ CREDENTIALS_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ CREDENTIALS_LOGOUT_URL | default('None') }}",
         username: "{{ CREDENTIALS_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_CREDENTIALS | default('') }}",
       }
     - {
         name: "{{ discovery_service_name | default('None') }}",
@@ -69,12 +72,14 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ DISCOVERY_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ DISCOVERY_LOGOUT_URL | default('None') }}",
         username: "{{ DISCOVERY_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_DISCOVERY | default('') }}",
       }
     - {
         name: "{{ veda_web_frontend_service_name | default('None') }}",
         url_root: "{{ VEDA_WEB_FRONTEND_OAUTH2_URL | default('None') }}",
         logout_uri: "{{ VEDA_WEB_FRONTEND_LOGOUT_URL | default('None') }}",
-        username: "{{ EDXAPP_VEDA_SERVICE_USER_NAME | default('None') }}"
+        username: "{{ EDXAPP_VEDA_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_VEDA | default('') }}"
       }
     - {
         name: "{{ registrar_service_name | default('None') }}",
@@ -85,6 +90,7 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ REGISTRAR_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ REGISTRAR_LOGOUT_URL | default('None') }}",
         username: "{{ REGISTRAR_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_REGISTRAR | default('') }}",
       }
     - {
         name: "{{ designer_service_name | default('None') }}",
@@ -95,12 +101,14 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ DESIGNER_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ DESIGNER_LOGOUT_URL | default('None') }}",
         username: "{{ DESIGNER_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_DESIGNER | default('') }}",
       }
     - {
         name: "{{ retirement_service_name if COMMON_RETIREMENT_SERVICE_SETUP|default(false)|bool else 'None' }}",
         backend_service_id: "{{ RETIREMENT_SERVICE_EDX_OAUTH2_KEY | default('None') }}",
         backend_service_secret: "{{ RETIREMENT_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         username: "{{ EDXAPP_RETIREMENT_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_RETIREMENT_SERVICE_SETUP | default(false) }}",
       }
 
     - {
@@ -108,6 +116,7 @@ oauth_client_setup_oauth2_clients:
         backend_service_id: "{{ EDX_NOTES_API_CLIENT_ID | default('None') }}",
         backend_service_secret: "{{ EDX_NOTES_API_CLIENT_SECRET | default('None') }}",
         username: staff,
+        enabled: "{{ COMMON_ENABLE_EDXNOTES | default(false) }}",
       }
 
     - {
@@ -119,6 +128,7 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ LICENSE_MANAGER_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ LICENSE_MANAGER_LOGOUT_URL | default('None') }}",
         username: "{{ LICENSE_MANAGER_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_LICENSE_MANAGER | default('') }}",
       }
     - {
         name: "{{ enterprise_catalog_service_name | default('None') }}",
@@ -129,6 +139,7 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ ENTERPRISE_CATALOG_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ ENTERPRISE_CATALOG_LOGOUT_URL | default('None') }}",
         username: "{{ ENTERPRISE_CATALOG_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_ENTERPRISE_CATALOG | default('') }}",
       }
     - {
         name: "{{ commerce_coordinator_service_name | default('None') }}",
@@ -139,6 +150,7 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ COMMERCE_COORDINATOR_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ COMMERCE_COORDINATOR_LOGOUT_URL | default('None') }}",
         username: "{{ COMMERCE_COORDINATOR_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_COMMERCE_COORDINATOR | default('') }}",
       }
     - {
         name: "{{ edx_exams_service_name | default('None') }}",
@@ -149,6 +161,7 @@ oauth_client_setup_oauth2_clients:
         backend_service_secret: "{{ EDX_EXAMS_BACKEND_SERVICE_EDX_OAUTH2_SECRET | default('None') }}",
         logout_uri: "{{ EDX_EXAMS_LOGOUT_URL | default('None') }}",
         username: "{{ EDX_EXAMS_SERVICE_USER_NAME | default('None') }}",
+        enabled: "{{ COMMON_ENABLE_EDX_EXAMS | default('') }}",
       }
 #
 # OS packages

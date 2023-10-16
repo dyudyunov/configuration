@@ -38,6 +38,7 @@
   environment: "{{ edxapp_environment }}"
   with_items: "{{ oauth_client_setup_oauth2_clients }}"
   when:
+    - item.enabled | default(True) | bool
     - item.name != 'None'
     - item.sso_id is defined
     - item.sso_id != 'None'
@@ -59,6 +60,7 @@
   environment: "{{ edxapp_environment }}"
   with_items: "{{ oauth_client_setup_oauth2_clients }}"
   when:
+    - item.enabled | default(True) | bool
     - item.name != 'None'
     - item.name != 'edx_notes_api'
     - item.backend_service_id is defined
@@ -81,6 +83,7 @@
   environment: "{{ edxapp_environment }}"
   with_items: "{{ oauth_client_setup_oauth2_clients }}"
   when:
+    - item.enabled | default(True) | bool
     - item.name == 'edx_notes_api'
     - item.backend_service_id is defined
     - item.backend_service_id != 'None'

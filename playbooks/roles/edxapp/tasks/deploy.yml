@@ -794,17 +794,6 @@
   become_user: "{{ common_web_user }}"
   when: COMMON_ENABLE_CREDENTIALS | default(false)
 
-#- name: add catalog integrations to lms
-#  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} create_catalog_integrations --enabled --internal_api_url={{ EDXAPP_LMS_BASE_SCHEME }}://{{
-#EDXAPP_DISCOVERY_API_URL }} --service_username={{ DISCOVERY_SERVICE_USER_NAME }}"
-#  args:
-#    chdir: "{{ edxapp_code_dir }}"
-#  become_user: "{{ common_web_user }}"
-#  when: COMMON_ENABLE_DISCOVERY | default(false)
-#  tags:
-#    - manage
-#    - manage:db
-
 - name: ensure indexes on contentstore and modulestore dbs
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} ensure_indexes"
   args:
