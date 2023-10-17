@@ -6,7 +6,7 @@ dependencies:
     user_name: "{{ GAMMA_USER }}"
     user_home: "{{ GAMMA_HOME }}"
     group_name: "{{ GAMMA_USER }}"
-  - role: docker
+  - role: docker-tools
     docker_users:
       - "{{ GAMMA_USER }}"
   - role: git_clone

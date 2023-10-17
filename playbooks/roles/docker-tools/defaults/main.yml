@@ -9,7 +9,8 @@ docker_tools_deps_deb_pkgs_focal:
     - apt-transport-https
     - ca-certificates
     - python3-pip
-
+    - docker-compose-plugin
+    
 docker_compose_pkg_url: "https://github.com/docker/compose/releases/download/v2.15.1/docker-compose-linux-x86_64"
 docker_apt_key_url: "https://download.docker.com/linux/ubuntu/gpg"
 docker_repos:

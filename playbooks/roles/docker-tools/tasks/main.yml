@@ -87,3 +87,21 @@
   tags:
     - install
     - install:system-requirements
+
+- name: Deploy docker-clean.sh
+  copy:
+    src: files/docker-clean.sh
+    dest: /root/docker-clean.sh
+    mode: 0750
+  tags:
+    - install
+
+- name: Add docker-clean.sh to crontab
+  cron:
+    name: docker-clean
+    job: 'nice /root/docker-clean.sh > /dev/null 2>&1'
+    minute: 6
+    hour: 6
+    weekday: 1
+  tags:
+    - install
