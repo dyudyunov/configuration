@@ -143,6 +143,11 @@
   tags: [ "rg_gamma" ]
 
 - import_role:
+    name: rg_portal
+  when: COMMON_ENABLE_RG_PORTAL
+  tags: [ "rg_portal" ]
+
+- import_role:
     name: datadog
   when: COMMON_ENABLE_DATADOG
   tags: [ "datadog" ]

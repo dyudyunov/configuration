@@ -1,0 +1,69 @@
+version: "3.5"
+
+services:
+{% if not RG_PORTAL_USE_EXTERNAL_DB %}
+  db:
+    image: postgres:9.6
+    env_file:
+      - "env.d/production"
+    ports:
+      - "5440:5432"
+    volumes:
+      - ./data/db/{{ RG_PORTAL_SITE_NAME }}:/var/lib/postgresql/data
+    user: "${DOCKER_USER:-1000}:${DOCKER_USER:-1000}"
+    restart: always
+{% endif %}
+
+  elasticsearch:
+    image: fundocker/openshift-elasticsearch:6.6.2
+    environment:
+      - discovery.type=single-node
+    env_file:
+      - "env.d/production"
+    ports:
+      - "9220:9200"
+    restart: always
+
+  app:
+    image: "{{ RG_PORTAL_PRODUCTION_IMAGE }}"
+    environment:
+      - DJANGO_SETTINGS_MODULE={{ RG_PORTAL_SITE_NAME }}.settings
+      - DJANGO_CONFIGURATION=ContinuousIntegration
+      - RICHIE_ES_INDICES_PREFIX=richie_{{ RG_PORTAL_SITE_NAME }}
+    env_file: env.d/production
+    networks:
+      - default
+      - lms_outside
+    volumes:
+      - ./data/media/{{ RG_PORTAL_SITE_NAME }}:/data/media
+    depends_on:
+{% if not RG_PORTAL_USE_EXTERNAL_DB %}
+      - "db"
+{% endif %}
+      - "elasticsearch"
+      - "redis-primary"
+    user: ${DOCKER_USER:-1000}
+    restart: always
+
+  nginx:
+    image: "{{ RG_PORTAL_NGINX_IMAGE }}"
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./docker/files/etc/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./data/media/{{ RG_PORTAL_SITE_NAME }}:/data/media:ro
+    depends_on:
+      - app
+    restart: always
+
+  redis-primary:
+    image: docker.io/bitnami/redis:6.2-debian-11
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    restart: always
+
+
+networks:
+  lms_outside:
+    driver: bridge
+    name: "${RICHIE_LMS_NETWORK:-edx_outside}"

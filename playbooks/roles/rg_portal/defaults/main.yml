@@ -1,0 +1,79 @@
+---
+RG_PORTAL_HOME: "{{ COMMON_APP_DIR }}/rg-portal"
+RG_PORTAL_APP_DIR: "{{ RG_PORTAL_HOME }}/app"
+RG_PORTAL_USER: rg-portal
+
+RG_PORTAL_REGISTRY: registry-gitlab.raccoongang.com
+RG_PORTAL_REGISTRY_USERNAME: rg-portal-registry-user
+RG_PORTAL_REGISTRY_PASSWORD: secret_password
+# RG_PORTAL_DEVELOPMENT_IMAGE: "{{ RG_PORTAL_REGISTRY }}/owlox-team/rg-portal/portal-dev:main"
+RG_PORTAL_PRODUCTION_IMAGE: "{{ RG_PORTAL_REGISTRY }}/owlox-team/rg-portal/portal:main"
+RG_PORTAL_NGINX_IMAGE: "{{ RG_PORTAL_REGISTRY }}/owlox-team/rg-portal/nginx:main"
+
+RG_PORTAL_EDX_API_KEY: "{{ EDXAPP_EDX_API_KEY | default('PUT_YOUR_API_KEY_HERE') }}"
+RG_PORTAL_PUBLIC_DNS: portal.example.com
+
+RG_PORTAL_SITE_NAME: portal
+RG_PORTAL_DJANGO_SECRET_KEY: !!null
+RG_PORTAL_DJANGO_ALLOWED_HOSTS:
+  - localhost
+  - 127.0.0.1
+  - "{{ RG_PORTAL_PUBLIC_DNS }}"
+RG_PORTAL_ENVIRONMENT: "production"
+
+RG_PORTAL_USE_EXTERNAL_DB: False
+RG_PORTAL_DB_ENGINE: django.db.backends.postgresql_psycopg2
+# RG_PORTAL_DB_ENGINE: django.db.backends.mysql
+RG_PORTAL_DB_HOST: db
+RG_PORTAL_DB_NAME: richie
+RG_PORTAL_DB_USER: fun
+RG_PORTAL_DB_PASSWORD: pass
+RG_PORTAL_DB_PORT: 5432
+
+RG_PORTAL_AUTHENTICATION_BASE_URL: "{{ EDXAPP_LMS_ROOT_URL | default('http://localhost:8000') }}"
+RG_PORTAL_EDX_BASE_URL: "{{ EDXAPP_LMS_ROOT_URL | default('http://localhost:8000') }}"
+RG_PORTAL_EDX_BACKEND: richie.apps.courses.lms.edx.EdXLMSBackend
+RG_PORTAL_EDX_COURSE_REGEX: '^.*/courses/(?P<course_id>.*)/info/?$'
+RG_PORTAL_EDX_JS_BACKEND: openedx-hawthorn
+RG_PORTAL_EDX_JS_COURSE_REGEX: '^.*/courses/(.*)/info/?$'
+
+RG_PORTAL_DJANGO_RICHIE_COURSE_RUN_SYNC_SECRETS: "SET_ME_PLEASE"
+
+# Sentry
+RG_PORTAL_SENTRY_DSN: "{{ COMMON_RG_SENTRY_DSN | default('') }}"
+
+# Web analytics
+RG_PORTAL_WEB_ANALYTICS_ID: None
+RG_PORTAL_WEB_ANALYTICS_LOCATION: 'head'
+RG_PORTAL_WEB_ANALYTICS_PROVIDER: 'google_analytics'
+
+# Minimum enrollment count value that would be shown on course detail page
+RG_PORTAL_RICHIE_MINIMUM_COURSE_RUNS_ENROLLMENT_COUNT: 1
+
+RG_PORTAL_ROBOTS_DISALLOW: True
+
+RG_PORTAL_STAFF_PASSWORD: "{{ EDXAPP_STAFF_PASSWORD }}"
+
+RG_PORTAL_BOOTSTRAP_TASKS:
+  - name: migrations
+    command: 'python manage.py migrate'
+  - name: create base site structure
+    command: 'python manage.py richie_init'
+  - name: (re)generate the Elasticsearch index
+    command: >
+      bash -c
+      '[[ "$(curl --retry 30 --retry-connrefused -s -o /dev/null -m 3 -L -w
+      ''%{http_code}'' http://elasticsearch:9200)" == "200" ]]
+      &&
+      python manage.py bootstrap_elasticsearch'
+  - name: create superuser if not exists
+    command: >
+      python manage.py
+      shell -c "from django.contrib.auth.models import User;
+      User.objects.filter(username='staff').exists() or
+      User.objects.create_superuser('staff', 'staff@example.com', '{{ RG_PORTAL_STAFF_PASSWORD }}')"
+  - name: set site name and domain
+    command: >
+      python manage.py
+      shell -c "from django.contrib.sites.models import Site;
+      Site.objects.update_or_create(pk=1, defaults={'domain': '{{ RG_PORTAL_PUBLIC_DNS }}', 'name': '{{ RG_PORTAL_SITE_NAME }}'})"

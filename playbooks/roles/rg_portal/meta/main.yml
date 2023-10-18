@@ -1,0 +1,11 @@
+---
+
+dependencies:
+  - role: common_vars
+  - role: add_user
+    user_name: "{{ RG_PORTAL_USER }}"
+    user_home: "{{ RG_PORTAL_HOME }}"
+    group_name: "{{ RG_PORTAL_USER }}"
+  - role: docker-tools
+    docker_users:
+      - "{{ RG_PORTAL_USER }}"
