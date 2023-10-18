@@ -88,9 +88,6 @@
   environment:
     DOCKER_USER: "{{ portal_user_uid_gid }}"
 
-# - ansible.builtin.debug:
-#     var: docker_compose_status.results[0].services.app
-
 # container name "app_app_1" is hardcoded, needs to be fixed
 - name: bootstraping tasks
   community.docker.docker_container_exec:

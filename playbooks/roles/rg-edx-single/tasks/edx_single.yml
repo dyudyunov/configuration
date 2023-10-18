@@ -148,11 +148,6 @@
   tags: [ "rg_portal" ]
 
 - import_role:
-    name: filebeat
-  vars:
-    filebeat_enable: "{{ COMMON_ENABLE_FILEBEAT }}"
-
-- import_role:
     name: datadog
   when: COMMON_ENABLE_DATADOG
   tags: [ "datadog" ]
