@@ -1977,7 +1977,7 @@ SERVICE_WORKER_USERS:
   - email: "{{ ECOMMERCE_SERVICE_USER_EMAIL | default('') }}"
     username: "{{ ECOMMERCE_SERVICE_USER_NAME | default('') }}"
     is_staff: true
-    is_superuser: false
+    is_superuser: true
     enabled: "{{ COMMON_ENABLE_ECOMMERCE | default('') }}"
   - email: "{{ EDXAPP_RETIREMENT_SERVICE_USER_EMAIL | default('') }}"
     username: "{{ EDXAPP_RETIREMENT_SERVICE_USER_NAME | default('') }}"
