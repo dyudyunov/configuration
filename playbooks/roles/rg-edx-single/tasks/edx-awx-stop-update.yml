@@ -9,6 +9,8 @@
       net.core.netdev_max_backlog: 250000
       net.ipv4.ip_local_port_range: "10240 65000"
       net.ipv4.conf.all.send_redirects: 0
+      # https://www.elastic.co/guide/en/elasticsearch/reference/6.6/docker.html#docker-cli-run-prod-mode
+      vm.max_map_count: "262144"
 
 - name: applying fix for mysql timezone information
   shell: "mysql_tzinfo_to_sql /usr/share/zoneinfo | sed -e 's/Local time zone must be set--see zic manual page/local/' | mysql -u root mysql"
