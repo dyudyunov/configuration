@@ -1,4 +1,12 @@
 ---
+
+- name: Transform human readable GitLab environment variables
+  set_fact:
+    MFES_FILTER_LIST: "{{ lookup('env', 'MFES_FILTER_LIST') | ternary(lookup('env', 'MFES_FILTER_LIST') | replace(' ','') | split(','), [], none_val=[]) }}"
+  tags:
+    - mfe
+    - mfe_deployer
+
 - name: get visible names for zabbix hosts which names starts with {{ EDXAPP_LMS_BASE }}
   shell: "python ~/playbooks/roles/zabbix/server/files/get_visiblename.py {{ EDXAPP_LMS_BASE | default(inventory_hostname, true) }}"
   environment:

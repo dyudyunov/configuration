@@ -46,6 +46,10 @@
 #      MFE_NAME: account
 #
 
+- name: Building MFE
+  debug:
+    msg: "MFE_NAME={{ MFE_NAME }}"
+
 - name: install needed packages
   apt:
     name: "{{ MFE_DEBIAN_PKGS }}"
