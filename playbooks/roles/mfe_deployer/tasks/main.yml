@@ -1,5 +1,12 @@
 ---
 
+- name: Building only selected MFEs
+  debug:
+    msg: "MFES_FILTER_LIST={{ MFES_FILTER_LIST }}"
+  when: MFES_FILTER_LIST
+  tags:
+    - install:base
+
 - name: Build MFE
   include_role:
      name: mfe
@@ -20,6 +27,7 @@
   loop: "{{ deploy_mfes }}"
   loop_control:
     loop_var: custom_mfe
+  when: MFES_FILTER_LIST | ternary(MFES_FILTER_LIST is contains custom_mfe.name, True)
   tags:
     - install:base
 
