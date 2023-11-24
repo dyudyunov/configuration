@@ -24,6 +24,7 @@
     MFE_PUBLIC_PATH: '{{ custom_mfe.public_path | default(MFE_DEPLOY_PUBLIC_PATH) }}'
     MFE_SITE_NAME: '{{ custom_mfe.site_name | default(MFE_DEPLOY_SITE_NAME) }}'
     MFE_STANDALONE_NGINX: '{{ custom_mfe.standalone_nginx | default(MFE_DEPLOY_STANDALONE_NGINX) }}'
+    MFE_NPM_INSTALL_EXTRA_ARGS: '{{ custom_mfe.npm_install_extra_args | default(MFE_DEPLOY_NPM_INSTALL_EXTRA_ARGS) }}'
   loop: "{{ deploy_mfes }}"
   loop_control:
     loop_var: custom_mfe
