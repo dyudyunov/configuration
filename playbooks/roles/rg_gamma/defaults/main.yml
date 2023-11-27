@@ -45,6 +45,20 @@ GAMMA_MONGO_DATABASE: 'gamma_data'
 GAMMA_CELERY_BROKER_URL: 'amqp://guest@rabbit'
 GAMMA_CELERY_RESULT_BACKEND: 'redis://redis:6379'
 
+# Media settings
+GAMMA_STORE_RELATIVE_URLS: False
+
+### RGG Notifications block ###
+# EDX Notification API
+GAMMA_EDX_NOTIFICATION_ENABLED: False
+GAMMA_EDX_NOTIFICATION_API_SUFFIX: notifications/api/v0/send-notification/
+
+# OneSignal
+ONESIGNAL_NOTIFICATION_ENABLED: False
+ONE_SIGNAL_APP_ID: "{{ GAMMA_ONE_SIGNAL_APP_ID | default('Set-Me-Please') }}"
+ONE_SIGNAL_APP_AUTH_KEY: "{{ GAMMA_SIGNAL_APP_AUTH_KEY | default('Set-Me-Please') }}"
+### END RGG Notifications block ###
+
 GAMMA_BOOTSTRAP_TASKS:
   - name: create superuser if not exists
     command: >
