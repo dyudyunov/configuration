@@ -1,8 +1,4 @@
 ---
-- name: include edx-defaults vars
-  include_vars: "inventories/edx-defaults/edx-rg-backups.yml"
-  when: not backup_profiles is defined or backup_profiles | list | length == 1 or not edx_backup_duplicity_profiles is defined
-
 - name: ensure for backup user is exists
   user:
     name: "{{ backup_user }}"
