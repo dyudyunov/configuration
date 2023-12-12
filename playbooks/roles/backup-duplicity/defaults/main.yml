@@ -29,6 +29,7 @@ backup_sys_packages:
       - python3-dev
       - librsync-dev
       - postgresql-client
+      - gettext
     ftp:
       - ncftp
       - lftp
