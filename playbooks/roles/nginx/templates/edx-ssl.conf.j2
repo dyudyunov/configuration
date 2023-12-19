@@ -78,7 +78,7 @@ server {
       root /var/www/letsencrypt;
     }
 {% if EDXAPP_EDXNOTES_PUBLIC_API is defined and '/edx_notes/' in EDXAPP_EDXNOTES_PUBLIC_API %}
-    location /edx_notes {
+    location /edx_notes/ {
       proxy_set_header X-Forwarded-Proto {{ '$http_x_forwarded_proto' if NGINX_FORWARDED_FOR_BEHIND_PROXY else '$scheme' }};
       proxy_set_header X-Forwarded-Port {{ '$http_x_forwarded_port' if NGINX_FORWARDED_FOR_BEHIND_PROXY else '$server_port' }};
       proxy_set_header X-Forwarded-For {{ '$http_x_forwarded_for' if NGINX_FORWARDED_FOR_BEHIND_PROXY else '$remote_addr' }};
