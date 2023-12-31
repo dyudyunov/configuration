@@ -13,8 +13,14 @@
   tags: [ "swapfile" ]
 
 - import_role:
+    name: mysql_8
+  when: COMMON_ENABLE_MYSQL_8 and (EDXAPP_MYSQL_HOST == 'localhost' or EDXAPP_MYSQL_HOST == '127.0.0.1')
+  tags: [ "mysql" ]
+
+# TODO: drop support of mysql_5_7 in next named release of OpenEdx
+- import_role:
     name: mysql
-  when: EDXAPP_MYSQL_HOST == 'localhost' or EDXAPP_MYSQL_HOST == '127.0.0.1'
+  when: not COMMON_ENABLE_MYSQL_8 and (EDXAPP_MYSQL_HOST == 'localhost' or EDXAPP_MYSQL_HOST == '127.0.0.1')
   tags: [ "mysql" ]
 
 - import_role:

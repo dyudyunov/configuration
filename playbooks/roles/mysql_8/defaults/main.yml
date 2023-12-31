@@ -1,0 +1,30 @@
+---
+
+mysql_debian_pkgs:
+  - python3-mysqldb
+
+mysql_version: 8.0
+mysql_server_pkg:
+  - "mysql-community-server={{ mysql_version }}.*"
+  - "mysql-server={{ mysql_version }}.*"
+mysql_client_pkg:
+  - "imysql-community-client={{ mysql_version }}.*"
+  - "mysql-client={{ mysql_version }}.*"
+
+mysql_dir: /etc/mysql
+
+mysql_socket: /var/run/mysqld/mysqld.sock
+
+DEFAULT_MYSQL_CHARACTER_SET: utf8
+DEFAULT_MYSQL_COLLATION: utf8_general_ci
+
+MYSQL_DATADIR: "{{ COMMON_BASE_DIR }}/var/mysql"
+MYSQL_BIND_ADDRESS: "127.0.0.1"
+
+# can be set to greater value for dedicated database instances
+# for example 2G or 4G
+MYSQL_INNODB_BUFFER_POOL_SIZE: 256M
+MYSQL_APT_KEYSERVER: "keyserver.ubuntu.com"
+MYSQL_APT_KEY: "B7B3B788A8D3785C"
+
+MYSQL_REPO: "deb [arch=amd64] http://repo.mysql.com/apt/ubuntu/ {{ ansible_distribution_release }} mysql-{{ mysql_version }}"
