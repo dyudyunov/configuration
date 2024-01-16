@@ -124,7 +124,6 @@ if [[ ( -z $AWS_ACCESS_KEY_ID || -z $AWS_SECRET_ACCESS_KEY ) && (! -f $BOTO_CONF
 fi
 
 extra_vars_file="/var/tmp/extra-vars-$$.yml"
-sandbox_secure_vars_file="${WORKSPACE}/configuration-secure/ansible/vars/developer-sandbox.yml"
 sandbox_internal_vars_file="${WORKSPACE}/configuration-internal/ansible/vars/developer-sandbox.yml"
 extra_var_arg="-e@${extra_vars_file}"
 program_console="false"
@@ -132,7 +131,7 @@ program_console="false"
 if [[ $edx_internal == "true" ]]; then
     # if this is a an edx server include
     # the secret var file
-    extra_var_arg="-e@${sandbox_internal_vars_file} -e@${sandbox_secure_vars_file} -e@${extra_vars_file} -e DECRYPT_CONFIG_PRIVATE_KEY=$WORKSPACE/configuration-secure/ansible/keys/sandbox-remote-config/sandbox/private.key -e ENCRYPTED_CFG_DIR=$WORKSPACE/configuration-internal/sandbox-remote-config/sandbox -e UNENCRYPTED_CFG_DIR=$WORKSPACE"
+    extra_var_arg="-e@${sandbox_internal_vars_file} -e@${extra_vars_file} -e DECRYPT_CONFIG_PRIVATE_KEY_PATH=$WORKSPACE -e DECRYPT_CONFIG_PRIVATE_KEY=$WORKSPACE/private.key -e ENCRYPTED_CFG_DIR=$WORKSPACE/configuration-internal/sandbox-remote-config/sandbox -e UNENCRYPTED_CFG_DIR=$WORKSPACE"
 fi
 
 if [[ -z $region ]]; then
@@ -292,6 +291,38 @@ if [[ -z $ora_grading_version ]]; then
   ORA_GRADING_MFE_VERSION="master"
 fi
 
+if [[ -z $course_authoring ]]; then
+  course_authoring="false"
+fi
+
+if [[ -z $course_authoring_version ]]; then
+  COURSE_AUTHORING_MFE_VERSION="master"
+fi
+
+if [[ -z $library_authoring ]]; then
+  library_authoring="false"
+fi
+
+if [[ -z $library_authoring_version ]]; then
+  LIBRARY_AUTHORING_MFE_VERSION="master"
+fi
+
+if [[ -z $profile ]]; then
+  profile="false"
+fi
+
+if [[ -z $profile_version ]]; then
+  PROFILE_MFE_VERSION="master"
+fi
+
+if [[ -z $learner_dashboard ]]; then
+  learner_dashboard="false"
+fi
+
+if [[ -z $learner_dashboard_version ]]; then
+  LEARNER_DASHBOARD_MFE_VERSION="master"
+fi
+
 # Lowercase the dns name to deal with an ansible bug
 dns_name="${dns_name,,}"
 
@@ -371,9 +402,6 @@ PAYMENT_MFE_VERSION: $payment_version
 PAYMENT_MFE_ENABLED: $payment
 PAYMENT_SANDBOX_BUILD: True
 
-VIDEO_PIPELINE_BASE_NGINX_PORT: 80
-VIDEO_PIPELINE_BASE_SSL_NGINX_PORT: 443
-
 LICENSE_MANAGER_NGINX_PORT: 80
 LICENSE_MANAGER_SSL_NGINX_PORT: 443
 LICENSE_MANAGER_VERSION: $license_manager_version
@@ -443,6 +471,30 @@ ORA_GRADING_MFE_VERSION: $ora_grading_version
 ORA_GRADING_MFE_ENABLED: $ora_grading
 ORA_GRADING_SANDBOX_BUILD: True
 
+COURSE_AUTHORING_NGINX_PORT: 80
+COURSE_AUTHORING_SSL_NGINX_PORT: 443
+COURSE_AUTHORING_MFE_VERSION: $course_authoring_version
+COURSE_AUTHORING_MFE_ENABLED: $course_authoring
+COURSE_AUTHORING_SANDBOX_BUILD: True
+
+LIBRARY_AUTHORING_NGINX_PORT: 80
+LIBRARY_AUTHORING_SSL_NGINX_PORT: 443
+LIBRARY_AUTHORING_MFE_VERSION: $library_authoring_version
+LIBRARY_AUTHORING_MFE_ENABLED: $library_authoring
+LIBRARY_AUTHORING_SANDBOX_BUILD: True
+
+PROFILE_NGINX_PORT: 80
+PROFILE_SSL_NGINX_PORT: 443
+PROFILE_MFE_VERSION: $profile_version
+PROFILE_MFE_ENABLED: $profile
+PROFILE_SANDBOX_BUILD: True
+
+LEARNER_DASHBOARD_NGINX_PORT: 80
+LEARNER_DASHBOARD_SSL_NGINX_PORT: 443
+LEARNER_DASHBOARD_MFE_VERSION: $learner_dashboard_version
+LEARNER_DASHBOARD_MFE_ENABLED: $learner_dashboard
+LEARNER_DASHBOARD_SANDBOX_BUILD: True
+
 mysql_server_version_5_7: True
 
 edxapp_container_enabled: $edxapp_container_enabled
@@ -466,6 +518,19 @@ else
 COMMON_ENABLE_BASIC_AUTH: False
 EOF_AUTH
 
+fi
+
+if [[ $mongo_version == "4.2" ]]; then
+    cat << MONGO_VERSION >> $extra_vars_file
+MONGO_4_2_ENABLED: True
+MONGO_4_4_ENABLED: False
+MONGO_VERSION
+fi
+if [[ $mongo_version == "4.4" ]]; then
+    cat << MONGO_VERSION >> $extra_vars_file
+MONGO_4_2_ENABLED: False
+MONGO_4_4_ENABLED: True
+MONGO_VERSION
 fi
 
 if [[ -n $nginx_users ]]; then
@@ -555,14 +620,6 @@ CREDENTIALS_URL_ROOT: "https://{{ CREDENTIALS_DOMAIN }}"
 CREDENTIALS_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
 CREDENTIALS_DISCOVERY_API_URL: "{{ DISCOVERY_URL_ROOT }}/api/v1/"
 
-VIDEO_PIPELINE_DOMAIN: "veda-${deploy_host}"
-VIDEO_PIPELINE_BASE_URL_ROOT: "https://{{ VIDEO_PIPELINE_DOMAIN }}"
-VIDEO_PIPELINE_BASE_LMS_BASE_URL: "https://{{ EDXAPP_LMS_BASE }}"
-
-VEDA_WEB_FRONTEND_VERSION: ${video_pipeline_version:-master}
-VEDA_PIPELINE_WORKER_VERSION: ${video_pipeline_version:-master}
-VEDA_ENCODE_WORKER_VERSION: ${video_encode_worker_version:-master}
-
 LICENSE_MANAGER_URL_ROOT: "https://license-manager-${deploy_host}"
 
 COMMERCE_COORDINATOR_URL_ROOT: "https://commerce-coordinator-${deploy_host}"
@@ -625,11 +682,6 @@ EOF
     fi
 fi
 
-veda_web_frontend=${video_pipeline:-false}
-veda_pipeline_worker=${video_pipeline:-false}
-veda_encode_worker=${video_encode_worker:-false}
-video_pipeline_integration=${video_pipeline:-false}
-
 # ansible overrides for master's integration environment setup
 if [[ $masters_integration_environment == "true" ]]; then
     cat << EOF >> $extra_vars_file
@@ -655,7 +707,7 @@ EOF
 fi
 
 declare -A deploy
-plays="prospectus edxapp forum ecommerce credentials discovery enterprise_catalog analyticsapi veda_web_frontend veda_pipeline_worker veda_encode_worker video_pipeline_integration xqueue certs demo testcourses registrar program_console learner_portal"
+plays="prospectus edxapp forum ecommerce credentials discovery enterprise_catalog analyticsapi xqueue certs demo testcourses registrar program_console learner_portal"
 
 for play in $plays; do
     deploy[$play]=${!play}
@@ -671,7 +723,7 @@ edxapp_containerized: true
 CAN_GENERATE_NEW_JWT_SIGNATURE: false
 EOF
       ansible -i "${deploy_host}," $deploy_host -m include_role -a "name=memcache" -u ubuntu -b
-      for playbook in redis mongo_4_2; do
+      for playbook in redis $mongo_version; do
           run_ansible $playbook.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
       done
       run_ansible edx_continuous_integration.yml -i "${deploy_host}," $extra_var_arg --user ubuntu --tags "edxlocal"
@@ -685,19 +737,40 @@ EOF
       rm -f "${provision_fluentd_script}"
 
       # decrypt lms config file
-      asym_crypto_yaml decrypt-encrypted-yaml --secrets_file_path $WORKSPACE/configuration-internal/sandbox-remote-config/sandbox/lms.yml --private_key_path $WORKSPACE/configuration-secure/ansible/keys/sandbox-remote-config/sandbox/private.key --outfile_path $WORKSPACE/lms.yml
+      asym_crypto_yaml decrypt-encrypted-yaml --secrets_file_path $WORKSPACE/configuration-internal/sandbox-remote-config/sandbox/lms.yml --private_key_path $WORKSPACE/private.key --outfile_path $WORKSPACE/lms.yml
       # decrypt cms config file
-      asym_crypto_yaml decrypt-encrypted-yaml --secrets_file_path $WORKSPACE/configuration-internal/sandbox-remote-config/sandbox/studio.yml --private_key_path $WORKSPACE/configuration-secure/ansible/keys/sandbox-remote-config/sandbox/private.key --outfile_path $WORKSPACE/cms.yml
+      asym_crypto_yaml decrypt-encrypted-yaml --secrets_file_path $WORKSPACE/configuration-internal/sandbox-remote-config/sandbox/studio.yml --private_key_path $WORKSPACE/private.key --outfile_path $WORKSPACE/cms.yml
 
       sed -i "s/deploy_host/${dns_name}.${dns_zone}/g" $WORKSPACE/lms.yml
       sed -i "s/deploy_host/${dns_name}.${dns_zone}/g" $WORKSPACE/cms.yml
 
+      # Remove exiting private requirements if found
+      if [[ -f "$WORKSPACE/dockerfiles-internal/edx-platform-private/private_requirements.txt" ]] ; then
+          rm -f $WORKSPACE/dockerfiles-internal/edx-platform-private/private_requirements.txt
+      fi
+
+      # Extract private requirements for sandbox
+      readarray app_private_requirements < <(cat $WORKSPACE/configuration/playbooks/roles/edxapp/defaults/main.yml | $WORKSPACE/yq e -o=j -I=0 '.EDXAPP_PRIVATE_REQUIREMENTS[]')
+      for app_private_requirement in "${app_private_requirements[@]}"; do
+          if ! $(echo ${app_private_requirement} | $WORKSPACE/yq '. | has("extra_args")' -) ; then
+              req_name=$(echo "${app_private_requirement}" | $WORKSPACE/yq -e '.name' -)
+              echo -e "${req_name}" >> $WORKSPACE/dockerfiles-internal/edx-platform-private/private_requirements.txt
+          else
+              req_name=$(echo "${app_private_requirement}" | $WORKSPACE/yq -e '.name' -)
+              req_extra_args=$(echo "${app_private_requirement}" | $WORKSPACE/yq -e '.extra_args' -)
+              echo -e "${req_extra_args} ${req_name}" >> $WORKSPACE/dockerfiles-internal/edx-platform-private/private_requirements.txt
+          fi
+      done
+
       # copy app config file
       ansible -c ssh -i "${deploy_host}," $deploy_host -m copy -a "src=$WORKSPACE/lms.yml dest=/var/tmp/lms.yml" -u ubuntu -b
       ansible -c ssh -i "${deploy_host}," $deploy_host -m copy -a "src=$WORKSPACE/cms.yml dest=/var/tmp/cms.yml" -u ubuntu -b
+      # copy private Dockerfile and requirements file
+      ansible -c ssh -i "${deploy_host}," $deploy_host -m copy -a "src=$WORKSPACE/dockerfiles-internal/edx-platform-private dest=/var/tmp/" -u ubuntu -b
 
       set +x
-      app_git_ssh_key="$($WORKSPACE/yq '._local_git_identity' $WORKSPACE/configuration-secure/ansible/vars/developer-sandbox.yml)"
+
+      app_git_ssh_key=$(aws secretsmanager get-secret-value --secret-id  $configuration_secure_secret --query SecretString --output text | jq -r '._local_git_identity')
 
       # specify variable names
       app_hostname="courses"
@@ -836,7 +909,7 @@ fi
 
 # deploy the edx_ansible play
 run_ansible edx_ansible.yml -i "${deploy_host}," $extra_var_arg --user ubuntu
-cat $sandbox_secure_vars_file $sandbox_internal_vars_file $extra_vars_file | grep -v -E "_version|migrate_db" > ${extra_vars_file}_clean
+cat $sandbox_internal_vars_file $extra_vars_file | grep -v -E "_version|migrate_db" > ${extra_vars_file}_clean
 ansible -c ssh -i "${deploy_host}," $deploy_host -m copy -a "src=${extra_vars_file}_clean dest=/edx/app/edx_ansible/server-vars.yml" -u ubuntu -b
 ret=$?
 if [[ $ret -ne 0 ]]; then
@@ -874,8 +947,7 @@ fi
 
 if [[ $edx_exams == 'true' ]]; then
     set +x
-    app_git_ssh_key="$($WORKSPACE/yq '._local_git_identity' $WORKSPACE/configuration-secure/ansible/vars/developer-sandbox.yml)"
-
+    app_git_ssh_key=$(aws secretsmanager get-secret-value --secret-id  $configuration_secure_secret --query SecretString --output text | jq -r '._local_git_identity')
     app_hostname="edx-exams"
     app_service_name="edx_exams"
     app_name="edx-exams"
@@ -897,8 +969,7 @@ fi
 
 if [[ $subscriptions == 'true' ]]; then
     set +x
-    app_git_ssh_key="$($WORKSPACE/yq '._local_git_identity' $WORKSPACE/configuration-secure/ansible/vars/developer-sandbox.yml)"
-
+    app_git_ssh_key=$(aws secretsmanager get-secret-value --secret-id  $configuration_secure_secret --query SecretString --output text | jq -r '._local_git_identity')
     app_hostname="subscriptions"
     app_service_name="subscriptions"
     app_name="subscriptions"

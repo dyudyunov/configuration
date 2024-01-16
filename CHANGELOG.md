@@ -4,10 +4,24 @@
 All notable changes to this project will be documented in this file.
 Add any new changes to the top (right below this line).
 
- - 2023-07-24
-     - Role: mfe
-        - Changed `ENABLE_PROGRESSIVE_PROFILING` to `ENABLE_PROGRESSIVE_PROFILING_ON_AUTHN`
-          and changed `WELCOME_PAGE_SUPPORT_LINK` to `AUTHN_PROGRESSIVE_PROFILING_SUPPORT_LINK`
+- 2023-10-09
+
+  - Role: edxapp
+    - Setting default value for `EDXAPP_EDXAPP_SECRET_KEY` as if it is not override in config secure,
+      helper script template can still be generated
+
+- 2023-09-28
+  - Role: prospectus
+    - Remove `GATSBY_TURN_ON_SIDEBAR_FILTERS` flag
+
+- 2023-08-29
+  - Role: prospectus
+    - Added `GATSBY_TURN_ON_SIDEBAR_FILTERS` flag to enable new sidebar changes
+
+ - 2023-06-20
+     - Role: prospectus
+        - Added `GATSBY_XPERT_STG_API_URL`, `GATSBY_XPERT_UAT_API_URL` and `GATSBY_XPERT_PROD_API_URL`
+          to enable Prospectus to communicate with the Xpert API
 
  - 2023-04-07
     - Changed default value of `EDXAPP_MONGO_REPLICA_SET` to `null` from existing
