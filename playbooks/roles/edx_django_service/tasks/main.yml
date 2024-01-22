@@ -420,7 +420,6 @@
   with_items:
     - python
     - pip
-    - django-admin.py
   tags:
     - install
     - install:app-requirements
