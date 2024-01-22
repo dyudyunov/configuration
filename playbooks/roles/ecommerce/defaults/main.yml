@@ -44,6 +44,12 @@ ECOMMERCE_SSL_NGINX_PORT: 48130
 ECOMMERCE_MEMCACHE:
   - localhost:11211
 
+ECOMMERCE_CACHES:
+  default:
+    BACKEND: 'django.core.cache.backends.memcached.MemcachedCache'
+    KEY_PREFIX: '{{ edx_django_service_name }}'
+    LOCATION: '{{ edx_django_service_memcache }}'
+
 ECOMMERCE_DATABASE_NAME: ecommerce
 ECOMMERCE_DATABASE_USER: ecomm001
 ECOMMERCE_DATABASE_PASSWORD: password
