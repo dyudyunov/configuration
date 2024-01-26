@@ -46,7 +46,9 @@ GAMMA_CELERY_BROKER_URL: 'amqp://guest@rabbit'
 GAMMA_CELERY_RESULT_BACKEND: 'redis://redis:6379'
 
 # Media settings
-GAMMA_STORE_RELATIVE_URLS: False
+# Main Site domain must be changed when switching to
+# an absolute path
+GAMMA_STORE_RELATIVE_URLS: True
 
 ### RGG Notifications block ###
 # EDX Notification API
