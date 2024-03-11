@@ -806,6 +806,13 @@
   become_user: "{{ common_web_user }}"
   when: COMMON_ENABLE_CREDENTIALS | default(false)
 
+- name: enable commerce configuration in lms
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} configure_commerce"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: COMMON_ENABLE_ECOMMERCE | default(false)
+  
 - name: ensure indexes on contentstore and modulestore dbs
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} ensure_indexes"
   args:
