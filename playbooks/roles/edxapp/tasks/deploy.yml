@@ -778,6 +778,16 @@
     - manage
     - manage:db
 
+- name: add ORA grading MFE waffle flag
+  shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms waffle_flag --settings={{ edxapp_settings }} --create --everyone openresponseassessment.enhanced_staff_grader"
+  args:
+    chdir: "{{ edxapp_code_dir }}"
+  become_user: "{{ common_web_user }}"
+  when: COMMON_ENABLE_MFE | default(false)
+  tags:
+    - manage
+    - manage:db
+
 - name: populate retirement states
   shell: ". {{ edxapp_app_dir }}/edxapp_env && {{ edxapp_venv_bin }}/python ./manage.py lms --settings={{ edxapp_settings }} populate_retirement_states"
   args:
